@@ -3,7 +3,7 @@ from card import Card
 class Hand:
 	def __init__(self):
 		self.cards = []
-		self.numbers = { "club": 0, "spade": 0, "diamond": 0, "hearth": 0}
+		self.numbers = { "club": 0, "spade": 0, "diamond": 0, "heart": 0}
 
 	def draw(self, card: Card):
 		if card.colors in self.numbers:
@@ -20,6 +20,11 @@ class Hand:
 				if self.numbers[card.colors] > 0:
 					self.numbers[card.colors] -= 1
 
+	def print(self):
+		for c in self.cards:
+			c.print()
+		print("\n")
+
 class Player:
 	def __init__(self, id: int):
 		self.id = id
@@ -30,3 +35,11 @@ class Player:
 
 	def playCard(self, card: Card):
 		self.hands.remove(card)
+
+	def clearHand(self):
+		self.hands = Hand()
+
+	def print(self):
+		print("Player ", self.id, ":")
+		self.hands.print()
+		# print("\n")
