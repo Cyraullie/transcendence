@@ -4,4 +4,4 @@ class Card:
 		self.colors = colors
 
 	def print(self):
-		print(self.values, "|", self.colors)
+		print("\t", self.values, "|", self.colors)
