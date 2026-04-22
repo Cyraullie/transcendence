@@ -1,16 +1,10 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .db import add_player_to_room, remove_player_from_room  # adapte le path
+from .db import add_player_to_room, remove_player_from_room, get_room_with_host  # adapte le path
 from .models import PlayerPresence, Room
 from asgiref.sync import sync_to_async
 
 class RoomConsumer(AsyncWebsocketConsumer):
-    async def room_event(self, event):
-        await self.send(text_data=json.dumps({
-            "event": event["event"],
-            "user": event["user"]
-        }))
-    
     async def connect(self):
         self.code = self.scope["url_route"]["kwargs"]["code"]
         self.group_name = f"room_{self.code}"
@@ -78,31 +72,69 @@ class RoomConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
-            message = data.get("message")
-
-            if not message:
-                return
-
-            await self.channel_layer.group_send(
-                self.group_name,
-                {
-                    "type": "room_message",
-                    "message": message,
-                    "user": self.get_username()
-                }
-            )
+        
+            msg_type = data.get("type")
+            action = data.get("action")
+            payload = data.get("payload", {})
+        
+            if msg_type == "action":
+                if action == "start_game":
+                    await self.handle_start_game()
+        
+            else:
+                await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "Unknown message type"
+                }))
 
         except json.JSONDecodeError:
             await self.send(text_data=json.dumps({
-                "error": "Invalid JSON"
+                "type": "error",
+                "message": "Invalid JSON"
             }))
 
-    async def room_message(self, event):
+
+
+
+    async def room_event(self, event):
         await self.send(text_data=json.dumps({
-            "message": event["message"],
-            "user": event["user"]
+            "type": "event",
+            "event": event["event"],
+            "payload": event.get("payload", {}),
         }))
 
+
+    async def handle_start_game(self):
+        room = await get_room_with_host(self.code)
+    
+        if self.user != room.host:
+            await self.send(json.dumps({
+                "event": "error",
+                "message": "Only host can start game"
+            }))
+            return
+    
+        if room.is_started:
+            await self.send(json.dumps({
+                "event": "error",
+                "message": "Game already started"
+            }))
+            return
+    
+        # update DB
+        room.is_started = True
+        await sync_to_async(room.save)()
+    
+        # broadcast à tout le monde
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "room_event",
+                "event": "game_started",
+                "user": self.user.username
+            }
+        )
+    
     def get_username(self):
         user = self.scope.get("user")
         return user.username if user and user.is_authenticated else "anonymous"

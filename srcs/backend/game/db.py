@@ -49,3 +49,10 @@ def remove_player_from_room(user, code):
         PlayerPresence.objects.filter(player=user, room=room).delete()
     except Room.DoesNotExist:
         pass
+
+
+@sync_to_async
+def get_room_with_host(code):
+    return Room.objects.select_related("host").get(code=code)
+
+
