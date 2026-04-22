@@ -41,6 +41,10 @@ def remove_player_from_room(user, code):
     try:
         room = Room.objects.get(code=code)
         if room.is_started:
+            PlayerPresence.objects.filter(
+                player=user,
+                room=room
+            ).update(is_online=False)
             return
         PlayerPresence.objects.filter(player=user, room=room).delete()
     except Room.DoesNotExist:
