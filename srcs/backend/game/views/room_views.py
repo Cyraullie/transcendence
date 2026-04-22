@@ -24,6 +24,6 @@ class JoinRoomView(APIView):
         try:
             room = Room.objects.get(code=code)
             PlayerScore.objects.get_or_create(player=request.user, room=room)
-            return Response({"message": f"Joined room"}, status=200)
+            return Response({"message": "Joined room"}, status=200)
         except Room.DoesNotExist:
             return Response({"error": "Room not found"}, status=404)
