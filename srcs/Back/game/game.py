@@ -16,6 +16,7 @@ class Game:
 		while deck.remaining() > len(self.players):
 			for p in self.players:
 				card = deck.drawRandom()
+				card.print()
 				p.drawCard(card)
 		lastCard = Card(-1, "other")
 		if deck.remaining() > 0:
@@ -49,7 +50,7 @@ class Game:
 			except ValueError:
 				print("not a card choose another one")
 			else:
-				if (index >= 0 and index < player.remainingCard() and legal[index] == True):
+				if (index >= 0 and index < player.remainingCard() and legal[index]):
 					return player.hands.cards[index]
 				else:
 					player.print()
