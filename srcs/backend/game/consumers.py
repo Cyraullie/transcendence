@@ -43,7 +43,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
             {
                 "type": "room_event",
                 "event": "user_joined",
-                "user": self.get_username()
+                "payload": {
+                    "user": self.get_username(),
+				}
             }
         )
 
@@ -66,9 +68,12 @@ class RoomConsumer(AsyncWebsocketConsumer):
             {
                 "type": "room_event",
                 "event": "user_left",
-                "user": self.get_username()
+                "payload": {
+                    "user": self.get_username(),
+				}
             }
         )
+
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
@@ -76,10 +81,19 @@ class RoomConsumer(AsyncWebsocketConsumer):
             msg_type = data.get("type")
             action = data.get("action")
             payload = data.get("payload", {})
-        
+
             if msg_type == "action":
                 if action == "start_game":
                     await self.handle_start_game()
+                if action == "play_card":
+                    await self.channel_layer.group_send(
+                        self.group_name,
+                        {
+                            "type": "room_event",
+                            "event": "play_card",
+                            "payload": payload
+                        }
+                    )
         
             else:
                 await self.send(text_data=json.dumps({
@@ -131,7 +145,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
             {
                 "type": "room_event",
                 "event": "game_started",
-                "user": self.user.username
+                "payload": {
+                    "user": self.get_username(),
+				}
             }
         )
     
