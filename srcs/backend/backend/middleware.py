@@ -26,7 +26,6 @@ class JwtAuthMiddleware:
                 user = await sync_to_async(User.objects.get)(id=user_id)
 
                 scope["user"] = user
-                print("AUTH OK:", user)
 
             except Exception as e:
                 print("AUTH ERROR:", e)

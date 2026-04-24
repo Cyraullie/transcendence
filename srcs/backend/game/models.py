@@ -1,5 +1,6 @@
 from django.db import models
 from api.models import User
+import uuid
 
 # Create your models here.
 
@@ -8,7 +9,7 @@ class Room(models.Model):
     host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hosted_rooms')
     created_at = models.DateTimeField(auto_now_add=True)
     is_started = models.BooleanField(default=False)
-    
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     def __str__(self):
         return f"{self.code}"
 
@@ -26,7 +27,7 @@ class PlayerPresence(models.Model):
 
     is_online = models.BooleanField(default=False)
     is_in_game = models.BooleanField(default=False)
-
+    position = models.IntegerField(default=0)
     last_seen = models.DateTimeField(auto_now=True)
 
     class Meta:
