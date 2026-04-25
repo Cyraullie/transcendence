@@ -29,8 +29,7 @@ class Hand:
 		print("\n")
 
 class Player:
-	def __init__(self, id: int):
-		self.id = id
+	def __init__(self):
 		self.takenFold = []
 		self.points = 0
 		self.hands = Hand()
@@ -56,6 +55,7 @@ class Player:
 		self.takenFold.append(copy)
 
 	def findSuit(self, bucket: dict[str, Card]):
+		ret = 0
 		for b in bucket.values():
 			if (len(b) >= 3):
 				b = sorted(b)
@@ -70,13 +70,14 @@ class Player:
 						suite += 1
 					else:
 						if (suite > 2):
-							self.points += self.suitePoint[suite]
+							ret += self.suitePoint[suite]
 						value = 0
 						value = 1
 				if (suite > 2):
-					self.points += self.suitePoint[suite]
+					ret += self.suitePoint[suite]
+		return ret
 
-	def countMelds(self, fold: list[Card]):
+	def countMelds(self, fold: list):
 		clubs = []
 		spades = []
 		diamonds = []
@@ -84,18 +85,19 @@ class Player:
 		bucket = {"club": clubs, "spade": spades, "diamond": diamonds, "heart": hearts}
 
 		for c in fold:
-			cList = bucket[c.colors]
-			cList.append(c)
+			cList = bucket[c["color"]]
+			cList.append(Card(c["value"], c["color"]))
 
-		self.findSuit(bucket)
+		ret = self.findSuit(bucket)
 		for c in clubs:
 			if (c in spades and c in diamonds and c in hearts):
 				if (c.values == "J"):
-					self.points += 200
+					ret += 200
 				elif (c.values == "9"):
-					self.points += 150
+					ret += 150
 				else:
-					self.points += 100
+					ret += 100
+		return ret
 
 	def countPoint(self, tricks: str):
 		for fold in self.takenFold:
