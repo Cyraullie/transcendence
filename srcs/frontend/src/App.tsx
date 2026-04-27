@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router";
 import { Home } from "./pages/Home";
 import { Game } from "./pages/Game";
 import { Leaderboard } from "./pages/Leaderboard";
@@ -8,6 +8,7 @@ import { Settings } from "./pages/Settings";
 import { Rules } from "./pages/Rules";
 
 function App() {
+
   return (
     <main className="bg-(--bg-color) font-[Cause] text-(--font-color) h-full">
       <BrowserRouter>
