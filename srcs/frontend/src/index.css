@@ -33,7 +33,7 @@
 .item-menu:hover {
   background: var(--hover-color);
   border-radius: 20px;
-  @apply transition-all;
+  @apply transition-all shadow-black shadow-2xs;
 }
 
 .active {
