@@ -5,19 +5,23 @@ import { Leaderboard } from "./pages/Leaderboard";
 import { Profile } from "./pages/Profile";
 import { Navbar } from "./components/Navbar";
 import { Settings } from "./pages/Settings";
+import { Rules } from "./pages/Rules";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/game" element={<Game />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/profile" element={<Profile />} />
-		<Route path="/settings" element={< Settings />} />
-      </Routes>
-    </BrowserRouter>
+    <main className="bg-base-200">
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/game" element={<Game />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/rules" element={<Rules />} />
+        </Routes>
+      </BrowserRouter>
+    </main>
   );
 }
 

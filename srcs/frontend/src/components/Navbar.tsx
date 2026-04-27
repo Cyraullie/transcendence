@@ -1,24 +1,29 @@
 export function Navbar() {
   return (
-    <div className="navbar bg-base-200">
+    <div className="navbar bg-(--nav-color)">
       <div className="flex-1">
-        <a className="btn btn-ghost text-xl" href="/">
+        <a className="text-xl item-menu" href="/">
           PopCards
         </a>
       </div>
       <div className="flex-none">
         <ul className="menu menu-horizontal">
           <li>
-            <a href="/game">Game</a>
+            <a className="item-menu" href="/game">
+              Game
+            </a>
           </li>
           <li>
-            <a href="/leaderboard">Leaderboard</a>
+            <a className="item-menu" href="/leaderboard">Leaderboard</a>
           </li>
           <li>
-            <a href="/profile">Profile</a>
+            <a className="item-menu" href="/profile">Profile</a>
           </li>
           <li>
-            <a href="/settings">Settings</a>
+            <a className="item-menu" href="/settings">Settings</a>
+          </li>
+          <li>
+            <a className="item-menu" href="/rules">Rules</a>
           </li>
         </ul>
       </div>
