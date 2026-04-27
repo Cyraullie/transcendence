@@ -20,7 +20,7 @@ class Deck:
 			self.cards.remove(ret)
 			return ret
 		else:
-			return False
+			return Card("-1", "other")
 
 	def remaining(self):
 		return len(self.cards)

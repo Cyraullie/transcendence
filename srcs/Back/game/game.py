@@ -1,121 +1,121 @@
-from player import Player
+from player import Player, Hand
 from card import Card
 from board import Board
 from deck import Deck
+import json
 
-
-class Game:
-	def __init__(self, playersList: list[Player]):
+class GameEngine:
+	def __init__(self, roomID: int):
 		self.indexPlayer = -1
-		self.players = playersList
-		self.tricks = "none"
-		self.board = Board()
+		self.roomID = roomID
+		self.trickValue = {"6": 0, "7": 1, "8": 2, "10": 3, "Q": 4, "K": 5, "A": 6, "9": 7, "J": 8}
+		self.cardValue = {"6": 0, "7": 1, "8": 2, "9": 3, "10": 4, "J": 5, "Q": 6, "K": 7, "A": 8}
+		
+	def initPlayer(self, data: dict, nbrPlayer: int):
+		i = 0
+		while (i < nbrPlayer):
+			data["players"][i] = {}
+			data["players"][i]["cards"] = []
+			data["players"][i]["taken"] = []
+			if ("puntos" not in data["players"][i].keys()):
+				data["players"][i]["puntos"] = 0
+			i += 1
 
-	def __cardDistribution(self):
+		return data
+
+	def startGame(self, data: dict, nbrPlayer: int):
+		index = 0
+		data = self.initPlayer(data, nbrPlayer)
 		deck = Deck()
-		while deck.remaining() > len(self.players):
-			for p in self.players:
+		last = Card("-1", "none")
+		if (deck.remaining() % nbrPlayer != 0):
+			last = deck.drawRandom()
+			while (last.colors == "diamond" and last.values == "7"):
+				deck = Deck()
+				last = deck.drawRandom()
+
+		while (deck.remaining() != 0):
+			i = 0
+			while (i < nbrPlayer):
 				card = deck.drawRandom()
-				p.drawCard(card)
-		lastCard = Card(-1, "other")
-		if deck.remaining() > 0:
-			lastCard = deck.drawRandom()
-		return lastCard
-			
-	def __find7Diamond(self):
-		for p in self.players:
-			for c in p.hands.cards:
-				if c.colors == "diamond" and c.values == "7":
-					return p
-	
-	def setupGame(self):
-		self.lastCard = self.__cardDistribution()
-		while self.lastCard.values == "7" and self.lastCard.colors == "diamond":
-			for p in self.players:
-				p.clearHand
-			self.__cardDistribution()
-		p = self.__find7Diamond()
-		self.indexPlayer = self.players.index(p)
-		self.startingPlayer = self.indexPlayer
-
-	def chooseCard(self, player: Player):
-		player.print()
-		legal = self.board.legalCard(player.hands, self.tricks)
-		print("choose a card to play")
-		while True:
-			index = input()
-			try:
-				index = int(index)
-			except ValueError:
-				print("not a card choose another one")
-			else:
-				if (index >= 0 and index < player.remainingCard() and legal[index] == True):
-					return player.hands.cards[index]
-				else:
-					player.print()
-					print("not a card choose another one")
-
-	def strongestCard(self):
-		strongest = Card("-1", "none")
-		asked = self.board.fold[0].colors
-		for c in self.board.fold:
-			if (c == self.board.fold[0]):
-				strongest = c
-				continue
-			if (c.colors != self.tricks and c.colors != asked):
-				continue
-			if (c.colors == self.tricks):
-				if (strongest.colors == self.tricks):
-					if (self.board.trickValue[c.values] > self.board.trickValue[strongest.values]):
-						strongest = c
-					continue
-				strongest = c
-				continue
-			elif (c.colors == asked):
-				if (strongest.colors == self.tricks):
-					continue
-				if (self.board.cardValue[c.values] > self.board.cardValue[strongest.values]):
-					strongest = c
-				continue
-		return self.board.fold.index(strongest)
-
-	def gameLoop(self):
-		while True:
-			if (self.indexPlayer == len(self.players)):
-				self.indexPlayer = 0
-
-			if (len(self.board.fold) == len(self.players)):
-				winner = self.strongestCard()
-				self.indexPlayer = winner
-				self.players[winner].takeFold(self.board.fold)
-				self.board.fold.clear()
-				if (len(self.players[winner].hands.cards) == 0):
-					self.players[winner].points += 5
+				if (card.values == "-1"):
 					break
+				if (card.values == "7" and card.colors == "diamond"):
+					index = i
+				data["players"][i]["cards"].append({"value": card.values, "color": card.colors})
+				i += 1
+			
+		data["lastCard"] = {"value": last.values, "color": last.colors}
+		data["tricks"] = "none"
+		data["playing"] = index
+		return data
 
-			playedCard = self.chooseCard(self.players[self.indexPlayer])
-			if (self.tricks == "none" and len(self.board.fold) != 0):
-				if (playedCard.colors != self.board.fold[0].colors):
-					self.tricks = playedCard.colors
+	def play(self, data: dict, idPlayer: int , idCard: int):
+		card = data["players"][idPlayer]["cards"][idCard].copy()
+		del data["players"][idPlayer]["cards"][idCard]
+		if (len(data["board"]) == 0):
+			data["board"]["asked"] = card
+		data["board"][idPlayer] = card
+		s = data["playing"]
 
-			self.players[self.indexPlayer].playCard(playedCard)
-			self.board.playCard(playedCard)
-			self.board.printFold(self.tricks)
-			self.indexPlayer += 1
+		if (card["color"] != data["board"]["asked"]["color"] and data["tricks"] == "none"):
+			data["tricks"] = card["color"]
 
-		print("lastCard = ")
-		self.lastCard.print()
-		print("point among player = ")
-		totalPoint = 0
-		for p in self.players:
-			p.countPoint(self.tricks)
-			totalPoint += p.points
-		print(totalPoint)
+		if (len(data["board"]) - 1 == len(data["players"])):
+			asked = data["board"].pop("asked")
+			fold = []
+			for c in data["board"].values():
+				fold.append(c)
+	
+			strongest = self.strongestCard(asked, fold, data["tricks"])
+			index = 0
+			for i in data["board"].keys():
+				if (data["board"][i] == strongest):
+					index = i
+					break
+			
+			melds = Player.countMelds(Player(), fold)
+			data["players"][index]["puntos"] = data["players"][index]["puntos"] + melds
 
-	def printGameInfo(self):
-		for p in self.players:
-			p.print()
-		print("last card:")
-		self.lastCard.print()
-		print("player who start:")
-		print(self.startingPlayer)
+			for c in data["board"].values():
+				data["players"][index]["taken"].append(c)
+			
+			data["board"].clear()
+			s = index
+		else:
+			s += 1
+			if (s == len(data["players"])):
+				s = 0
+
+		data["playing"] = s
+		return data
+
+	def legal(self, data: dict,  idPlayer: int):
+		hand = data["players"][idPlayer]["cards"]
+		fold = []
+		cardBoard = data["board"].copy()
+		if ("asked" in cardBoard.keys()):
+			asked = cardBoard.pop("asked")
+
+		for c in data["board"].values():
+			fold.append(Card(c["value"], c["color"]))
+		board = Board(fold, Card(asked["value"], asked["color"]))
+
+		cardHand = Hand()
+		for c in hand:
+			cardHand.draw(Card(c["value"], c["color"]))
+	
+		return board.legalCard(cardHand, data["tricks"])
+
+	def handleAction(self, action: str, data: dict, nbPlayer=0, idPlayer=-1, idCard=-1):
+
+		if (action == "start"):
+			return self.startGame(data, nbPlayer)
+
+		if (action == "play"):
+			return self.play(data, idPlayer, idCard)
+
+		if (action == "legal"):
+			return self.legal(data, idPlayer)
+		
+		return data
