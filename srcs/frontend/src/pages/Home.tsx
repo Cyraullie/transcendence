@@ -1,8 +1,16 @@
 export function Home() {
   return (
-    <div className="mt-5">
+    <div className="page-content mt-5">
       <h1>Home</h1>
-			<img src="./src/assets/home-icon.webp" className="m-auto mt-10"/>
+      <div>
+        <p>
+          Welcome to our beautiful game! Go check the{" "}
+          <a className="underline" href="/rules">
+            rules
+          </a>{" "}
+          to start playing
+        </p>
+      </div>
     </div>
   );
 }

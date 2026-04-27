@@ -2,7 +2,7 @@ export function Navbar() {
   return (
     <div className="navbar bg-(--nav-color)">
       <div className="flex-1">
-        <a className="text-xl item-menu" href="/">
+        <a className="text-xl item-menu p-2" href="/">
           PopCards
         </a>
       </div>
@@ -14,16 +14,24 @@ export function Navbar() {
             </a>
           </li>
           <li>
-            <a className="item-menu" href="/leaderboard">Leaderboard</a>
+            <a className="item-menu" href="/leaderboard">
+              Leaderboard
+            </a>
           </li>
           <li>
-            <a className="item-menu" href="/profile">Profile</a>
+            <a className="item-menu" href="/profile">
+              Profile
+            </a>
           </li>
           <li>
-            <a className="item-menu" href="/settings">Settings</a>
+            <a className="item-menu" href="/settings">
+              Settings
+            </a>
           </li>
           <li>
-            <a className="item-menu" href="/rules">Rules</a>
+            <a className="item-menu" href="/rules">
+              Rules
+            </a>
           </li>
         </ul>
       </div>

@@ -9,7 +9,7 @@ import { Rules } from "./pages/Rules";
 
 function App() {
   return (
-    <main className="bg-base-200">
+    <main className="bg-(--bg-color) font-[Cause] text-(--font-color) h-full">
       <BrowserRouter>
         <Navbar />
         <Routes>
