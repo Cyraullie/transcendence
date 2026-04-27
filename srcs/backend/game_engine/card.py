@@ -21,3 +21,6 @@ class Card:
 	
 	def __ge__(self, other):
 		return self.cardValue[self.values] >= self.cardValue[other.values]
+
+	def __repr__(self):
+		return f"value = {self.values} - color = {self.colors}\n"

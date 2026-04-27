@@ -23,6 +23,25 @@ class GameEngine:
 
 		return data
 
+	def order(self, hand: list):
+		ret = []
+		clubs = []
+		spades = []
+		diamonds = []
+		hearts = []
+		bucket = {"club": clubs, "diamond": diamonds, "spade": spades, "heart": hearts}
+
+		for c in hand:
+			cList = bucket[c["color"]]
+			cList.append(Card(c["value"], c["color"]))
+
+		for color in bucket.values():
+			sort = sorted(color)
+			for c in sort:
+				ret.append({"color": c.colors, "value": c.values})
+
+		return ret
+
 	def startGame(self, data: dict, nbrPlayer: int):
 		index = 0
 		data = self.initPlayer(data, nbrPlayer)
@@ -44,6 +63,11 @@ class GameEngine:
 					index = i
 				data["players"][i]["cards"].append({"value": card.values, "color": card.colors})
 				i += 1
+
+		i = 0
+		while (i < nbrPlayer):
+			data["players"][i]["cards"] = self.order(data["players"][i]["cards"])
+			i += 1
 
 		data["lastCard"] = {"value": last.values, "color": last.colors}
 		data["tricks"] = "none"
