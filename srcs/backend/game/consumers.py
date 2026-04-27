@@ -131,6 +131,26 @@ class RoomConsumer(AsyncWebsocketConsumer):
             "payload": event.get("payload", {}),
         }))
 
+    async def handle_legal(self):
+        room = await get_room_with_host(self.code)
+        
+        position = await get_player_pos(self.user, room.code)
+        p = await sync_to_async(PlayerPresence.objects.get)(
+            room=room,
+            position=int(position)
+        )
+        game = GameEngine(room.uuid)
+        legal = game.handleAction("legal",room.game_state, idPlayer=str(position))
+        await self.channel_layer.send(
+            p.channel_name,
+            {
+                "type": "private_event",
+                "event": "init_cards",
+                "payload": {
+                    "cards": legal
+                }
+            }
+        )
 
     async def handle_start_game(self):
         room = await get_room_with_host(self.code)
