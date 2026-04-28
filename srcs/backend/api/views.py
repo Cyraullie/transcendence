@@ -6,21 +6,22 @@ from rest_framework.response import Response
 from .serializers import UserSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.utils import timezone
 
-@api_view(["PUT", "PATCH"])
-def update_user(request, id):
-
-    user = get_object_or_404(User, id=id)
-
-    serializer = UserSerializer(user, data=request.data, partial=True)
-
-    if serializer.is_valid():
-        serializer.save()
+@api_view(["GET", "PUT", "PATCH"])
+@permission_classes([IsAuthenticated])
+def user(request):
+    if request.method == "GET":
+        serializer = UserSerializer(request.user)
         return Response(serializer.data)
-
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
+    if request.method == "PUT" or request.method == "PATCH":
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
@@ -44,6 +45,9 @@ def login(request):
     user = authenticate(username=username, password=password)
 
     if user is not None:
+        user.last_login = timezone.now()
+        user.save(update_fields=["last_login"])
+
         refresh = RefreshToken.for_user(user)
 
         return Response({
