@@ -1,4 +1,5 @@
 import { Friends } from "../components/FriendsPart";
+import { History } from "../components/HistoryPart";
 import { ProfilePart } from "../components/ProfilePart";
 import type { accountT } from "../utils/accountType";
 
@@ -15,7 +16,11 @@ export function Profile({ accountCurr }: { accountCurr: accountT }) {
         <Friends />
       </div>
       <div className="bordered">
-        <h2>Statistic:</h2>
+        <h2>History:</h2>
+        <History />
+      </div>
+      <div className="bordered">
+        <h2>Statistics:</h2>
         <ul>
           <li>Played games: 42</li>
           <li>Total points: 4242</li>

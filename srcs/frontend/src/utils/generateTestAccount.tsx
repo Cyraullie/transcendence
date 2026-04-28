@@ -3,7 +3,7 @@ import avatar_test from "../assets/avatar_test.png";
 
 export function generateFakeAccount(): accountT {
   return {
-    username: "Alex le mec qui dit des trucs mais qui les faits pas, genre vraiment un hypocrite ce mec",
+    username: "Alex le mec qui critique les autres mais qui est pas mieux, genre vraiment un hypocrite ce mec",
     mail: "atomasi42@proton.me",
     password: "cacaboudin",
     avatar: avatar_test,

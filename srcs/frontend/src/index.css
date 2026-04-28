@@ -9,6 +9,8 @@
   --font-color: #ccdbdc;
   --hover-color: #6f7dda;
   --accent-color: #e06b73;
+  --red-color: #c40606;
+  --green-color: #079404;
   --font: "JetBrains Mono";
 }
 
@@ -57,6 +59,10 @@
   @apply border-2 border-(--accent-color) mt-10 rounded-xl p-10;
 }
 
-.title-profile {
+.th-profile{
 	@apply text-left w-30
+}
+
+.th-history {
+	@apply w-26 text-left
 }
