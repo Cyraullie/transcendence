@@ -1,4 +1,9 @@
 import { useLocation } from "react-router";
+import { MdLogin, MdOutlineLeaderboard } from "react-icons/md";
+import { TbCards } from "react-icons/tb";
+import { CgProfile } from "react-icons/cg";
+import { CiSettings } from "react-icons/ci";
+import { GoLaw } from "react-icons/go";
 
 export function Navbar() {
   const current_location = useLocation();
@@ -19,7 +24,7 @@ export function Navbar() {
               className={(isActive("/game") ? "active " : "") + "item-menu"}
               href="/game"
             >
-              Game
+              <TbCards /> Game
             </a>
           </li>
           <li>
@@ -29,7 +34,7 @@ export function Navbar() {
               }
               href="/leaderboard"
             >
-              Leaderboard
+              <MdOutlineLeaderboard /> Leaderboard
             </a>
           </li>
           <li>
@@ -37,7 +42,7 @@ export function Navbar() {
               className={(isActive("/profile") ? "active " : "") + "item-menu"}
               href="/profile"
             >
-              Profile
+              <CgProfile /> Profile
             </a>
           </li>
           <li>
@@ -45,7 +50,7 @@ export function Navbar() {
               className={(isActive("/settings") ? "active " : "") + "item-menu"}
               href="/settings"
             >
-              Settings
+              <CiSettings /> Settings
             </a>
           </li>
           <li>
@@ -53,7 +58,15 @@ export function Navbar() {
               className={(isActive("/rules") ? "active " : "") + "item-menu"}
               href="/rules"
             >
-              Rules
+              <GoLaw /> Rules
+            </a>
+          </li>
+          <li>
+            <a
+              className={(isActive("/login") ? "active " : "") + "item-menu"}
+              href="/login"
+            >
+              <MdLogin fontSize={20} />
             </a>
           </li>
         </ul>

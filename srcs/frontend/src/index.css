@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Cause:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
 @import "tailwindcss";
 @plugin "daisyui";
 
@@ -8,13 +9,14 @@
   --font-color: #ccdbdc;
   --hover-color: #6f7dda;
   --accent-color: #e06b73;
-  --default-font: "Cause";
+  --font: "JetBrains Mono";
 }
 
 @layer base {
   body {
     background: var(--bg-color);
     height: 100vh;
+    font-family: "JetBrains Mono";
   }
   .page-content {
     @apply mx-24;
@@ -30,10 +32,21 @@
   }
 }
 
+@utility input {
+  @apply bg-(--hover-color);
+}
+
+.item-menu {
+  @apply rounded-2xl;
+}
+
+@utility link-hover {
+  @apply cursor-pointer;
+}
+
 .item-menu:hover {
   background: var(--hover-color);
-  border-radius: 20px;
-  @apply transition-all shadow-black shadow-2xs;
+  @apply transition-all scale-x-105 shadow-black shadow-2xs rounded-2xl;
 }
 
 .active {
@@ -42,4 +55,8 @@
 
 .bordered {
   @apply border-2 border-(--accent-color) mt-10 rounded-xl p-10;
+}
+
+.title-profile {
+	@apply text-left w-30
 }
