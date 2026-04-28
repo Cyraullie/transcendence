@@ -10,6 +10,7 @@ class GameEngine:
 		self.roomID = roomID
 		self.trickValue = {"6": 0, "7": 1, "8": 2, "10": 3, "Q": 4, "K": 5, "A": 6, "9": 7, "J": 8}
 		self.cardValue = {"6": 0, "7": 1, "8": 2, "9": 3, "10": 4, "J": 5, "Q": 6, "K": 7, "A": 8}
+		self.cardPoint = {"6": 0, "7": 0, "8": 0, "9": 0, "10": 10, "J": 2, "Q": 3, "K": 4, "A": 11}
 		
 	def initPlayer(self, data: dict, nbrPlayer: int):
 		i = 0
@@ -103,7 +104,7 @@ class GameEngine:
 		if (len(data["board"]) == 0):
 			data["board"]["asked"] = card
 		data["board"][idPlayer] = card
-		s = data["playing"]
+		s = int(data["playing"])
 
 		if (card["color"] != data["board"]["asked"]["color"] and data["tricks"] == "none"):
 			data["tricks"] = card["color"]
@@ -166,18 +167,35 @@ class GameEngine:
 		
 		return False
 
+	def points(self, data: dict):
+		for p in data["players"].values():
+			points = int(p["puntos"])
+			for c in p["taken"]:
+				if (c["color"] == data["tricks"]):
+					if (c["value"] == "J"):
+						points += 20
+						continue
+					elif (c["value"] == "9"):
+						points += 14
+						continue
+				points += self.cardPoint[c["value"]]
+			p["puntos"] = points
+
+		return data
+
 	def handleAction(self, action: str, data: dict, nbPlayer=0, idPlayer=-1, idCard=-1, meldIndex=[]):
 		if (action == "start"):
 			return self.startGame(data, nbPlayer)
 
 		if (action == "play"):
 			return self.play(data, idPlayer, idCard)
-
 		if (action == "legal"):
 			return self.legal(data, idPlayer)
 		
 		if (action == "meld"):
 			return self.melds(data, idPlayer, meldIndex)
 
+		if (action == "point"):
+			return self.points(data)
 
 		return data
