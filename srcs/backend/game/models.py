@@ -77,7 +77,7 @@ class Stat(models.Model):
     nb_last_take = models.IntegerField(default=0)
     nb_trick_choose = models.IntegerField(default=0)
     prefered_trick = models.CharField(max_length=10, choices=TRICKS_CHOICES, default="null")
-    tricks = models.JSONField(default=default_state)
+    tricks = models.JSONField(default=tricks_state)
     hand_meld_points = models.IntegerField(default=0)
     board_meld_points = models.IntegerField(default=0)
     highest_hand_meld = models.IntegerField(default=0)
