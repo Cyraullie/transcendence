@@ -5,23 +5,22 @@ export function LeaderboardPart() {
   const leaderboard = data.leaderboard;
   const current = data.current;
 
-  // const isFind = leaderboard.find((player) => player === current);
   return (
     <table className="w-full">
       <thead className="w-full">
         <th className="w-1/3">rank</th>
-        <th className="w-1/3">Usernameborder radius o tbody</th>
+        <th className="w-1/3">Username</th>
         <th className="w-1/3">Score</th>
       </thead>
-      <tbody className="bg-(--hover-color) rounded-2xl overflow-hidden">
+      <tbody className="bg-(--hover-color)">
         {leaderboard.map((player) => (
-          <tr className="h-8 border-b">
+          <tr className="h-10 border-y border-(--bg-color)">
             <td className="text-center">{leaderboard.indexOf(player) + 1}</td>
             <td className="text-center">{player.username}</td>
             <td className="text-center">{player.score}</td>
           </tr>
         ))}
-        <tr className="bg-(--nav-color) h-10">
+        <tr className="bg-(--nav-color) h-12">
           <td className="text-center">{current.rank}</td>
           <td className="text-center">{current.username}</td>
           <td className="text-center">{current.score}</td>
