@@ -89,7 +89,6 @@ def get_friends(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def send_friend_request(request, user_id):
-    print("SEND FRIEND REQUEST")
     try:
         target = User.objects.get(id=user_id)
 
@@ -124,12 +123,10 @@ def send_friend_request(request, user_id):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def accept_friend_request(request, request_id):
-    print("ACCEPT FRIEND REQUEST")
-    print(request_id)
-    print("CACA")
     try:
         friendship = Friendship.objects.get(
             id=request_id,
+            to_user=request.user,
             status="pending"
         )
         print(friendship)
