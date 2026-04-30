@@ -1,6 +1,7 @@
 import { Friends } from "../components/FriendsPart";
 import { History } from "../components/HistoryPart";
 import { ProfilePart } from "../components/ProfilePart";
+import { StatisticsPart } from "../components/StatisticPart";
 import type { accountT } from "../utils/accountType";
 
 export function Profile({ accountCurr }: { accountCurr: accountT }) {
@@ -40,19 +41,7 @@ export function Profile({ accountCurr }: { accountCurr: accountT }) {
           <h2>Statistics:</h2>
         </div>
         <div className="collapse-content">
-          <ul>
-            <li>Played games: 42</li>
-            <li>Ratio: W: 30 L: 12</li>
-            <li>Total points: 4242</li>
-            <li>Nombre fois atout choisis</li>
-            <li>Atout preferée</li>
-            <li>Nombre de pli prise</li>
-            <li>Nombre de derniere pli prise</li>
-            <li>Nombre de annonce en main</li>
-            <li>Nombre de annonce sur table</li>
-            <li>Record annonce en main</li>
-            <li>Record sur table</li>
-          </ul>
+          <StatisticsPart />
         </div>
       </div>
       <div className="bordered collapse">

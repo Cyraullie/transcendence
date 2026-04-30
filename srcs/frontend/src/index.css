@@ -10,7 +10,7 @@
   --hover-color: #6f7dda;
   --accent-color: #e06b73;
   --red-color: #c40606;
-  --green-color: #31DD7E;
+  --green-color: #31dd7e;
   --font: "JetBrains Mono";
 }
 
@@ -32,6 +32,18 @@
   h3 {
     @apply text-2xl font-bold;
   }
+  /* table { */
+  /*   border-collapse: separate; */
+  /*   border-spacing: 0; */
+  /*   width: 100%; */
+  /* } */
+  /**/
+  /* tbody { */
+  /*   display: block; /* Required */ */
+  /*   border-radius: 15px; */
+  /*   border: 1px solid #ccc; */
+  /*   overflow: hidden; /* Ensures background/borders follow radius */ */
+  /* } */
 }
 
 @utility input {
@@ -59,10 +71,14 @@
   @apply border-2 border-(--accent-color) mt-10 rounded-xl p-10;
 }
 
-.th-profile{
-	@apply text-left w-30
+.th-profile {
+  @apply text-left w-30;
 }
 
 .th-history {
-	@apply w-26 text-left
+  @apply w-26 text-left;
+}
+
+.th-stats {
+  @apply w-50 h-8;
 }

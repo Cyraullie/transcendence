@@ -34,7 +34,7 @@ export function History() {
         <tr
           className={
             (game.winned ? "bg-(--green-color)" : "bg-(--accent-color)") +
-            " text-black h-16 border-b-2"
+            " text-black h-16 border-b-2 border-(--bg-color)"
           }
         >
           <td>

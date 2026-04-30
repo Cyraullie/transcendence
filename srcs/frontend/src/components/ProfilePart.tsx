@@ -22,10 +22,7 @@ export function ProfilePart({ accountCurr }: { accountCurr: accountT }) {
         </tr>
         <tr>
           <th className="th-profile">Password:</th>
-          <td>*******</td>
-          <td>
-            <a className="link">change</a>
-          </td>
+          <td>*******<a className="link"> change</a></td>
         </tr>
         <tr>
           <th className="th-profile">Joined on:</th>
