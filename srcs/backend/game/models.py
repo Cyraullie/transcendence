@@ -33,6 +33,7 @@ class Room(models.Model):
     status = models.CharField(max_length=5, choices=STATUS_CHOICES, default="open")
     game_state = models.JSONField(default=default_state)
     created_at = models.DateTimeField(auto_now_add=True)
+    nb_player = models.IntegerField(default=0)
     
     def __str__(self):
         return f"{self.code}"

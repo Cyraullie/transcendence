@@ -35,7 +35,7 @@ def add_player_to_room(user, code):
         next_position = 0
         if last_position != None:
             next_position = (last_position or 0) + 1
-
+        
         if room.status == "start":
             exists = PlayerPresence.objects.filter(
                 player=user,
@@ -60,6 +60,8 @@ def add_player_to_room(user, code):
                 "is_online": True
             }
         )
+        room.nb_player = PlayerPresence.objects.filter(room=room).count()
+        room.save()
 
         if not created:
             obj.is_online = True
