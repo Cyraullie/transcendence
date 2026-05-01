@@ -1,6 +1,6 @@
 import type { accessT } from '../utils/accessType'
 
-async function loginRequest(in_email:string, in_pass:string): Promise<accessT | null> {
+export async function loginRequest(in_email:string, in_pass:string): Promise<accessT | null> {
 	const requestOptions = {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
