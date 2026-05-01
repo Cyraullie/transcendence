@@ -40,10 +40,21 @@ def register(request):
     if serializer.is_valid():
         user = serializer.save()
         Stat.objects.create(user=user)
-        return Response({
-			"message": "User created",
-            "user": UserSerializer(user).data
-		}, status=status.HTTP_201_CREATED)
+        
+        username = user.username
+        password = request.data.get("password")
+        
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            user.last_login = timezone.now()
+            user.save(update_fields=["last_login"])
+    
+            refresh = RefreshToken.for_user(user)
+    
+            return Response({
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+            })
         
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
