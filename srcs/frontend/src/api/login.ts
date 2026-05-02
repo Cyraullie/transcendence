@@ -1,14 +1,14 @@
 import type { accessT } from '../utils/accessType'
 
-export async function loginRequest(in_email:string, in_pass:string): Promise<accessT | null> {
+export async function loginRequest(in_name:string, in_pass:string): Promise<accessT | null> {
 	const requestOptions = {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ email: in_email, password:in_pass})
+		body: JSON.stringify({ username: in_name, password:in_pass})
 	}
 
 	try {
-		const res = await fetch('/login', requestOptions);
+		const res = await fetch('http://localhost:8000/login/', requestOptions);
 		if (!res.ok)
 			return null;
 		const parse = await res.json();

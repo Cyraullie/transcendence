@@ -34,7 +34,11 @@ export function RegisterForm({
 				return ;
 			}
 			setSuccess(false);
+			setFailure(true);
+			return ;
 		}
+		setFailure(true);
+		return ;
 	}
 
 	if (success) {
@@ -44,7 +48,7 @@ export function RegisterForm({
   return (
     <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">
       <legend className="fieldset-legend">Register</legend>
-	  {failure ? <label className="label">Login Failure!</label>: <div></div> } // to improve.
+	  {failure ? <label className="label">Registration Failure!</label>: <div></div> }
       <label className="label">Username</label>
       <input type="text" value={name} onChange={nameChange} className="input" placeholder="Username" />
 
