@@ -1,7 +1,7 @@
 import type { accountT } from '../utils/accountType'
 import axios from 'axios'
 
-export async function profileRequest(): Promise<accountT> {
+export async function profileRequest(): Promise<accountT | null> {
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
 		const res = await axios.get('http://localhost:8000/user/', { 'headers': { 'Authorization': AuthStr}});
@@ -16,15 +16,6 @@ export async function profileRequest(): Promise<accountT> {
 		}
 		return result;
 	} catch {
-			const result : accountT = {
-			username: "",
-			mail:  "",
-			password:  "",
-			avatar:  "",
-			date_joined:  "",
-			is_online:  false,
-			last_login:  "",
-		}
-		return result;
+		return null;
 	}
 }
