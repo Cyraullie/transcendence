@@ -217,6 +217,24 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game = GameEngine(room.uuid)
         
         legal = game.handleAction("legal", room.game_state, idPlayer=str(position))
+        
+        if payload["cardId"] >= len(legal) or payload["cardId"] < 0:
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(position)
+            )
+            await self.channel_layer.send(
+                p.channel_name,
+                {
+                    "type": "room_event",
+                    "event": "message",
+                    "payload": {
+                        "message": "il n'y a pas de carte a cette position"
+					}
+                }
+            )
+            return
+        
         if not legal[payload["cardId"]]:
             p = await sync_to_async(PlayerPresence.objects.get)(
                 room=room,
@@ -309,7 +327,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
             )
         
             legal = game.handleAction("legal", game_state, idPlayer=str(player_id))
-            
+            #TODO send message with all to player who play
+            #TODO send board to everybody when its not his time
             if p.channel_name:
                 await self.channel_layer.send(
                     p.channel_name,
@@ -319,6 +338,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
                         "payload": {
                             "hand": player_data["cards"],
                             "board": game_state["board"],
+                            "taken": player_data["taken"],
+                            "puntos": player_data["puntos"],
                             "legal": legal,
                             
                         }
