@@ -1,11 +1,10 @@
-from player import Player, Hand
-from card import Card
-from board import Board
-from deck import Deck
-import json
+from .player import Player, Hand
+from .card import Card
+from .board import Board
+from .deck import Deck
 
 class GameEngine:
-	def __init__(self, roomID: int):
+	def __init__(self, roomID: str):
 		self.indexPlayer = -1
 		self.roomID = roomID
 		self.trickValue = {"6": 0, "7": 1, "8": 2, "10": 3, "Q": 4, "K": 5, "A": 6, "9": 7, "J": 8}
@@ -129,7 +128,7 @@ class GameEngine:
 				data["players"][index]["taken"].append(c)
 			
 			data["board"].clear()
-			s = index
+			s = int(index)
 		else:
 			s += 1
 			if (s == len(data["players"])):
