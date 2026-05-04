@@ -9,6 +9,7 @@ class GameEngine:
 		self.roomID = roomID
 		self.trickValue = {"6": 0, "7": 1, "8": 2, "10": 3, "Q": 4, "K": 5, "A": 6, "9": 7, "J": 8}
 		self.cardValue = {"6": 0, "7": 1, "8": 2, "9": 3, "10": 4, "J": 5, "Q": 6, "K": 7, "A": 8}
+		self.cardPoint = {"6": 0, "7": 0, "8": 0, "9": 0, "10": 10, "J": 2, "Q": 3, "K": 4, "A": 11}
 		
 	def initPlayer(self, data: dict, nbrPlayer: int):
 		i = 0
@@ -21,6 +22,36 @@ class GameEngine:
 			i += 1
 
 		return data
+
+	def order(self, hand: list):
+		ret = []
+		clubs = []
+		spades = []
+		diamonds = []
+		hearts = []
+		bucket = {"club": clubs, "diamond": diamonds, "spade": spades, "heart": hearts}
+
+		for c in hand:
+			cList = bucket[c["color"]]
+			cList.append(Card(c["value"], c["color"]))
+
+		for color in bucket.values():
+			sort = sorted(color)
+			for c in sort:
+				ret.append({"color": c.colors, "value": c.values})
+
+		return ret
+
+	def shtokr(self, cards: list):
+		colors = ["club", "diamond", "spade", "heart"]
+		ret = []
+
+		for c in colors:
+			if ({"value": "Q", "color": c} in cards and 
+				{"value": "K", "color": c} in cards):
+				ret.append(c)
+
+		return ret
 
 	def startGame(self, data: dict, nbrPlayer: int):
 		index = 0
@@ -43,6 +74,14 @@ class GameEngine:
 					index = i
 				data["players"][i]["cards"].append({"value": card.values, "color": card.colors})
 				i += 1
+
+		i = 0
+		while (i < nbrPlayer):
+			data["players"][i]["cards"] = self.order(data["players"][i]["cards"])
+			i += 1
+
+		for p in data["players"]:
+			p["shtokr"] = self.shtokr(p["cards"])
 
 		data["lastCard"] = {"value": last.values, "color": last.colors}
 		data["tricks"] = "none"
@@ -96,7 +135,7 @@ class GameEngine:
 					index = i
 					break
 			
-			melds = Player.countMelds(Player(), fold)
+			melds = Player.countMelds(Player(), fold, data["tricks"])
 			data["players"][index]["puntos"] = data["players"][index]["puntos"] + melds
 
 			for c in data["board"].values():
@@ -130,15 +169,48 @@ class GameEngine:
 	
 		return board.legalCard(cardHand, data["tricks"])
 
-	def handleAction(self, action: str, data: dict, nbPlayer=0, idPlayer=-1, idCard=-1):
+	def melds(self, data, idPlayer, meldIndex):
+		hand = []
+		for i in meldIndex:
+			hand.append(data["players"][idPlayer]["cards"][i])
+		meld = Player.countMelds(Player(), hand)
+		if (meld != 0):
+			data["players"][idPlayer]["puntos"] = data["players"][idPlayer]["puntos"] + meld
+			return True
+		
+		return False
 
+	def points(self, data: dict):
+		for p in data["players"].values():
+			points = int(p["puntos"])
+			if (data["tricks"] in p["shtokr"]):
+				points -= 20
+			for c in p["taken"]:
+				if (c["color"] == data["tricks"]):
+					if (c["value"] == "J"):
+						points += 20
+						continue
+					elif (c["value"] == "9"):
+						points += 14
+						continue
+				points += self.cardPoint[c["value"]]
+			p["puntos"] = points
+
+		return data
+
+	def handleAction(self, action: str, data: dict, nbPlayer=0, idPlayer=-1, idCard=-1, meldIndex=[]):
 		if (action == "start"):
 			return self.startGame(data, nbPlayer)
 
 		if (action == "play"):
 			return self.play(data, idPlayer, idCard)
-
 		if (action == "legal"):
 			return self.legal(data, idPlayer)
 		
+		if (action == "meld"):
+			return self.melds(data, idPlayer, meldIndex)
+
+		if (action == "point"):
+			return self.points(data)
+
 		return data

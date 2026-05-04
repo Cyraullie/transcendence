@@ -15,16 +15,20 @@ def main():
 	# game.gameLoop()
 
 	data = game.handleAction("start", data, nbPlayer=4)
-	# print(json.dumps(data, indent=6))
 	data = game.handleAction("play", data, idPlayer=data["playing"], idCard=0)
 	data = game.handleAction("play", data, idPlayer=data["playing"], idCard=0)
-	# breakpoint()
+	data = game.handleAction("play", data, idPlayer=data["playing"], idCard=0)
+	data = game.handleAction("play", data, idPlayer=data["playing"], idCard=0)
+	data = game.handleAction("play", data, idPlayer=data["playing"], idCard=0)
+	data = game.handleAction("play", data, idPlayer=data["playing"], idCard=0)
+	data = game.handleAction("play", data, idPlayer=data["playing"], idCard=0)
 	data = game.handleAction("play", data, idPlayer=data["playing"], idCard=0)
 	print(json.dumps(data, indent=6))
-	data = game.handleAction("play", data, idPlayer=data["playing"], idCard=0)
+	data = game.handleAction("point", data)
 	print(json.dumps(data, indent=6))
 	legal = game.handleAction("legal", data, idPlayer=data["playing"])
 	print(legal)
+	game.handleAction("meld", data, idPlayer=0, meldIndex=[0, 1, 2, 3])
 
 if __name__ == "__main__":
 	main()
