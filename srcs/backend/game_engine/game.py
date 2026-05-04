@@ -121,7 +121,7 @@ class GameEngine:
 					index = i
 					break
 			
-			melds = Player.countMelds(Player(), fold)
+			melds = Player.countMelds(Player(), fold, data["tricks"])
 			data["players"][index]["puntos"] = data["players"][index]["puntos"] + melds
 
 			for c in data["board"].values():

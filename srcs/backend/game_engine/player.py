@@ -38,7 +38,7 @@ class Player:
 					ret += self.suitePoint[suite]
 		return ret
 
-	def countMelds(self, fold: list):
+	def countMelds(self, fold: list, tricks: str):
 		clubs = []
 		spades = []
 		diamonds = []
@@ -58,6 +58,10 @@ class Player:
 					ret += 150
 				else:
 					ret += 100
+
+		if (Card("Q", tricks) in bucket[tricks] and Card("K", tricks) in bucket[tricks]):
+			ret += 20
+
 		return ret
 
 	def countPoint(self, tricks: str):
