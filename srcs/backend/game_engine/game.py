@@ -42,6 +42,17 @@ class GameEngine:
 
 		return ret
 
+	def shtokr(self, cards: list):
+		colors = ["club", "diamond", "spade", "heart"]
+		ret = []
+
+		for c in colors:
+			if ({"value": "Q", "color": c} in cards and 
+				{"value": "K", "color": c} in cards):
+				ret.append(c)
+
+		return ret
+
 	def startGame(self, data: dict, nbrPlayer: int):
 		index = 0
 		data = self.initPlayer(data, nbrPlayer)
@@ -68,6 +79,9 @@ class GameEngine:
 		while (i < nbrPlayer):
 			data["players"][i]["cards"] = self.order(data["players"][i]["cards"])
 			i += 1
+
+		for p in data["players"]:
+			p["shtokr"] = self.shtokr(p["cards"])
 
 		data["lastCard"] = {"value": last.values, "color": last.colors}
 		data["tricks"] = "none"
@@ -169,6 +183,8 @@ class GameEngine:
 	def points(self, data: dict):
 		for p in data["players"].values():
 			points = int(p["puntos"])
+			if (data["tricks"] in p["shtokr"]):
+				points -= 20
 			for c in p["taken"]:
 				if (c["color"] == data["tricks"]):
 					if (c["value"] == "J"):

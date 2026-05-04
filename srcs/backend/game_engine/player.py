@@ -59,7 +59,8 @@ class Player:
 				else:
 					ret += 100
 
-		if (Card("Q", tricks) in bucket[tricks] and Card("K", tricks) in bucket[tricks]):
+		if (Card("Q", tricks) in bucket[tricks] and 
+			Card("K", tricks) in bucket[tricks]):
 			ret += 20
 
 		return ret
