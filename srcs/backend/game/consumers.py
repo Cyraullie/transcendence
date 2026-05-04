@@ -1,6 +1,6 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .db import add_player_to_room, remove_player_from_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
+from .db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
 from .models import PlayerPresence, Room, PlayerScore
 from api.models import User
 from asgiref.sync import sync_to_async
@@ -11,7 +11,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.code = self.scope["url_route"]["kwargs"]["code"]
         self.group_name = f"room_{self.code}"
-
+        
         self.user = self.scope.get("user")
         if not self.user or not self.user.is_authenticated:
             await self.close(code=4001)
@@ -28,6 +28,15 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 room=room
             ).exists
         )()
+        
+        if room.status == "end":
+            await self.accept()
+            await self.send(text_data=json.dumps({
+                "event": "game_ended",
+                "message": "La partie est déjà finie"
+            }, ensure_ascii=False))
+            await self.close(code=4003)
+            return
         
         if room.status == "start" and not is_member:
             await self.accept()
@@ -65,7 +74,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         group_name = getattr(self, "group_name", None)
         code = getattr(self, "code", None)
         user = getattr(self, "user", None)
-
+        #TODO change host if actual host disconnect
         if group_name:
             await self.channel_layer.group_discard(
                 group_name,
@@ -104,6 +113,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     await self.handle_start_game()
                 if action == "play_card":
                     await self.handle_play_card(payload)
+                if action == "continue":
+                    await self.handle_continue_game()
+                if action == "end_game":
+                    await self.handle_end_game()
         
             else:
                 await self.send(text_data=json.dumps({
@@ -227,6 +240,63 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
         await self.send_data()
 
+    async def handle_continue_game(self):
+        room = await get_room_with_host(self.code)
+    
+        if self.user != room.host:
+            await self.send(json.dumps({
+                "event": "error",
+                "message": "Only host can start game"
+            }))
+            return
+        
+        game = GameEngine(room.uuid)
+        game_state = game.handleAction("start", room.game_state, await count_player(room.code))
+                
+        await start_room(room.uuid, game_state)
+        
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "room_event",
+                "event": "game_started",
+                "payload": {
+                    "user": self.get_username(),
+				}
+            }
+        )
+        await self.send_data()
+
+    async def handle_end_game(self):
+        room = await get_room_with_host(self.code)
+
+        if self.user != room.host:
+            await self.send(json.dumps({
+                "event": "error",
+                "message": "Only host can start game"
+            }))
+            return
+        
+        if room.status == "open" or room.status == "end":
+            await self.send(json.dumps({
+                "event": "error",
+                "message": "Game not launch or already stopped"
+            }))
+            return
+
+        await end_room(room.uuid, room.game_state)
+        
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "room_event",
+                "event": "game_ended",
+                "payload": {
+                    "user": self.get_username(),
+				}
+            }
+        )
+
     async def send_data(self):
         room = await get_room_with_host(self.code)
         game_state = room.game_state
@@ -240,19 +310,20 @@ class RoomConsumer(AsyncWebsocketConsumer):
         
             legal = game.handleAction("legal", game_state, idPlayer=str(player_id))
             
-            await self.channel_layer.send(
-                p.channel_name,
-                {
-                    "type": "private_event",
-                    "event": "init_cards",
-                    "payload": {
-                        "hand": player_data["cards"],
-                        "board": game_state["board"],
-                        "legal": legal,
-                        
+            if p.channel_name:
+                await self.channel_layer.send(
+                    p.channel_name,
+                    {
+                        "type": "private_event",
+                        "event": "init_cards",
+                        "payload": {
+                            "hand": player_data["cards"],
+                            "board": game_state["board"],
+                            "legal": legal,
+                            
+                        }
                     }
-                }
-            )
+                )
 
     def get_username(self):
         user = self.scope.get("user")

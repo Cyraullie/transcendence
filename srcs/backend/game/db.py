@@ -1,5 +1,6 @@
 from asgiref.sync import sync_to_async
-from .models import PlayerPresence, Room
+from .models import PlayerPresence, Room, PlayerScore
+from api.models import User
 from django.db.models import Max
 
 @sync_to_async
@@ -109,3 +110,38 @@ def save_room_state(uuid, data):
     room.game_state = data
     room.save()
 
+@sync_to_async
+def end_room(uuid, data):
+    room = Room.objects.get(uuid=uuid)
+
+    scores = []
+
+    for player_id, player_data in data["players"].items():
+        pp = PlayerPresence.objects.get(
+            room=room,
+            position=int(player_id)
+        )
+
+        p, _ = PlayerScore.objects.get_or_create(
+            room=room,
+            player_id=pp.player_id
+        )
+
+        p.score = player_data["puntos"]
+        p.save()
+
+        scores.append({
+            "player_id": pp.player_id,
+            "score": p.score
+        })
+
+    scores.sort(key=lambda x: x["score"], reverse=False)
+
+    for rank, entry in enumerate(scores, start=1):
+        PlayerScore.objects.filter(
+            room=room,
+            player_id=entry["player_id"]
+        ).update(rank=rank)
+
+    room.status = "end"
+    room.save()
