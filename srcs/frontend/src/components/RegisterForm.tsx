@@ -1,7 +1,9 @@
 import type { Dispatch, SetStateAction } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { registerRequest } from '../api/register'
 import { useNavigate } from "react-router-dom";
+import { checkAuth } from "../api/checkAuth";
+
 
 export function RegisterForm({
   setCreated,
@@ -15,6 +17,7 @@ export function RegisterForm({
 	const [repassword,setrePassword] = useState("");
 	const [success, setSuccess] = useState(false);
 	const [failure, setFailure] = useState(false);
+	const [access, setAccess] = useState(false);
 	const navigate = useNavigate();
 	const emailChange = (e: React.ChangeEvent<HTMLInputElement>) => {setEmail(e.target.value);};
 	const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => {setName(e.target.value);};
@@ -41,7 +44,22 @@ export function RegisterForm({
 		return ;
 	}
 
-	if (success) {
+	async function checkAccess() {
+		const authed = await checkAuth();
+		if (authed) {
+			setAccess(true);
+			return ;
+		}
+		setAccess(false);
+		return ;
+	}
+
+	useEffect(() => {
+		checkAccess();
+	}, [])
+
+
+	if (success || access) {
 		navigate('/profile')
 	}
 	

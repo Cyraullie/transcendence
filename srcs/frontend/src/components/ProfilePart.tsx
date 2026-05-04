@@ -2,24 +2,27 @@ import { profileRequest } from "../api/profile";
 import type { accountT } from "../utils/accountType";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import type { errorT } from "../utils/errorType";
 
 export function ProfilePart({ accountCurr }: { accountCurr: accountT }) {
 
 	const [failure, setFailure] = useState(false);
 	const [success, setSuccess] = useState(false);
-	const [realAccount, setAccount] = useState< accountT | null>(null);
+	const [realAccount, setAccount] = useState< accountT | errorT>({code: 0, response: ''});
 	const navigate = useNavigate();
 
 	accountCurr.avatar = "";
-	
+
 	async function getProfile() {
 		setFailure(false);
 		setSuccess(false);
-		setAccount(await profileRequest());
-		if (!realAccount) {
+		const result = await profileRequest();
+		if ('code' in result) {
+			setAccount(result);
 			setFailure(true);
 			return ;
 		}
+		setAccount(result);
 		setSuccess(true);
 		return ;
 	}
@@ -30,10 +33,14 @@ export function ProfilePart({ accountCurr }: { accountCurr: accountT }) {
 		}
 	}, []);
 	
-	if (!realAccount) {
-		navigate('/login')
-		return ;
+	if (failure) {
+		if (realAccount.code === 401) {
+			navigate('/login')
+			return ;
+		}
+		return <p>Error: {realAccount.response}</p>; // improve message
 	}
+
   return (
     <div>
       <div className="avatar mt-8 flex-col">

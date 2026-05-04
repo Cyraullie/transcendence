@@ -1,7 +1,8 @@
 import type { accountT } from '../utils/accountType'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
+import type { errorT } from '../utils/errorType';
 
-export async function profileRequest(): Promise<accountT | null> {
+export async function profileRequest(): Promise<accountT | errorT> {
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
 		const res = await axios.get('http://localhost:8000/user/', { 'headers': { 'Authorization': AuthStr}});
@@ -15,7 +16,13 @@ export async function profileRequest(): Promise<accountT | null> {
 			last_login: res.data['last_login']
 		}
 		return result;
-	} catch {
-		return null;
+	} catch (err) {
+		const error = err as AxiosError;
+		// console.error('profile error:', error.status);
+		const result: errorT = {
+			code: error.status ? error.status : 0,
+			response: error.response ? error.response.data : '',
+		}
+		return result;
 	}
 }

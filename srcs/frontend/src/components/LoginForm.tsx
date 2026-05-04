@@ -1,7 +1,9 @@
 import type { Dispatch, SetStateAction } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { loginRequest } from '../api/login'
 import { useNavigate } from "react-router-dom";
+import { checkAuth } from "../api/checkAuth";
+
 
 export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<boolean>>}) {
 
@@ -10,6 +12,7 @@ export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<b
 	const [password,setPassword] = useState("");
 	const [success, setSuccess] = useState(false);
 	const [failure, setFailure] = useState(false);
+	const [access, setAccess] = useState(false);
 	const navigate = useNavigate();
 	const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => {setName(e.target.value);};
 	const passChange = (e: React.ChangeEvent<HTMLInputElement>) => {setPassword(e.target.value);};
@@ -34,7 +37,22 @@ export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<b
 		return ;
 	}
 
-	if (success) {
+	async function checkAccess() {
+		const authed = await checkAuth();
+		if (authed) {
+			setAccess(true);
+			return ;
+		}
+		setAccess(false);
+		return ;
+	}
+
+	useEffect(() => {
+		checkAccess();
+	}, [])
+
+
+	if (success || access) {
 		navigate('/profile')
 	}
 
