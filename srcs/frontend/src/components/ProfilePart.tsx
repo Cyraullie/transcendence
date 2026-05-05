@@ -3,15 +3,14 @@ import type { accountT } from "../utils/accountType";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { errorT } from "../utils/errorType";
+import host from "../api/host"
 
-export function ProfilePart({ accountCurr }: { accountCurr: accountT }) {
+export function ProfilePart() {
 
 	const [failure, setFailure] = useState(false);
 	const [success, setSuccess] = useState(false);
 	const [realAccount, setAccount] = useState< accountT | errorT>({code: 0, response: ''});
 	const navigate = useNavigate();
-
-	accountCurr.avatar = "";
 
 	async function getProfile() {
 		setFailure(false);
@@ -32,8 +31,8 @@ export function ProfilePart({ accountCurr }: { accountCurr: accountT }) {
 			getProfile();
 		}
 	}, []);
-	
-	if (failure) {
+
+	if ('code' in realAccount) {
 		if (realAccount.code === 401) {
 			navigate('/login')
 			return ;
@@ -41,11 +40,13 @@ export function ProfilePart({ accountCurr }: { accountCurr: accountT }) {
 		return <p>Error: {realAccount.response}</p>; // improve message
 	}
 
+
+
   return (
     <div>
       <div className="avatar mt-8 flex-col">
         <div className="rounded-4xl w-24">
-          <img src={realAccount.avatar} />
+          <img src={"http://" + host.host_ip + ":8000" + realAccount.avatar} />
         </div>
         <p className="text-green-200 font-extrabold my-2 mx-auto">
           {realAccount.is_online ? "Online" : ""}
@@ -58,7 +59,7 @@ export function ProfilePart({ accountCurr }: { accountCurr: accountT }) {
         </tr>
         <tr>
           <th className="th-profile">Email:</th>
-          <td>{realAccount.mail}</td>
+          <td>{realAccount.email}</td>
         </tr>
         <tr>
           <th className="th-profile">Password:</th>
