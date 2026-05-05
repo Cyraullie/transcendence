@@ -238,7 +238,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game = GameEngine(room.uuid)
         
         legal = game.handleAction("legal", room.game_state, idPlayer=str(position))
-        
+
         if payload["cardId"] >= len(legal) or payload["cardId"] < 0:
             p = await sync_to_async(PlayerPresence.objects.get)(
                 room=room,
@@ -274,9 +274,30 @@ class RoomConsumer(AsyncWebsocketConsumer):
             return
         
         game_state = game.handleAction("play", room.game_state, idPlayer= str(position), idCard= int(payload["cardId"]))
-        #print(json.dumps(game_state, indent=6))
         await save_room_state(room.uuid, game_state)
 
+        player_finished = 0
+        for player_id, player_data in game_state["players"].items():
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(player_id)
+            )
+            if len(player_data["cards"]) == 0:
+                player_finished += 1
+        if player_finished == room.nb_player:
+            game_state = game.handleAction("point", game_state)
+            await save_room_state(room.uuid, game_state)
+            await self.channel_layer.group_send(
+                self.group_name,
+                {
+                    "type": "room_event",
+                    "event": "message",
+                    "payload": {
+                        "message": "game finished do you want continue or stop ?"
+					}
+                }
+            )
+            return
         await self.send_data()
 
     async def handle_continue_game(self):
