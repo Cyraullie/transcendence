@@ -1,6 +1,7 @@
 import type { accessT } from '../utils/accessType'
 import axios from 'axios';
 import host from '../api/host'
+import status from '../api/login_status'
 
 export async function registerRequest(in_email:string, in_user:string, in_pass:string, in_avatar: string): Promise<accessT | null> {
 	const formData = new FormData();
@@ -19,9 +20,11 @@ export async function registerRequest(in_email:string, in_user:string, in_pass:s
 			access: res.data['access'],
 			refresh: res.data['refresh'],
 		}
+		status.logged_in = true;
 		return response;
 	} catch (err) {
 		console.error('registration error:', err)
+		status.logged_in = false;
 		return null;
 	}
 }
