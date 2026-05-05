@@ -12,6 +12,12 @@ class GameEngine:
 		self.cardPoint = {"6": 0, "7": 0, "8": 0, "9": 0, "10": 10, "J": 2, "Q": 3, "K": 4, "A": 11}
 		
 	def initPlayer(self, data: dict, nbrPlayer: int):
+		if (len(data["players"]) > 0):
+			for p in data["players"]:
+				p["cards"].clear()
+				p["taken"].clear()
+			return data
+
 		i = 0
 		while (i < nbrPlayer):
 			data["players"][i] = {}
@@ -42,6 +48,17 @@ class GameEngine:
 
 		return ret
 
+	def shtokr(self, cards: list):
+		colors = ["club", "diamond", "spade", "heart"]
+		ret = []
+
+		for c in colors:
+			if ({"value": "Q", "color": c} in cards and 
+				{"value": "K", "color": c} in cards):
+				ret.append(c)
+
+		return ret
+
 	def startGame(self, data: dict, nbrPlayer: int):
 		index = 0
 		data = self.initPlayer(data, nbrPlayer)
@@ -55,23 +72,35 @@ class GameEngine:
 
 		while (deck.remaining() != 0):
 			i = 0
-			while (i < nbrPlayer):
+			for p in data["players"]:
 				card = deck.drawRandom()
 				if (card.values == "-1"):
 					break
 				if (card.values == "7" and card.colors == "diamond"):
 					index = i
-				data["players"][i]["cards"].append({"value": card.values, "color": card.colors})
+				p["cards"].append({"value": card.values, "color": card.colors})
 				i += 1
 
 		i = 0
-		while (i < nbrPlayer):
-			data["players"][i]["cards"] = self.order(data["players"][i]["cards"])
+		for p in data["players"]:
+			p["cards"] = self.order(p["cards"])
 			i += 1
+
+		for p in data["players"]:
+			p["shtokr"] = self.shtokr(p["cards"])
 
 		data["lastCard"] = {"value": last.values, "color": last.colors}
 		data["tricks"] = "none"
-		data["playing"] = index
+
+		if ("start" in data.keys()):
+			data["start"] = int(data["start"]) + 1
+			if (data["start"] == len(data["players"])):
+				data["start"] = 0
+			data["playing"] = data["start"]
+		else:
+			data["playing"] = index
+			data["start"] = index
+
 		return data
 
 	def strongestCard(self, asked, fold, tricks):
@@ -121,7 +150,7 @@ class GameEngine:
 					index = i
 					break
 			
-			melds = Player.countMelds(Player(), fold)
+			melds = Player.countMelds(Player(), fold, data["tricks"])
 			data["players"][index]["puntos"] = data["players"][index]["puntos"] + melds
 
 			for c in data["board"].values():
@@ -169,6 +198,8 @@ class GameEngine:
 	def points(self, data: dict):
 		for p in data["players"].values():
 			points = int(p["puntos"])
+			if (data["tricks"] in p["shtokr"]):
+				points -= 20
 			for c in p["taken"]:
 				if (c["color"] == data["tricks"]):
 					if (c["value"] == "J"):
