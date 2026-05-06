@@ -2,8 +2,11 @@ import { TbPointFilled } from "react-icons/tb";
 import type { friendT } from "../utils/friendType";
 import { generateFakeFriends } from "../utils/generateArrayTestFriends";
 
+
 export function Friends() {
+
   const friends = generateFakeFriends();
+
   return (
     <table>
       <tr>
