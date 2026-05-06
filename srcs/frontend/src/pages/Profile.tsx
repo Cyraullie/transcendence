@@ -27,7 +27,7 @@ export function Profile({ accountCurr }: { accountCurr: accountT }) {
         </div>
       </div>
       <div className="bordered collapse collapse-arrow">
-        <input type="radio" name="profile-radio" />
+        <input type="checkbox" name="profile-radio" />
         <div className="collapse-title">
           <h2 className="text-center">History</h2>
         </div>
@@ -36,7 +36,7 @@ export function Profile({ accountCurr }: { accountCurr: accountT }) {
         </div>
       </div>
       <div className="bordered collapse collapse-arrow">
-        <input type="radio" name="profile-radio" />
+        <input type="checkbox" name="profile-radio" />
         <div className="collapse-title">
           <h2 className="text-center">Statistics</h2>
         </div>
@@ -45,7 +45,7 @@ export function Profile({ accountCurr }: { accountCurr: accountT }) {
         </div>
       </div>
       <div className="bordered collapse collapse-arrow">
-        <input type="radio" name="profile-radio" />
+        <input type="checkbox" name="profile-radio" />
         <div className="collapse-title">
           <h2 className="text-center">Achievements:</h2>
         </div>
