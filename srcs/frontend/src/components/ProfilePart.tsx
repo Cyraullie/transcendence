@@ -29,7 +29,9 @@ export function ProfilePart() {
 
 	if ('code' in realAccount) {
 		if (realAccount.code === 401) {
-			navigate('/login')
+			localStorage.removeItem('access');
+			localStorage.removeItem('refresh');
+			navigate('/login');
 			return ;
 		}
 		return <p>Error: {realAccount.response}</p>; // improve message
