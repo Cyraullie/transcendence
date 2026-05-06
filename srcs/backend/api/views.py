@@ -155,8 +155,8 @@ def accept_friend_request(request, request_id):
 def deny_friend_request(request, request_id):
     try:
         friendship = Friendship.objects.get(
+            Q(from_user=request.user) | Q(to_user=request.user),
             id=request_id,
-            to_user=request.user,
             status="pending"
         )
 
@@ -166,7 +166,23 @@ def deny_friend_request(request, request_id):
 
     except Friendship.DoesNotExist:
         return Response({"error": "Request not found"}, status=404)
-    
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def delete_friend_request(request, request_id):
+    try:
+        friendship = Friendship.objects.get(
+            Q(from_user=request.user) | Q(to_user=request.user),
+            id=request_id,
+            status="accepted"
+        )
+
+        friendship.delete()
+
+        return Response({"message": "Friend request delete"})
+
+    except Friendship.DoesNotExist:
+        return Response({"error": "Request not found"}, status=404)
     
 @api_view(["GET"])
 @permission_classes([AllowAny])
