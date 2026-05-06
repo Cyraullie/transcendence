@@ -51,6 +51,18 @@
   @apply bg-(--hover-color);
 }
 
+.avatar-hovered {
+  @apply opacity-30;
+}
+
+.pen-hovered {
+  @apply absolute text-3xl z-10;
+}
+
+.li-avatars {
+  @apply w-24 m-3 h-24 hover:scale-110 transition-all;
+}
+
 .item-menu {
   @apply rounded-2xl;
 }
