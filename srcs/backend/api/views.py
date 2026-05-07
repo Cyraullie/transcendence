@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from .models import User, Friendship
-from game.models import Stat, PlayerScore
+from game.models import Stat, PlayerScore, Room, PlayerPresence
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -250,4 +250,26 @@ def game_history(request):
         })
 
     return Response(history)
+    
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def room_data(request, uuid):
+    room = Room.objects.get(uuid=uuid)
+    print(room)
+    players = (
+        PlayerScore.objects
+        .filter(room=room)
+        .order_by("rank")
+	)
+    
+    users = []
+    for ps in players:
+        u = User.objects.get(id=ps.player_id)
+        users.append({
+			"id": ps.player_id,
+            "username": u.username,
+            "score": ps.score,
+            "rank": ps.rank
+		})
+    return Response(users)
     
