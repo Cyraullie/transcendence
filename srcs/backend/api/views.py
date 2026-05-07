@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.utils import timezone
 from django.db.models import Q
+from datetime import timedelta
 
 @api_view(["GET", "PUT", "PATCH"])
 @permission_classes([IsAuthenticated])
@@ -211,3 +212,42 @@ def leaderboard(request):
         "leaderboard": top,
         "user_rank": me
     })
+
+
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def game_history(request):
+
+    scores = (
+        PlayerScore.objects
+        .filter(player=request.user, room__status="end")
+        .select_related("room")
+        .order_by("-room__started_at")
+    )
+
+    history = []
+
+    for ps in scores:
+        room = ps.room
+
+        duration = None
+
+        if room.started_at and room.ended_at:
+            duration = int(
+                (room.ended_at - room.started_at).total_seconds()
+            )
+
+        history.append({
+            "game_id": room.code,
+            "uuid": str(room.uuid),
+            "start": room.started_at.strftime("%d/%m/%Y %H:%M"),
+            "points": ps.score,
+            "rank": ps.rank,
+            "duration": duration,
+            "nb_player": room.nb_player
+        })
+
+    return Response(history)
+    

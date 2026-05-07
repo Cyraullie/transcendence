@@ -13,5 +13,7 @@ urlpatterns = [
     path("friends/accept/<int:request_id>/", accept_friend_request),
     path("friends/deny/<int:request_id>/", deny_friend_request),
     path("friends/delete/<int:request_id>/", delete_friend_request),
-    path("leaderboard/", leaderboard)
+    #stat part
+    path("leaderboard/", leaderboard),
+    path("history/", game_history)
 ]
