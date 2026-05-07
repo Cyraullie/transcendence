@@ -165,12 +165,20 @@ def end_room(uuid, data):
         })
 
     scores.sort(key=lambda x: x["score"], reverse=False)
-
+    elo = room.nb_player
+    if room.nb_player % 2 == 1:
+        elo = room.nb_player + 1
     for rank, entry in enumerate(scores, start=1):
         PlayerScore.objects.filter(
             room=room,
             player_id=entry["player_id"]
         ).update(rank=rank)
+        user = User.objects.get(id=entry["player_id"])
+        user.elo += elo
+        elo -= 2
+        if elo == 0:
+            elo -= 2
+        user.save()
 
     room.status = "end"
     room.ended_at = timezone.now()
