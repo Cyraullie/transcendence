@@ -32,19 +32,6 @@
   h3 {
     @apply text-2xl font-bold;
   }
-
-  /* table { */
-  /*   border-collapse: separate; */
-  /*   border-spacing: 0; */
-  /*   width: 100%; */
-  /* } */
-  /**/
-  /* tbody { */
-  /*   display: block; /* Required */
-  /*   border-radius: 15px; */
-  /*   border: 1px solid #ccc; */
-  /*   overflow: hidden; /* Ensures background/borders follow radius */
-  /* } */
 }
 
 @utility input {
@@ -69,6 +56,10 @@
 
 @utility link-hover {
   @apply cursor-pointer;
+}
+
+.modal-box {
+  scrollbar-color: var(--accent-color) var(--hover-color);
 }
 
 .item-menu:hover {

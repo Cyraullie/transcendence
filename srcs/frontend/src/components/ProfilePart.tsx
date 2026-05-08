@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { errorT } from "../utils/errorType";
 import { AvatarSelection } from "./AvatarSelection";
-import { AvatarSelectionV2 } from "./avatarSelectionV2";
 
 export function ProfilePart() {
   // const [failure, setFailure] = useState(false);
@@ -42,7 +41,7 @@ export function ProfilePart() {
   return (
     <div>
       <div className="avatar mt-8 flex-col">
-        <AvatarSelectionV2 currentAvatar={realAccount.avatar}/>
+        <AvatarSelection currentAvatar={realAccount.avatar}/>
         <p className="text-green-200 font-extrabold my-2 mx-auto">
           {realAccount.is_online ? "Online" : ""}
         </p>
