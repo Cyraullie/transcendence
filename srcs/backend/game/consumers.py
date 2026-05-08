@@ -6,6 +6,7 @@ from api.models import User
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
 from api.serializers import UserSerializer
+from game_engine.bot.bot import bot
 
 class RoomConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -214,6 +215,27 @@ class RoomConsumer(AsyncWebsocketConsumer):
         )
         await self.send_init()
     
+    async def end(self, room, game):
+        player_finished = 0
+        for player_id, player_data in game_state["players"].items():
+            if len(player_data["cards"]) == 0:
+                player_finished += 1
+        if player_finished == room.nb_player:
+            game_state = game.handleAction("point", game_state)
+            await save_room_state(room.uuid, game_state)
+            await self.channel_layer.group_send(
+                self.group_name,
+                {
+                    "type": "room_event",
+                    "event": "message",
+                    "payload": {
+                        "message": "game finished do you want continue or stop ?"
+					}
+                }
+            )
+            return True
+        return False
+        
     async def handle_play_card(self, payload: dict):
         room = await get_room_with_host(self.code)
         position = await get_player_pos(self.user, room.code)
@@ -272,33 +294,33 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 }
             )
             return
-        
+
         game_state = game.handleAction("play", room.game_state, idPlayer= str(position), idCard= int(payload["cardId"]))
         await save_room_state(room.uuid, game_state)
 
-        player_finished = 0
-        for player_id, player_data in game_state["players"].items():
+        if (self.end(room, game)):
+            return 
+
+        await self.send_data()
+
+        p = await sync_to_async(PlayerPresence.objects.get)(
+            room=room,
+            position= await get_player_pos(self.user, room.code)
+        )
+        while (not p.is_human or not p.is_online):
+            position = str(game_state["playing"])
+            card = bot(game_state, position, legal, p.diffuculty)
+            game_state = game.handleAction("play", game_state, idPlayer= position, idCard= card)
+            
+            if (self.end(room, game)):
+                return
+
+            await self.send_date()
+
             p = await sync_to_async(PlayerPresence.objects.get)(
                 room=room,
-                position=int(player_id)
+                position= await get_player_pos(self.user, room.code)
             )
-            if len(player_data["cards"]) == 0:
-                player_finished += 1
-        if player_finished == room.nb_player:
-            game_state = game.handleAction("point", game_state)
-            await save_room_state(room.uuid, game_state)
-            await self.channel_layer.group_send(
-                self.group_name,
-                {
-                    "type": "room_event",
-                    "event": "message",
-                    "payload": {
-                        "message": "game finished do you want continue or stop ?"
-					}
-                }
-            )
-            return
-        await self.send_data()
 
     async def handle_continue_game(self):
         room = await get_room_with_host(self.code)
