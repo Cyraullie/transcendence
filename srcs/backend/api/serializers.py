@@ -3,6 +3,15 @@ from .models import User, Friendship
 
 class UserSerializer(serializers.ModelSerializer):
 
+    date_joined = serializers.DateTimeField(
+        format="%d/%m/%Y %H:%M"
+    )
+
+    last_login = serializers.DateTimeField(
+        format="%d/%m/%Y %H:%M",
+        allow_null=True
+    )
+
     class Meta:
         model = User
         fields = [
@@ -15,6 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
             "last_login",
             "elo",
         ]
+
         extra_kwargs = {
             "password": {"write_only": True}
         }
@@ -39,6 +49,15 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 class FriendProfileSerializer(serializers.ModelSerializer):
+    date_joined = serializers.DateTimeField(
+        format="%d/%m/%Y %H:%M"
+    )
+    
+    last_login = serializers.DateTimeField(
+        format="%d/%m/%Y %H:%M",
+        allow_null=True
+    )
+
     class Meta:
         model = User
         fields = [
@@ -53,6 +72,10 @@ class FriendProfileSerializer(serializers.ModelSerializer):
 class FriendSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     status = serializers.CharField()
+
+    accepted_at = serializers.DateTimeField(
+        format="%d/%m/%Y %H:%M"
+    )
 
     class Meta:
         model = Friendship
