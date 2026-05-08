@@ -189,7 +189,7 @@ class GameEngine:
 		for i in meldIndex:
 			hand.append(data["players"][idPlayer]["cards"][i])
 		meld = Player.countMelds(Player(), hand, data["tricks"])
-		data["players"][idPlayer]["puntos"] = data["players"][idPlayer]["puntos"] + meld
+		data["players"][idPlayer]["puntos"] = data["players"][idPlayer]["puntos"] - meld
 		
 		return data
 
