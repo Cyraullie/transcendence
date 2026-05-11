@@ -25,6 +25,7 @@ export function friendArray(friends:AxiosResponse<friendApiT[]>) {
 	const friend_arr: friendT[] = [];
 	for (const friend_data of data) {
 		const friend:friendT = {
+			req_id: friend_data.id,
 			id: friend_data.user.id,
 			username: friend_data.user.username,
 			status: friend_data.status,
@@ -35,13 +36,60 @@ export function friendArray(friends:AxiosResponse<friendApiT[]>) {
 	}
 	return friend_arr;
 }
-	
 
 
 export async function friendRequest(id:number) {
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
 		const res = await axios.post('http://' + host.host_ip + ':8000/friends/add/' + id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}});
+		return res;
+	} catch (err) {
+		const error = err as AxiosError;
+		// console.error('profile error:', error.status);
+		const result: errorT = {
+			code: error.status ? error.status : 0,
+			response: error.response ? error.response.data : '',
+		}
+		return result;
+	}
+}
+
+export async function acceptRequest(req_id:number) {
+	const AuthStr = 'Bearer ' + localStorage.getItem('access');
+	try {
+		const res = await axios.post('http://' + host.host_ip + ':8000/friends/accept/' + req_id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}});
+		return res;
+	} catch (err) {
+		const error = err as AxiosError;
+		// console.error('profile error:', error.status);
+		const result: errorT = {
+			code: error.status ? error.status : 0,
+			response: error.response ? error.response.data : '',
+		}
+		return result;
+	}
+}
+
+export async function denyRequest(req_id:number) {
+	const AuthStr = 'Bearer ' + localStorage.getItem('access');
+	try {
+		const res = await axios.post('http://' + host.host_ip + ':8000/friends/deny/' + req_id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}});
+		return res;
+	} catch (err) {
+		const error = err as AxiosError;
+		// console.error('profile error:', error.status);
+		const result: errorT = {
+			code: error.status ? error.status : 0,
+			response: error.response ? error.response.data : '',
+		}
+		return result;
+	}
+}
+
+export async function deleteRequest(req_id:number) {
+	const AuthStr = 'Bearer ' + localStorage.getItem('access');
+	try {
+		const res = await axios.post('http://' + host.host_ip + ':8000/friends/delete/' + req_id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}});
 		return res;
 	} catch (err) {
 		const error = err as AxiosError;

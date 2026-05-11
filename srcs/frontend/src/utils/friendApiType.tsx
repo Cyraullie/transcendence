@@ -1,4 +1,5 @@
 export type friendApiT = {
+	id: number;
 	user: {
 		id: number;
 		username: string;

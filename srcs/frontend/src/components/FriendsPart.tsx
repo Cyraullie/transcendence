@@ -1,6 +1,6 @@
 import { TbPointFilled } from "react-icons/tb";
 import type { friendT } from "../utils/friendType";
-import { friendArray, getFriends } from "../api/friend";
+import { acceptRequest, deleteRequest, denyRequest, friendArray, getFriends } from "../api/friend";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { errorT } from "../utils/errorType";
@@ -9,6 +9,7 @@ export function Friends() {
 
 	const [friends, setFriends] = useState< friendT[] | errorT>({code: 0, response: ''});
 	const navigate = useNavigate();
+	const [updatedFriends, setUpdate] = useState(false);
 
 	useEffect(() => {
 	async function retrieveFriends() {
@@ -20,7 +21,7 @@ export function Friends() {
 		setFriends(friendArray(data));
 	}
 	retrieveFriends();
-	}, [])
+	}, [updatedFriends])
 
 
 	if ('code' in friends) {
@@ -31,6 +32,30 @@ export function Friends() {
 			return ;
 		}
 		return <p>Error: {friends.response}</p>; // improve message
+	}
+
+	//todo: add to button when it exists: onClick={() => changeHandler(friend.req_id, 'accept')}
+	async function changeHandler(req_id:number, func:string) {
+		if (func === 'accept') {
+			const res = await acceptRequest(req_id);
+			if ('code' in res) {
+				console.error(res.response);
+			}
+		}
+		else if (func === 'deny') {
+			const res = await denyRequest(req_id);
+			if ('code' in res) {
+				console.error(res.response);
+			}
+		}
+		else if (func === 'delete') {
+			const res = await deleteRequest(req_id);
+			if ('code' in res) {
+				console.error(res.response);
+			}
+		}
+		setUpdate(!updatedFriends);
+		return ;
 	}
 
   return (
