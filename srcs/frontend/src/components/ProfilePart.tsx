@@ -25,7 +25,7 @@ export function ProfilePart() {
     }
 
     getProfile();
-  }, [navigate, updatedProfile]);
+  }, [updatedProfile]);
 
   if ("code" in realAccount) {
     if (realAccount.code === 401) {

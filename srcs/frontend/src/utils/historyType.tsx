@@ -1,11 +1,12 @@
-import type { accountT } from "./accountType";
+import type { playerT } from "./playerType";
 
 export type historyT = {
-  gameId: number;
-  date: string;
+  game_id: number;
+  start: string;
   points: number;
-  winned: boolean;
-  timePlayed: string;
-  nbPlayers: number;
-  players: accountT[];
+  rank: number;
+  won: boolean;
+  duration: number;
+  nb_player: number;
+  players: playerT[];
 };
