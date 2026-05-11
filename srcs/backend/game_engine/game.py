@@ -193,6 +193,14 @@ class GameEngine:
 		
 		return data
 
+	def point_melds(self, data, idPlayer, meldIndex):
+		hand = []
+		for i in meldIndex:
+			hand.append(data["players"][idPlayer]["cards"][i])
+		meld = Player.countMelds(Player(), hand, data["tricks"])
+		
+		return meld
+
 	def points(self, data: dict):
 		for p in data["players"].values():
 			points = int(p["puntos"])
@@ -226,5 +234,8 @@ class GameEngine:
 
 		if (action == "point"):
 			return self.points(data)
+
+		if (action == "point_meld"):
+			return self.point_melds(data, idPlayer, meldIndex)
 
 		return data
