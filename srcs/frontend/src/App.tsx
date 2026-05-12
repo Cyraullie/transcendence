@@ -12,6 +12,7 @@ import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { TermsOfService } from "./pages/TermsOfService";
 
 function App() {
+
   return (
     <main className="bg-(--bg-color) font-[Cause] text-(--font-color) h-full">
       <BrowserRouter>

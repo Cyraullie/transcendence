@@ -39,3 +39,4 @@ export function generateFakeFriends() : friendT[] {
 		}
 	])
 }
+
