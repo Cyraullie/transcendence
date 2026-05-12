@@ -110,4 +110,38 @@ def delete_friend_request(request, request_id):
 
     except Friendship.DoesNotExist:
         return Response({"error": "Request not found"}, status=404)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def block_friend(request, request_id):
+    try:
+        friendship = Friendship.objects.get(
+            Q(from_user=request.user) | Q(to_user=request.user),
+            id=request_id,
+            status="accepted"
+        )
+
+        friendship.status = "blocked"
+        friendship.save()
+
+        return Response({"message": "Friend blocked"})
+
+    except Friendship.DoesNotExist:
+        return Response({"error": "Request not found"}, status=404)
     
+    
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def list_blocked(request):
+    friendships = Friendship.objects.filter(
+        from_user=request.user,
+        status="blocked"
+    )
+
+    serializer = FriendSerializer(
+        friendships,
+        many=True,
+        context={"request": request}
+    )
+
+    return Response(serializer.data)

@@ -1,6 +1,6 @@
 from django.urls import path
 from .views.user_views import register, login, user, user_data
-from .views.friend_view import get_friends, accept_friend_request, delete_friend_request, send_friend_request, deny_friend_request
+from .views.friend_view import get_friends, accept_friend_request, block_friend, list_blocked, delete_friend_request, send_friend_request, deny_friend_request
 from .views.stat_view import get_stat, room_data, game_history, leaderboard
 
 
@@ -16,7 +16,9 @@ urlpatterns = [
     path("friends/accept/<int:request_id>/", accept_friend_request),
     path("friends/deny/<int:request_id>/", deny_friend_request),
     path("friends/delete/<int:request_id>/", delete_friend_request),
-    #TODO add block friends (no profile, no friend request, no party)
+    path("friends/block/<int:request_id>/", block_friend),
+    path("friends/block/", list_blocked),
+    
     #TODO add report
     
     #stat part
