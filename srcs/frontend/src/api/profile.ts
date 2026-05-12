@@ -54,11 +54,16 @@ export async function changeAvatar(in_avatar:string) {
 	formData.set('avatar', in_avatar);
 
 	try {
-		await axios.patch('http://' + host.host_ip + ':8000/user/', formData, { 'headers': { 'Authorization': AuthStr}});
-		return true;
+		await axios.patch('http://' + host.host_ip + ':8000/user/', formData, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
+		return {code:200};
 	} catch (err) {
-		console.error('update error:', err);
-		return false;
+		const error = err as AxiosError;
+		// console.error('profile error:', error.status);
+		const result: errorT = {
+			code: error.status ? error.status : 0,
+			response: error.response ? error.response.data : '',
+		}
+		return result;
 	}
 }
 
