@@ -1,5 +1,5 @@
 import axios, { AxiosError, type AxiosResponse } from 'axios'
-import type { errorT } from '../utils/errorType';
+import type { backendErrorT, errorT } from '../utils/errorType';
 import host from '../api/host'
 import type { leaderboardRetT } from '../utils/leaderboardApiType';
 import type { userLB, leaderboardT, currentLB } from '../utils/leaderboardType';
@@ -17,11 +17,10 @@ export async function getLeaderboard() { //: Promise<friendT | errorT>
 		res = await axios.get('http://' + host.host_ip + ':8000/leaderboard/');
 		return res;
 	} catch (err) {
-		const error = err as AxiosError;
-		// console.error('profile error:', error.status);
+		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {
-			code: error.status ? error.status : 0,
-			response: error.response ? error.response.data : '',
+			code: error.response?.status ?? 0,
+			response: error.response?.data.error ?? "Unkown error",
 		}
 		return result;
 	}

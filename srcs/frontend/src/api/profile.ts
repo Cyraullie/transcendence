@@ -1,7 +1,8 @@
 import type { accountT } from '../utils/accountType'
 import axios, { AxiosError } from 'axios'
-import type { errorT } from '../utils/errorType';
+import { getError, type backendErrorT, type errorT } from '../utils/errorType';
 import host from '../api/host'
+import { checkPass } from './checkAuth';
 
 export async function profileRequest(): Promise<accountT | errorT> {
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
@@ -10,27 +11,34 @@ export async function profileRequest(): Promise<accountT | errorT> {
 		const result : accountT = res.data;
 		return result;
 	} catch (err) {
-		const error = err as AxiosError;
-		// console.error('profile error:', error.status);
+		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {
-			code: error.status ? error.status : 0,
-			response: error.response ? error.response.data : '',
+			code: error.response?.status ?? 0,
+			response: error.response?.data.error ?? "Unkown error",
 		}
 		return result;
 	}
 }
 
 export async function changeUsername(in_user:string, old_pass:string) {
+	const check = await checkPass(old_pass);
+	if (check.code !== 200) {
+		return check;
+	}
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	const formData = new FormData();
 	formData.set('username', in_user);
 
 	try {
 		await axios.patch('http://' + host.host_ip + ':8000/user/', formData, { 'headers': { 'Authorization': AuthStr}});
-		return true;
+		return {code:200, response:""};
 	} catch (err) {
-		console.error('update error:', err);
-		return false;
+		const error = err as AxiosError<backendErrorT>;
+		const result: errorT = {
+			code: error.response?.status ?? 0,
+			response: getError(error.response?.data),
+		}
+		return result;
 	}
 }
 
@@ -57,11 +65,10 @@ export async function changeAvatar(in_avatar:string) {
 		await axios.patch('http://' + host.host_ip + ':8000/user/', formData, { 'headers': { 'Authorization': AuthStr}, timeout: 2000});
 		return {code:200};
 	} catch (err) {
-		const error = err as AxiosError;
-		// console.error('profile error:', error.status);
+		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {
-			code: error.status ? error.status : 0,
-			response: error.response ? error.response.data : '',
+			code: error.response?.status ?? 0,
+			response: error.response?.data.error ?? "Unkown error",
 		}
 		return result;
 	}

@@ -1,5 +1,6 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import host from '../api/host'
+import type { errorT, backendErrorT } from '../utils/errorType';
 
 export async function refreshAuth() : Promise<boolean> {
 
@@ -25,5 +26,23 @@ export async function checkAuth() : Promise<boolean> {
 			return false;
 		}
 		return true;
+	}
+}
+
+export async function checkPass(old_pass:string) : Promise<errorT> {
+	const AuthStr = 'Bearer ' + localStorage.getItem('access');
+	try {
+		const res = await axios.post('http://' + host.host_ip + ':8000/user/verify/',{ 'token': localStorage.getItem('access'), 'password':old_pass}, { 'headers': { 'Authorization': AuthStr}});
+		if (res.data.valid === false) {
+			return {code:-1, response:"Wrong Password"};
+		}
+		return {code:200, response:""};
+	} catch (err) {
+		const error = err as AxiosError<backendErrorT>;
+		const result: errorT = {
+			code: error.response?.status ?? 0,
+			response: error.response?.data.error ?? "Unkown error",
+		}
+		return result;
 	}
 }

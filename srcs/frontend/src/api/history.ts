@@ -1,5 +1,5 @@
 import axios, { AxiosError, type AxiosResponse } from 'axios'
-import type { errorT } from '../utils/errorType';
+import type { backendErrorT, errorT } from '../utils/errorType';
 import host from '../api/host'
 import type { historyT } from '../utils/historyType';
 import type { historyApiT } from '../utils/historyApiType';
@@ -11,11 +11,10 @@ export async function getHistory() {
 		const res = await axios.get('http://' + host.host_ip + ':8000/history/', { 'headers': { 'Authorization': AuthStr}});
 		return res;
 	} catch (err) {
-		const error = err as AxiosError;
-		// console.error('profile error:', error.status);
+		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {
-			code: error.status ? error.status : 0,
-			response: error.response ? error.response.data : '',
+			code: error.response?.status ?? 0,
+			response: error.response?.data.error ?? "Unkown error",
 		}
 		return result;
 	}
@@ -27,14 +26,13 @@ async function getPlayers(uuid:string) {
 		const res = await axios.get('http://' + host.host_ip + ':8000/room/' + uuid + '/', { 'headers': { 'Authorization': AuthStr}});
 		return res;
 	} catch (err) {
-		const error = err as AxiosError;
-		// console.error('profile error:', error.status);
+		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {
-			code: error.status ? error.status : 0,
-			response: error.response ? error.response.data : '',
+			code: error.response?.status ?? 0,
+			response: error.response?.data.error ?? "Unkown error",
 		}
 		return result;
-	}	
+	}
 }
 
 async function playerArray(players:AxiosResponse<playerT[]>) {
@@ -51,7 +49,6 @@ export async function historyArray(friends:AxiosResponse<historyApiT[]>) {
 	const data = friends.data;
 	const history_arr: historyT[] = [];
 	for (const history_data of data) {
-		
 		const res = await getPlayers(history_data.uuid);
 		let playerArr:playerT[] = [];
 		if (!('code' in res)) {

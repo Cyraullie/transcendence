@@ -1,5 +1,5 @@
 import axios, { AxiosError, type AxiosResponse } from 'axios'
-import type { errorT } from '../utils/errorType';
+import type { backendErrorT, errorT } from '../utils/errorType';
 import host from '../api/host'
 import type { friendT } from '../utils/friendType';
 
@@ -9,11 +9,10 @@ export async function getFriends() {
 		const res = await axios.get('http://' + host.host_ip + ':8000/friends/', { 'headers': { 'Authorization': AuthStr}});
 		return res;
 	} catch (err) {
-		const error = err as AxiosError;
-		// console.error('profile error:', error.status);
+		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {
-			code: error.status ? error.status : 0,
-			response: error.response ? error.response.data : '',
+			code: error.response?.status ?? 0,
+			response: error.response?.data.error ?? "Unkown error",
 		}
 		return result;
 	}
@@ -36,11 +35,10 @@ export async function friendRequest(id:number) {
 		const res = await axios.post('http://' + host.host_ip + ':8000/friends/add/' + id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}});
 		return res;
 	} catch (err) {
-		const error = err as AxiosError;
-		// console.error('profile error:', error.status);
+		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {
-			code: error.status ? error.status : 0,
-			response: error.response ? error.response.data : '',
+			code: error.response?.status ?? 0,
+			response: error.response?.data.error ?? "Unkown error",
 		}
 		return result;
 	}
@@ -52,11 +50,10 @@ export async function acceptRequest(req_id:number) {
 		const res = await axios.post('http://' + host.host_ip + ':8000/friends/accept/' + req_id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}});
 		return res;
 	} catch (err) {
-		const error = err as AxiosError;
-		// console.error('profile error:', error.status);
+		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {
-			code: error.status ? error.status : 0,
-			response: error.response ? error.response.data : '',
+			code: error.response?.status ?? 0,
+			response: error.response?.data.error ?? "Unkown error",
 		}
 		return result;
 	}
@@ -68,11 +65,10 @@ export async function denyRequest(req_id:number) {
 		const res = await axios.post('http://' + host.host_ip + ':8000/friends/deny/' + req_id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}});
 		return res;
 	} catch (err) {
-		const error = err as AxiosError;
-		// console.error('profile error:', error.status);
+		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {
-			code: error.status ? error.status : 0,
-			response: error.response ? error.response.data : '',
+			code: error.response?.status ?? 0,
+			response: error.response?.data.error ?? "Unkown error",
 		}
 		return result;
 	}
@@ -84,11 +80,10 @@ export async function deleteRequest(req_id:number) {
 		const res = await axios.post('http://' + host.host_ip + ':8000/friends/delete/' + req_id + '/',{ 'token': localStorage.getItem('access')}, { 'headers': { 'Authorization': AuthStr}});
 		return res;
 	} catch (err) {
-		const error = err as AxiosError;
-		// console.error('profile error:', error.status);
+		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {
-			code: error.status ? error.status : 0,
-			response: error.response ? error.response.data : '',
+			code: error.response?.status ?? 0,
+			response: error.response?.data.error ?? "Unkown error",
 		}
 		return result;
 	}

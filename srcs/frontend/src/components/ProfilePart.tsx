@@ -38,7 +38,7 @@ export function ProfilePart() {
   }, [updatedProfile, navigate]);
 
   if ("code" in realAccount) {
-    return <p>Error: {String(realAccount.response)}</p>; // improve message
+    return <p>Error: {realAccount.response}</p>; // improve message
   }
 
 //   async function updateEmail(in_email:string) {
@@ -79,7 +79,7 @@ export function ProfilePart() {
               className="modal"
               ref={dialogPseudoRef}
             >
-			<PseudoChange dialogRef={dialogPseudoRef} />
+			<PseudoChange dialogRef={dialogPseudoRef} updatedProfile={updatedProfile} setUpdate={setUpdate} />
             </dialog>
           </td>
         </tr>
