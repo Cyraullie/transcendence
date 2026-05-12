@@ -9,6 +9,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.utils import timezone
+from django.contrib.auth.hashers import check_password
+from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
 
 @api_view(["GET", "PUT", "PATCH"])
 @permission_classes([IsAuthenticated])
@@ -92,11 +95,53 @@ def verify_password(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    user = authenticate(
-        username=request.user.username,
-        password=password
-    )
+    if check_password(password, request.user.password):
+        return Response({
+            "valid": True
+        })
+    else:
+        return Response({
+            "valid": False
+        })
+        
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def check_new_password(request):
+    password = request.data.get("password")
+    password2 = request.data.get("password2")
+    
+    if not password:
+        return Response(
+            {"error": "Password required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    if not password2:
+        return Response(
+            {"error": "Password2 required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
-    return Response({
-        "valid": user is not None
-    })
+
+    if password == password2:
+        try:
+            # Check if password meets the validation criteria
+            print(validate_password(password, user))
+            return Response(
+            {"valid": True},
+            status=200
+            )
+        except ValidationError as e:
+            for error in e.messages:
+                return Response(
+                    {"error": (f"Password validation error: {error}")},
+                    status=400
+                    )
+
+    else:
+        return Response(
+            {"error": "Not the same password"},
+            status=400
+            )
+
+        
