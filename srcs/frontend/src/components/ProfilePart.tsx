@@ -1,18 +1,20 @@
 import { profileRequest } from "../api/profile";
 import type { accountT } from "../utils/accountType";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import type { errorT } from "../utils/errorType";
 import { AvatarSelection } from "./AvatarSelection";
+import { PswdChange } from "./PswdChange";
+import { PseudoChange } from "./PseudoChange";
 
 export function ProfilePart() {
-  // const [failure, setFailure] = useState(false);
-  // const [success, setSuccess] = useState(false);
   const [realAccount, setAccount] = useState<accountT | errorT>({
     code: 0,
     response: "",
   });
   const navigate = useNavigate();
+  const dialogPswdRef = useRef<HTMLDialogElement>(null);
+  const dialogPseudoRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     async function getProfile() {
@@ -41,7 +43,7 @@ export function ProfilePart() {
   return (
     <div>
       <div className="avatar mt-8 flex-col">
-        <AvatarSelection currentAvatar={realAccount.avatar}/>
+        <AvatarSelection currentAvatar={realAccount.avatar} />
         <p className="text-green-200 font-extrabold my-2 mx-auto">
           {realAccount.is_online ? "Online" : ""}
         </p>
@@ -49,7 +51,16 @@ export function ProfilePart() {
       <table className="mt-5">
         <tr>
           <th className="th-profile">Username:</th>
-          <td>{realAccount.username}</td>
+          <td>
+            {realAccount.username} <button className="link ml-5" onClick={() => dialogPseudoRef.current?.showModal()}>change</button>
+            <dialog
+              id="change_pseudo_modal"
+              className="modal"
+              ref={dialogPseudoRef}
+            >
+			<PseudoChange />
+            </dialog>
+          </td>
         </tr>
         <tr>
           <th className="th-profile">Email:</th>
@@ -58,7 +69,21 @@ export function ProfilePart() {
         <tr>
           <th className="th-profile">Password:</th>
           <td>
-            *******<a className="link"> change</a>
+            *******
+            <button
+              className="link ml-5"
+              onClick={() => dialogPswdRef.current?.showModal()}
+            >
+              {" "}
+              change
+            </button>
+            <dialog
+              id="change_pswd_modal"
+              className="modal"
+              ref={dialogPswdRef}
+            >
+              <PswdChange />
+            </dialog>
           </td>
         </tr>
         <tr>
