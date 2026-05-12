@@ -3,23 +3,33 @@ import type { historyT } from "../utils/historyType";
 import type { errorT } from "../utils/errorType";
 import { getHistory, historyArray } from "../api/history";
 import type { playerT } from "../utils/playerType";
+import { useNavigate } from "react-router-dom";
 
 export function History() {
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(10)
   const [gameHistory, setHistory] = useState< historyT[] | errorT>({code: 0, response: ''});
+  const navigate = useNavigate();
 
   	useEffect(() => {
-	async function retrieveHistory() {
-		const data = await getHistory();
-		if ("code" in data) {
-			setHistory(data);
-			return ;
+		async function retrieveHistory() {
+			const res = await getHistory();
+			if ('code' in res) {
+				if (res.code === 401) {
+					localStorage.removeItem('access');
+					localStorage.removeItem('refresh');
+					navigate('/login');
+				}
+				setHistory(res);
+			} else {
+				const arr = await historyArray(res);
+				setHistory(arr);
+			}	
 		}
-		setHistory(await historyArray(data));
-	}
-	retrieveHistory();
-	}, [])
+
+		retrieveHistory();
+
+	}, [navigate])
 
 	if ('code' in gameHistory) {
 		return <p>Error: {gameHistory.response}</p>;

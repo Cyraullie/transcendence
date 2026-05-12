@@ -6,6 +6,7 @@ import type { errorT } from "../utils/errorType";
 import { AvatarSelection } from "./AvatarSelection";
 
 export function ProfilePart() {
+	
   const [realAccount, setAccount] = useState<accountT | errorT>({
     code: 0,
     response: "",
@@ -16,24 +17,22 @@ export function ProfilePart() {
   useEffect(() => {
     async function getProfile() {
       const result = await profileRequest();
-      if ("code" in result) {
-        setAccount(result);
-        return;
+
+	  if ("code" in result) {
+		if (result.code === 401) {
+			localStorage.removeItem("access");
+			localStorage.removeItem("refresh");
+			navigate("/login");
+		}
       }
-      setAccount(result);
+	  setAccount(result);
       return;
     }
 
     getProfile();
-  }, [updatedProfile]);
+  }, [updatedProfile, navigate]);
 
   if ("code" in realAccount) {
-    if (realAccount.code === 401) {
-      localStorage.removeItem("access");
-      localStorage.removeItem("refresh");
-      navigate("/login");
-      return;
-    }
     return <p>Error: {realAccount.response}</p>; // improve message
   }
 

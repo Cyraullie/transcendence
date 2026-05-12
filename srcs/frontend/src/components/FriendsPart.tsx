@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import type { errorT } from "../utils/errorType";
 
 export function Friends() {
+	
 
 	const [friends, setFriends] = useState< friendT[] | errorT>({code: 0, response: ''});
 	const navigate = useNavigate();
@@ -13,24 +14,24 @@ export function Friends() {
 
 	useEffect(() => {
 	async function retrieveFriends() {
-		const data = await getFriends();
-		if ("code" in data) {
-			setFriends(data);
-			return ;
-		}
-		setFriends(friendArray(data));
+		const res = await getFriends();
+		if ('code' in res) {
+			if (res.code === 401) {
+				localStorage.removeItem('access');
+				localStorage.removeItem('refresh');
+				navigate('/login');
+			}
+			setFriends(res);
+		} else {
+			const arr = friendArray(res);
+			setFriends(arr);
+		}	
 	}
 	retrieveFriends();
-	}, [updatedFriends])
+	}, [navigate, updatedFriends])
 
 
 	if ('code' in friends) {
-		if (friends.code === 401) {
-			localStorage.removeItem('access');
-			localStorage.removeItem('refresh');
-			navigate('/login');
-			return ;
-		}
 		return <p>Error: {friends.response}</p>; // improve message
 	}
 
