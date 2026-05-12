@@ -35,7 +35,7 @@ export function ProfilePart() {
   }, [updatedProfile, navigate]);
 
   if ("code" in realAccount) {
-    return <p>Error: {realAccount.response}</p>; // improve message
+    return <p>Error: {String(realAccount.response)}</p>; // improve message
   }
 
   async function updateUser(in_name:string) {

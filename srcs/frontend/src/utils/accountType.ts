@@ -7,4 +7,5 @@
     date_joined: string,
     is_online: boolean,
     last_login: string,
+	elo: number,
   };

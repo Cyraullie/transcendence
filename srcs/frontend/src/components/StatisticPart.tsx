@@ -49,7 +49,7 @@ export function StatisticsPart() {
 	}, [navigate])
 
 	if ('code' in stats) {
-		return <p>Error: {stats.response}</p>;
+		return <p>Error: {String(stats.response)}</p>;
 	} 
 
   return (

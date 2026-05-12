@@ -40,7 +40,7 @@ export function History() {
 	}, [navigate])
 
 	if ('code' in gameHistory) {
-		return <p>Error: {gameHistory.response}</p>;
+		return <p>Error: {String(gameHistory.response)}</p>;
 	} 
 
   function handleMoreLessBtn() {

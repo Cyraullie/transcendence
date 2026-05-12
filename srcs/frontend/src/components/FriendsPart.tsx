@@ -40,7 +40,7 @@ export function Friends() {
 
 
 	if ('code' in friends) {
-		return <p>Error: {friends.response}</p>; // improve message
+		return <p>Error: {String(friends.response)}</p>; // improve message
 	}
 
 	//todo: add to button when it exists: onClick={() => changeHandler(friend.req_id, 'accept')}
@@ -77,12 +77,12 @@ export function Friends() {
       </tr>
       {friends.map((friend: friendT) => (
         <tr>
-          <td className={(friend.online ? "text-green-400" : "") + " text-2xl text-center"}>
+          <td className={(friend.user.is_online ? "text-green-400" : "") + " text-2xl text-center"}>
             <TbPointFilled />
           </td>
-          <td>{friend.username}</td>
+          <td>{friend.user.username}</td>
           <td>{friend.status}</td>
-          <td>{friend.date}</td>
+          <td>{friend.status === 'pending' ? friend.created_at : friend.accepted_at}</td>
         </tr>
       ))}
     </table>

@@ -25,7 +25,7 @@ export function LeaderboardPart() {
   }, [])
 
   if ('code' in leaderboard_gen) {
-	return <p>Error: {leaderboard_gen.response}</p>; // improve message
+	return <p>Error: {String(leaderboard_gen.response)}</p>; // improve message
   }
 
   const current = leaderboard_gen.current;

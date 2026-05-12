@@ -7,15 +7,7 @@ export async function profileRequest(): Promise<accountT | errorT> {
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
 	try {
 		const res = await axios.get('http://' + host.host_ip + ':8000/user/', { 'headers': { 'Authorization': AuthStr}});
-		const result : accountT = {
-			id: res.data['id'],
-			username: res.data['username'],
-			email: res.data['email'],
-			avatar: res.data['avatar'],
-			date_joined: res.data['date_joined'],
-			is_online: res.data['is_online'],
-			last_login: res.data['last_login']
-		}
+		const result : accountT = res.data;
 		return result;
 	} catch (err) {
 		const error = err as AxiosError;

@@ -2,7 +2,6 @@ import axios, { AxiosError, type AxiosResponse } from 'axios'
 import type { errorT } from '../utils/errorType';
 import host from '../api/host'
 import type { friendT } from '../utils/friendType';
-import type { friendApiT } from '../utils/friendApiType';
 
 export async function getFriends() { 
 	const AuthStr = 'Bearer ' + localStorage.getItem('access');
@@ -20,18 +19,11 @@ export async function getFriends() {
 	}
 }
 
-export function friendArray(friends:AxiosResponse<friendApiT[]>) {
+export function friendArray(friends:AxiosResponse<friendT[]>) {
 	const data = friends.data;
 	const friend_arr: friendT[] = [];
 	for (const friend_data of data) {
-		const friend:friendT = {
-			req_id: friend_data.id,
-			id: friend_data.user.id,
-			username: friend_data.user.username,
-			status: friend_data.status,
-			date:friend_data.accepted_at,
-			online: friend_data.user.is_online,
-		}
+		const friend:friendT = friend_data;
 		friend_arr.push(friend);
 	}
 	return friend_arr;
