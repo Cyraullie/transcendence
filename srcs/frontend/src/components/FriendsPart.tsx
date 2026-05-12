@@ -4,6 +4,7 @@ import { acceptRequest, deleteRequest, denyRequest, friendArray, getFriends } fr
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { errorT } from "../utils/errorType";
+import { refreshAuth } from "../api/checkAuth";
 
 export function Friends() {
 	
@@ -14,14 +15,21 @@ export function Friends() {
 
 	useEffect(() => {
 	async function retrieveFriends() {
-		const res = await getFriends();
+		let res = await getFriends();
 		if ('code' in res) {
 			if (res.code === 401) {
-				localStorage.removeItem('access');
-				localStorage.removeItem('refresh');
-				navigate('/login');
+				if (!(await refreshAuth())) {
+					navigate('/login');
+				}
+				res = await getFriends();
 			}
-			setFriends(res);
+			if ('code' in res) {
+				setFriends(res);
+			}
+			else {
+				const arr = friendArray(res);
+				setFriends(arr);
+			}
 		} else {
 			const arr = friendArray(res);
 			setFriends(arr);

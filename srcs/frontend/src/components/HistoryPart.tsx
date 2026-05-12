@@ -4,6 +4,7 @@ import type { errorT } from "../utils/errorType";
 import { getHistory, historyArray } from "../api/history";
 import type { playerT } from "../utils/playerType";
 import { useNavigate } from "react-router-dom";
+import { refreshAuth } from "../api/checkAuth";
 
 export function History() {
   const [isMore, setIsMore] = useState(false);
@@ -13,14 +14,21 @@ export function History() {
 
   	useEffect(() => {
 		async function retrieveHistory() {
-			const res = await getHistory();
+			let res = await getHistory();
 			if ('code' in res) {
 				if (res.code === 401) {
-					localStorage.removeItem('access');
-					localStorage.removeItem('refresh');
-					navigate('/login');
+					if (!(await refreshAuth())) {
+						navigate('/login');
+					}
+					res = await getHistory();
 				}
-				setHistory(res);
+				if ('code' in res) {
+					setHistory(res);
+				}
+				else {
+					const arr = await historyArray(res);
+					setHistory(arr);
+				}
 			} else {
 				const arr = await historyArray(res);
 				setHistory(arr);

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { errorT } from "../utils/errorType";
 import { AvatarSelection } from "./AvatarSelection";
+import { refreshAuth } from "../api/checkAuth";
 
 export function ProfilePart() {
 	
@@ -16,13 +17,14 @@ export function ProfilePart() {
 
   useEffect(() => {
     async function getProfile() {
-      const result = await profileRequest();
+      let result = await profileRequest();
 
 	  if ("code" in result) {
 		if (result.code === 401) {
-			localStorage.removeItem("access");
-			localStorage.removeItem("refresh");
-			navigate("/login");
+			if (!(await refreshAuth())) {
+				navigate('/login');
+			}
+			result = await profileRequest();
 		}
       }
 	  setAccount(result);
