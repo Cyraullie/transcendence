@@ -1,18 +1,20 @@
 import { profileRequest } from "../api/profile";
 import type { accountT } from "../utils/accountType";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import type { errorT } from "../utils/errorType";
 import { AvatarSelection } from "./AvatarSelection";
+import { PswdChange } from "./PswdChange";
+import { PseudoChange } from "./PseudoChange";
 
 export function ProfilePart() {
-  // const [failure, setFailure] = useState(false);
-  // const [success, setSuccess] = useState(false);
   const [realAccount, setAccount] = useState<accountT | errorT>({
     code: 0,
     response: "",
   });
   const navigate = useNavigate();
+  const dialogPswdRef = useRef<HTMLDialogElement>(null);
+  const dialogPseudoRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     async function getProfile() {
@@ -49,7 +51,16 @@ export function ProfilePart() {
       <table className="mt-5">
         <tr>
           <th className="th-profile">Username:</th>
-          <td>{realAccount.username}</td>
+          <td>
+            {realAccount.username} <button className="link ml-5" onClick={() => dialogPseudoRef.current?.showModal()}>change</button>
+            <dialog
+              id="change_pseudo_modal"
+              className="modal"
+              ref={dialogPseudoRef}
+            >
+			<PseudoChange />
+            </dialog>
+          </td>
         </tr>
         <tr>
           <th className="th-profile">Email:</th>
@@ -59,54 +70,20 @@ export function ProfilePart() {
           <th className="th-profile">Password:</th>
           <td>
             *******
-            <a className="link" href="#change_pswd_modal">
+            <button
+              className="link ml-5"
+              onClick={() => dialogPswdRef.current?.showModal()}
+            >
               {" "}
               change
-            </a>
-            <div
-              className="modal modal-top"
-              role="dialog"
+            </button>
+            <dialog
               id="change_pswd_modal"
+              className="modal"
+              ref={dialogPswdRef}
             >
-              <div className="modal-box bg-(--bg-color)">
-                <h3 className="text-lg font-bold">Change password</h3>
-                <p className="py-4">
-                  Enter your password and choose your new one
-                </p>
-                <div className="modal-action">
-                  <fieldset className="fieldset bg-(--bg-color) border-(--accent-color) rounded-box w-xs border p-4 mx-auto">
-                    <legend className="fieldset-legend">Change password</legend>
-
-                    <label className="label">Old password</label>
-                    <input
-                      type="password"
-                      className="input"
-                      placeholder="old password"
-                    />
-
-                    <label className="label">New password</label>
-                    <input
-                      type="password"
-                      className="input"
-                      placeholder="new password"
-                    />
-                    <label className="label">Confirm new password</label>
-                    <input
-                      type="password"
-                      className="input"
-                      placeholder="confirm new password"
-                    />
-
-                    <a className="btn bg-(--nav-color) mt-4" href="#">
-                      change
-                    </a>
-                    <a className="btn bg-(--nav-color) mt-4" href="#">
-                      cancel
-                    </a>
-                  </fieldset>
-                </div>
-              </div>
-            </div>
+              <PswdChange />
+            </dialog>
           </td>
         </tr>
         <tr>
