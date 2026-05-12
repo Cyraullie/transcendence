@@ -5,6 +5,13 @@ import { generateFakeFriends } from "../utils/generateArrayTestFriends";
 export function Friends() {
   const friends = generateFakeFriends();
   return (
+	  <div className="friend-part">
+	  <div className="btn-container mb-5">
+	  <button className="btn">Search
+	  </button>
+	  <button className="btn">Add</button>
+	  <button className="btn">Notif</button>
+	  </div>
     <table>
       <tr>
         <th className="w-10 text-left"></th>
@@ -23,5 +30,6 @@ export function Friends() {
         </tr>
       ))}
     </table>
+	</div>
   );
 }
