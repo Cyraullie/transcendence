@@ -23,6 +23,7 @@ export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<b
 		setSuccess(false);
 		setFailure(false);
 		setReason({code:200, response:""});
+		setName(name.trim());
 		if (password !== "" && name.trim().length !== 0) {
 			const result = await loginRequest(name, password);
 			if (!('code' in result)) {

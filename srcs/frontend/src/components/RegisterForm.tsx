@@ -33,16 +33,32 @@ export function RegisterForm({
     setrePassword(e.target.value);
   };
 
+  function validate_inputs(in_email:string, in_name:string, in_pass:string, re_pass:string) {
+	const emailPattern = /\w+@\w+\.\w+/;
+	if (in_email.trim().length === 0 || in_name.trim().length === 0 || in_pass.length === 0 || re_pass.length === 0) {
+		setReason({code: -1, response: "All fields must be filled!"});
+	} else if (!emailPattern.test(in_email)) {
+		setReason({code: -1, response: "Please enter a valid email!"});
+	} else if (in_pass !== re_pass){
+		setReason({code: -1, response: "Passwords do not match!"});
+	} else if (in_pass.length < 8) {
+		setReason({code: -1, response: "Password must be at least 8 characters!"})
+	} else if (!(/[A-Z]/.test(in_pass)) || !(/[a-z]/.test(in_pass)) || !/[^a-zA-Z0-9]/.test(in_pass)) {
+		setReason({code: -1, response: "Password must contain at least: 1 uppercase, 1 lowercase and 1 special character"})
+	}
+
+	if (reason.code !== 200)
+		return false;
+	return true;
+  }
+
   async function registerClick() {
     setSuccess(false);
     setFailure(false);
 	setReason({code:200, response:""});
-    if (
-      email !== "" &&
-      password !== "" &&
-      name !== "" &&
-      password === repassword
-    ) {
+	setName(name.trim());
+	setEmail(email.trim());
+    if (validate_inputs(email, name, password, repassword)) {
       const result = await registerRequest(email, name, password, avatar);
       if (!('code' in result)) {
         localStorage.setItem("access", result.access);
@@ -55,7 +71,6 @@ export function RegisterForm({
       setFailure(true);
       return;
     }
-	setReason({code:-1,response:"All fields must be filled in!"})
     setFailure(true);
     return;
   }
