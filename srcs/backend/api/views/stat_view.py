@@ -1,4 +1,4 @@
-from ..models import User
+from ..models import User, Friendship
 from game.models import Stat, PlayerScore, Room, Stat
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from game.serializers import StatSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from api.auth.authentication import OptionalJWTAuthentication
+from django.db.models import Q
 from rest_framework.decorators import authentication_classes
 
 @api_view(["GET"])
@@ -98,7 +99,57 @@ def game_history(request):
         })
 
     return Response(history)
-    
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def game_history_friend(request, user_id):
+
+    viewer = request.user
+
+    is_friend = Friendship.objects.filter(
+        status="accepted"
+    ).filter(
+        Q(from_user=viewer, to_user_id=user_id) |
+        Q(from_user_id=user_id, to_user=viewer)
+    ).exists()
+
+    # autoriser accès seulement si ami OU soi-même
+    if not is_friend and viewer.id != user_id:
+        return Response(
+            {"error": "Forbidden: not friends"},
+            status=403
+        )
+
+    scores = (
+        PlayerScore.objects
+        .filter(player_id=user_id, room__status="end")
+        .select_related("room")
+        .order_by("-room__started_at")
+    )
+
+    history = []
+
+    for ps in scores:
+        room = ps.room
+
+        duration = None
+        if room.started_at and room.ended_at:
+            duration = int(
+                (room.ended_at - room.started_at).total_seconds()
+            )
+
+        history.append({
+            "game_id": room.code,
+            "uuid": str(room.uuid),
+            "start": room.started_at.strftime("%d/%m/%Y %H:%M"),
+            "points": ps.score,
+            "rank": ps.rank,
+            "duration": duration,
+            "nb_player": room.nb_player
+        })
+
+    return Response(history)
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def room_data(request, uuid):
