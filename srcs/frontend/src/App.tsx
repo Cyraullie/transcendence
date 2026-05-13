@@ -15,7 +15,7 @@ import { Error404 } from "./pages/Error404";
 function App() {
 
   return (
-    <main className="bg-(--bg-color) font-[Cause] text-(--font-color) h-full">
+    <main className="bg-(--bg-color) font-[Cause] text-(--font-color) ContentFooterContainer flex flex-col justify-between min-h-dvh">
       <BrowserRouter>
         <Navbar />
         <Routes>
@@ -33,7 +33,7 @@ function App() {
           <Route path="/termsOfService" element={<TermsOfService />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
-		<Footer />
+        <Footer />
       </BrowserRouter>
     </main>
   );
