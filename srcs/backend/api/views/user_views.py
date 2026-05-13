@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ObjectDoesNotExist
 from ..models import User
 from game.models import Stat
 from rest_framework import status
@@ -30,8 +31,21 @@ def user(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def user_data(request, user_id):
-    user = User.objects.get(id=user_id)
+
+    try:
+        user = User.objects.get(id=user_id)
+
+    except User.DoesNotExist:
+        return Response(
+            {
+                "code": "user_not_found",
+                "error": f"No user found with id {user_id}"
+            },
+            status=404
+        )
+
     serializer = FriendProfileSerializer(user)
+
     return Response(serializer.data)
     
 
