@@ -100,8 +100,8 @@ def delete_friend_request(request, request_id):
     try:
         friendship = Friendship.objects.get(
             Q(from_user=request.user) | Q(to_user=request.user),
+            Q(status="accepted") | Q(status="pending") | Q(status="blocked"),
             id=request_id,
-            status="accepted"
         )
 
         friendship.delete()
@@ -117,8 +117,8 @@ def block_friend(request, request_id):
     try:
         friendship = Friendship.objects.get(
             Q(from_user=request.user) | Q(to_user=request.user),
+            Q(status="accepted") | Q(status="pending"),
             id=request_id,
-            status="accepted"
         )
 
         friendship.status = "blocked"
