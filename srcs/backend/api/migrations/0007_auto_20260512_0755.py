@@ -7,8 +7,48 @@ def create_bot(apps, schema_editor):
 
     if not User.objects.filter(username="BOT").exists():
         User.objects.create(
-            username="BOT",
-            email="bot@bot.com",
+            username="BOT0",
+            email="bot0@bot.com",
+            is_bot=True,
+            is_online=False,
+            avatar="avatars/bot.jpg",
+        )
+    if not User.objects.filter(username="BOT").exists():
+        User.objects.create(
+            username="BOT1",
+            email="bot1@bot.com",
+            is_bot=True,
+            is_online=False,
+            avatar="avatars/bot.jpg",
+        )
+    if not User.objects.filter(username="BOT").exists():
+        User.objects.create(
+            username="BOT2",
+            email="bot2@bot.com",
+            is_bot=True,
+            is_online=False,
+            avatar="avatars/bot.jpg",
+        )
+    if not User.objects.filter(username="BOT").exists():
+        User.objects.create(
+            username="BOT3",
+            email="bot3@bot.com",
+            is_bot=True,
+            is_online=False,
+            avatar="avatars/bot.jpg",
+        )
+    if not User.objects.filter(username="BOT").exists():
+        User.objects.create(
+            username="BOT4",
+            email="bot4@bot.com",
+            is_bot=True,
+            is_online=False,
+            avatar="avatars/bot.jpg",
+        )
+    if not User.objects.filter(username="BOT").exists():
+        User.objects.create(
+            username="BOT5",
+            email="bot5@bot.com",
             is_bot=True,
             is_online=False,
             avatar="avatars/bot.jpg",
