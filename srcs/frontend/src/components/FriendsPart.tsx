@@ -7,13 +7,15 @@ import {
   friendArray,
   getFriends,
 } from "../api/friend";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import type { errorT } from "../utils/errorType";
 import { refreshAuth } from "../api/checkAuth";
 import { IoNotificationsOutline, IoSearch } from "react-icons/io5";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { RxCheck, RxCross2 } from "react-icons/rx";
+import { generateFakeFriends } from "../utils/test_funcs/generateArrayTestFriends";
+import { AddFriends } from "./AddFriends";
 
 export function Friends() {
   const fakeRequest = [
@@ -41,6 +43,8 @@ export function Friends() {
   });
   const navigate = useNavigate();
   const [updatedFriends, setUpdate] = useState(false);
+  const addFriendsRef = useRef<HTMLDialogElement>(null);
+  const [search, setSearch] = useState<string>("")
 
   useEffect(() => {
     async function retrieveFriends() {
@@ -63,7 +67,8 @@ export function Friends() {
         setFriends(arr);
       }
     }
-    retrieveFriends();
+    // retrieveFriends();
+    setFriends(generateFakeFriends());
   }, [navigate, updatedFriends]);
 
   if ("code" in friends) {
@@ -82,7 +87,7 @@ export function Friends() {
       if ("code" in res) {
         console.error(res.response);
       }
-    } else if (func === "delete") { // ??????????
+    } else if (func === "delete") {
       const res = await deleteRequest(req_id);
       if ("code" in res) {
         console.error(res.response);
@@ -91,22 +96,36 @@ export function Friends() {
     setUpdate(!updatedFriends);
     return;
   }
+  
+  const searchedFriends = friends.filter((friend) => {
+	  if (!search) return true;
+	  const lower = search.toLocaleLowerCase();
+	  return (friend.user.username.toLocaleLowerCase().includes(lower))
+  })
 
   return (
     <div className="friend-part min-h-70">
-      <div className="btn-container my-5 flex justify-end gap-1">
-        <button className="btn">
-          <IoSearch />
-        </button>
-        <button className="btn">
-          {" "}
-          <FaPlus />{" "}
-        </button>
-        <div className="dropdown dropdown-end">
-          <div className="indicator">
-            <span className="indicator-item badge bg-(--nav-color)">{fakeRequest.length}</span>
-            <div tabIndex={0} className="btn" role="button">
-              <IoNotificationsOutline />
+      <div className="action-container flex justify-between">
+        <label className="input my-5">
+          <IoSearch className="text-2xl" />
+          <input type="search" required placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)}/>
+        </label>
+        <div className="btn-container my-5 flex justify-end gap-1">
+          <button className="btn" onClick={() => addFriendsRef.current?.showModal()}>
+            {" "}
+            <FaPlus />{" "}
+          </button>
+          <dialog id="add_new_friends" className="modal" ref={addFriendsRef}>
+		  <AddFriends />
+          </dialog>
+          <div className="dropdown dropdown-end">
+            <div className="indicator">
+              <span className="indicator-item badge bg-(--nav-color)">
+                {fakeRequest.length}
+              </span>
+              <div tabIndex={0} className="btn" role="button">
+                <IoNotificationsOutline />
+              </div>
             </div>
             <ul
               tabIndex={-1}
@@ -120,10 +139,16 @@ export function Friends() {
                         <p>{request.username}</p>
                       </div>
                       <div className="btn-accept-or-reject flex gap-3">
-                        <button className="btn btn-circle" onClick={() => changeHandler(request.id, "accept")}>
+                        <button
+                          className="btn btn-circle validate"
+                          onClick={() => changeHandler(request.id, "accept")}
+                        >
                           <RxCheck />
                         </button>
-                        <button className="btn btn-circle" onClick={() => changeHandler(request.id, "deny")}>
+                        <button
+                          className="btn btn-circle del"
+                          onClick={() => changeHandler(request.id, "deny")}
+                        >
                           <RxCross2 />
                         </button>
                       </div>
@@ -135,17 +160,15 @@ export function Friends() {
           </div>
         </div>
       </div>
-      <table>
-        {/* <tr> */}
-        {/*   <td className={(friends.is_online ? "text-green-400" : "") + " text-2xl text-center"}> */}
-        {/*     <TbPointFilled /> */}
-        {/*   </td> */}
-        {/*   <td>{friend.user.username}</td> */}
-        {/*   <td>{friend.status}</td> */}
-        {/*   <td>{friend.status === 'pending' ? friend.created_at : friend.accepted_at}</td> */}
-        {/* </tr> */}
-        {friends.map((friend: friendT) => (
-          <tr>
+      <table className="">
+        <tr>
+          <th className="w-10 text-left"></th>
+          <th className="w-50 text-left">Name</th>
+          <th className="w-30 text-left">Status</th>
+          <th className="w-30 text-left">From</th>
+        </tr>
+        {searchedFriends.map((friend: friendT) => (
+          <tr className="h-14">
             <td
               className={
                 (friend.user.is_online ? "text-green-400" : "") +
@@ -156,7 +179,17 @@ export function Friends() {
             </td>
             <td>{friend.user.username}</td>
             <td>{friend.status}</td>
-            <td>{friend.accepted_at}</td>
+            <td>
+              {friend.status === "pending"
+                ? friend.created_at
+                : friend.accepted_at}
+            </td>
+            <td>
+              <button className="btn del ">
+                {" "}
+                <FaRegTrashAlt />{" "}
+              </button>
+            </td>
           </tr>
         ))}
       </table>
