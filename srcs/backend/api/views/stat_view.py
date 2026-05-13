@@ -5,21 +5,48 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from game.serializers import StatSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
-
+from api.auth.authentication import OptionalJWTAuthentication
+from rest_framework.decorators import authentication_classes
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
+@authentication_classes([OptionalJWTAuthentication])
 def leaderboard(request):
-    top = list(
+
+    top_users = (
         User.objects
         .order_by("-elo")
         .values("id", "username", "elo")[:15]
     )
 
+    leaderboard = []
+
+    current_rank = 0
+    previous_elo = None
+
+    for index, user in enumerate(top_users, start=1):
+
+        if user["elo"] != previous_elo:
+            current_rank = index
+
+        leaderboard.append({
+            "rank": current_rank,
+            "id": user["id"],
+            "username": user["username"],
+            "elo": user["elo"],
+        })
+
+        previous_elo = user["elo"]
+
     if request.user.is_authenticated:
+
         user = request.user
 
-        rank = User.objects.filter(elo__gt=user.elo).count() + 1
+        rank = (
+            User.objects
+            .filter(elo__gt=user.elo)
+            .count() + 1
+        )
 
         me = {
             "id": user.id,
@@ -27,15 +54,14 @@ def leaderboard(request):
             "elo": user.elo,
             "rank": rank
         }
+
     else:
         me = None
 
     return Response({
-        "leaderboard": top,
+        "leaderboard": leaderboard,
         "user_rank": me
     })
-
-
 
 
 @api_view(["GET"])

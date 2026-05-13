@@ -14,7 +14,6 @@ urlpatterns = [
     path("user/check/", check_new_password),
     
     #friend part
-    #TODO add search user to friend
     path("friends/", get_friends),
     path("friends/add/<int:user_id>/", send_friend_request),
     path("friends/accept/<int:request_id>/", accept_friend_request),
