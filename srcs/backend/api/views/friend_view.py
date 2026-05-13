@@ -152,18 +152,15 @@ def list_user(request, name):
 
     user = request.user
 
-    # users déjà en relation (sent ou received)
     related_users = Friendship.objects.filter(
         Q(from_user=user) | Q(to_user=user)
     ).values_list("from_user", "to_user")
 
-    # flatten IDs
     related_ids = set()
     for from_id, to_id in related_users:
         related_ids.add(from_id)
         related_ids.add(to_id)
 
-    # exclure soi-même + relations existantes
     users = User.objects.exclude(
         Q(id__in=related_ids) | Q(id=user.id)
     ).filter(username__contains=name)
