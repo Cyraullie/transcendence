@@ -10,6 +10,7 @@ import { Login } from "./pages/Login";
 import { Footer } from "./components/Footer";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { TermsOfService } from "./pages/TermsOfService";
+import { Error404 } from "./pages/Error404";
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
           <Route path="/termsOfService" element={<TermsOfService />} />
+          <Route path="*" element={<Error404 />} />
         </Routes>
 		<Footer />
       </BrowserRouter>
