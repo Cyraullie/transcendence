@@ -76,23 +76,6 @@ def accept_friend_request(request, request_id):
 
     except Friendship.DoesNotExist:
         return Response({"error": "Request not found"}, status=404)
-    
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def deny_friend_request(request, request_id):
-    try:
-        friendship = Friendship.objects.get(
-            Q(from_user=request.user) | Q(to_user=request.user),
-            id=request_id,
-            status="pending"
-        )
-
-        friendship.delete()
-
-        return Response({"message": "Friend request refused"})
-
-    except Friendship.DoesNotExist:
-        return Response({"error": "Request not found"}, status=404)
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -100,8 +83,8 @@ def delete_friend_request(request, request_id):
     try:
         friendship = Friendship.objects.get(
             Q(from_user=request.user) | Q(to_user=request.user),
+            Q(status="accepted") | Q(status="pending") | Q(status="blocked"),
             id=request_id,
-            status="accepted"
         )
 
         friendship.delete()
@@ -117,8 +100,8 @@ def block_friend(request, request_id):
     try:
         friendship = Friendship.objects.get(
             Q(from_user=request.user) | Q(to_user=request.user),
+            Q(status="accepted") | Q(status="pending"),
             id=request_id,
-            status="accepted"
         )
 
         friendship.status = "blocked"
@@ -145,3 +128,33 @@ def list_blocked(request):
     )
 
     return Response(serializer.data)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def list_user(request, name):
+
+    user = request.user
+
+    related_users = Friendship.objects.filter(
+        Q(from_user=user) | Q(to_user=user)
+    ).values_list("from_user", "to_user")
+
+    related_ids = set()
+    for from_id, to_id in related_users:
+        related_ids.add(from_id)
+        related_ids.add(to_id)
+
+    users = User.objects.exclude(
+        Q(id__in=related_ids) | Q(id=user.id)
+    ).filter(username__contains=name)
+
+    data = [
+        {
+            "id": u.id,
+            "username": u.username,
+            "is_online": u.is_online,
+        }
+        for u in users
+    ]
+
+    return Response(data)
