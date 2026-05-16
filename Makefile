@@ -2,8 +2,6 @@ COMPOSE = docker compose -f ./srcs/docker-compose.yml
 DEV_COMPOSE = $(COMPOSE) --profile dev
 PROD_COMPOSE = $(COMPOSE) --profile prod
 
-PROD_BUILD = cd srcs/frontend ; npm run build
-
 RM = rm -rf
 
 RESET := $(shell printf "\033[0m")
@@ -21,14 +19,13 @@ BLACK    := $(shell printf "\033[1;90m")
 all:
 	@echo "Make usage:\n\nLaunch in production mode: $(GREEN)make prod\n$(RESET)Launch in developer mode: $(GREEN)make dev$(RESET)"
 	@echo "\n\nDeveloper tools:\n"
-	@echo "Rebuild npm production files: $(GREEN)make npm-build$(RESET)"
 	@echo "Clean up unused images/containers: $(GREEN)make clean$(RESET)"
 	@echo "Force rebuild and relaunch containers: $(GREEN)make prod-build $(RESET)||$(GREEN) make dev-build\n$(RESET)Reset volumes and clean up: $(GREEN)make fclean$(RESET)"
 	@echo "All of the above: $(GREEN)make prod-re$(RESET) || $(GREEN)make dev-re$(RESET)"
 
 dev: header dev-up
 
-prod: header npm-build prod-up
+prod: header prod-up
 
 header:
 	@echo "$(GREEN)"
@@ -40,9 +37,6 @@ header:
 	@echo "'------''------''------''------''------''------''------''------''------''------''------''------''------'"
 	@echo "BY DVAUTHEY, ATOMASI, KTINTIM-, AKABBAJ, CGOLDENS"
 	@echo "$(RESET)"
-
-npm-build:
-	@$(PROD_BUILD)
 
 prod-up:
 	@$(COMPOSE) --profile "*" down

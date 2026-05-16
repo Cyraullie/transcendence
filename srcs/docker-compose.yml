@@ -40,8 +40,8 @@ services:
 
   nginx_prod:
     build:
-      context: ./Docker/nginx/prod_nginx
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Docker/nginx/prod_nginx/Dockerfile
     profiles: [prod]
     container_name: nginx_prod
     ports:
