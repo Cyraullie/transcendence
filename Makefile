@@ -1,4 +1,8 @@
 COMPOSE = docker compose -f ./srcs/docker-compose.yml
+DEV_COMPOSE = $(COMPOSE) --profile dev
+PROD_COMPOSE = $(COMPOSE) --profile prod
+
+PROD_BUILD = cd srcs/frontend ; npm run build
 
 RM = rm -rf
 
@@ -14,7 +18,17 @@ BLUE     := $(shell printf "\033[34m")
 BLACK    := $(shell printf "\033[1;90m")
 
 # Règles
-all: header up
+all:
+	@echo "Make usage:\n\nLaunch in production mode: $(GREEN)make prod\n$(RESET)Launch in developer mode: $(GREEN)make dev$(RESET)"
+	@echo "\n\nDeveloper tools:\n"
+	@echo "Rebuild npm production files: $(GREEN)make npm-build$(RESET)"
+	@echo "Clean up unused images/containers: $(GREEN)make clean$(RESET)"
+	@echo "Force rebuild and relaunch containers: $(GREEN)make prod-build $(RESET)||$(GREEN) make dev-build\n$(RESET)Reset volumes and clean up: $(GREEN)make fclean$(RESET)"
+	@echo "All of the above: $(GREEN)make prod-re$(RESET) || $(GREEN)make dev-re$(RESET)"
+
+dev: header dev-up
+
+prod: header npm-build prod-up
 
 header:
 	@echo "$(GREEN)"
@@ -27,11 +41,22 @@ header:
 	@echo "BY DVAUTHEY, ATOMASI, KTINTIM-, AKABBAJ, CGOLDENS"
 	@echo "$(RESET)"
 
+npm-build:
+	@$(PROD_BUILD)
 
-up:
+prod-up:
 	@if [ -f ./srcs/.env ]; then \
 		echo "$(YELLOW)Launching docker container...$(RESET)"; \
-		$(COMPOSE) up -d; \
+		$(PROD_COMPOSE) up -d; \
+		echo "$(CYAN)Launching completed!$(RESET)"; \
+	else \
+		echo "❌ Missing ./srcs/.env file"; \
+	fi
+
+dev-up:
+	@if [ -f ./srcs/.env ]; then \
+		echo "$(YELLOW)Launching docker container...$(RESET)"; \
+		$(DEV_COMPOSE) up -d; \
 		echo "$(CYAN)Launching completed!$(RESET)"; \
 	else \
 		echo "❌ Missing ./srcs/.env file"; \
@@ -40,16 +65,29 @@ up:
 
 down:
 	@echo "$(YELLOW)Stopping docker container...$(RESET)"
-	@$(COMPOSE) down
+	@$(COMPOSE) --profile "*" down
 	@echo "$(CYAN)Stopped!$(RESET)"
 
 clean:
-	@echo "Removing containers..."
-	@$(COMPOSE) down
+	@echo "Cleaning up images and containers.."
+	@$(COMPOSE) --profile "*" down --rmi local --remove-orphans
 
-fclean: clean
-	@docker volume rm -f srcs_db_data || true
+fclean:
+	@echo "Cleaning up images and containers.."
+	@echo "Clearing volumes.."
+	@$(COMPOSE) --profile "*" down -v --rmi local --remove-orphans
 
-re: down fclean up
+prod-build: down
+	@$(COMPOSE) --no-cache build django
+	@$(MAKE) prod-up
 
-.PHONY: all up down clean fclean re header
+dev-build: down
+	@$(COMPOSE) build --no-cache django
+	@$(COMPOSE) build --no-cache frontend
+	@$(MAKE) dev-up
+
+prod-re: fclean prod-up
+
+dev-re: fclean dev-up 
+
+.PHONY: all prod-up dev-up down clean fclean prod-re dev-re header prod-build dev-build
