@@ -53,16 +53,18 @@ export function LoginForm( {setCreated}: {setCreated : Dispatch<SetStateAction<b
 		}
 		setAccess(false);
 		return ;
-	}
-	if (success || access) {
-		if (location.state) {
-			navigate(location.state);
+		}
+
+		checkAccess();
+
+		if (success || access) {
+			if (location.state) {
+				navigate(location.state);
+				return ;
+			}
+			navigate('/');
 			return ;
 		}
-		navigate('/');
-		return ;
-	}
-		checkAccess();
 	}, [access, navigate, success, location])
 
 
