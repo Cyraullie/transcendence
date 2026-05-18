@@ -10,7 +10,7 @@ import { Login } from "./pages/Login";
 import { Footer } from "./components/Footer";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { TermsOfService } from "./pages/TermsOfService";
-import { Error404 } from "./pages/Error404";
+import  Error404 from "./pages/Error404";
 
 function App() {
 

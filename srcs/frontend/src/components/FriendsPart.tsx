@@ -182,11 +182,15 @@ export function Friends() {
             >
               <TbPointFilled />
             </td>
+            <td>
             <button onClick={() => showMiniProfileRef.current?.showModal()}>{friend.user.username}</button>
-            <div id="showMiniProfile" className="modal" ref={showMiniProfileRef}>
+
+            <dialog id="showMiniProfile" className="modal" ref={showMiniProfileRef}>
               <MiniProfile />
-            </div>
+            </dialog>
+            </td>
             <td>{friend.status}</td>
+
             <td>
               {friend.status === "pending"
                 ? friend.created_at
