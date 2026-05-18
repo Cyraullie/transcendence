@@ -41,6 +41,7 @@ header:
 prod-up:
 	@$(COMPOSE) --profile "*" down
 	@if [ -f ./srcs/.env ]; then \
+		sed -i 's/DEBUG=True/DEBUG=False/g' ./srcs/.env; \
 		echo "$(YELLOW)Launching docker container...$(RESET)"; \
 		$(PROD_COMPOSE) up -d; \
 		echo "$(CYAN)Launching completed!$(RESET)"; \
@@ -51,6 +52,7 @@ prod-up:
 dev-up:
 	@$(COMPOSE) --profile "*" down
 	@if [ -f ./srcs/.env ]; then \
+		sed -i 's/DEBUG=False/DEBUG=True/g' ./srcs/.env; \
 		echo "$(YELLOW)Launching docker container...$(RESET)"; \
 		$(DEV_COMPOSE) up -d; \
 		echo "$(CYAN)Launching completed!$(RESET)"; \
