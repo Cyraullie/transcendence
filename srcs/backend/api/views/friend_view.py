@@ -103,20 +103,40 @@ def block_friend(request, request_id):
         )
 
         friendship.status = "blocked"
+        friendship.blocked_by = request.user
+        friendship.blocked_at = timezone.now()
         friendship.save()
 
         return Response({"message": "Friend blocked"})
 
     except Friendship.DoesNotExist:
         return Response({"error": "Request not found"}, status=404)
-    
-#TODO savoir qui a bloquer l'ami
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def unblock_friend(request, request_id):
+    try:
+        friendship = Friendship.objects.get(
+            Q(from_user=request.user) | Q(to_user=request.user),
+            status="blocked",
+            id=request_id,
+            blocked_by=request.user,
+        )
+
+        friendship.delete()
+
+        return Response({"message": "Friend unblock"})
+
+    except Friendship.DoesNotExist:
+        return Response({"error": "Request not found"}, status=404)
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_blocked(request):
     friendships = Friendship.objects.filter(
-        from_user=request.user,
-        status="blocked"
+        Q(from_user=request.user) | Q(to_user=request.user),
+        status="blocked",
+        blocked_by=request.user,
     )
 
     serializer = FriendSerializer(
