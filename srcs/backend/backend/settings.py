@@ -78,6 +78,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+BASE_APP_URL=os.getenv("BASE_APP_URL")
+BASE_API_URI=os.getenv("BASE_API_URI")
+GOOGLE_OAUTH2_CLIENT_ID=os.getenv("GOOGLE_OAUTH2_CLIENT_ID") ## Needs to be in env
+GOOGLE_OAUTH2_CLIENT_SECRET=os.getenv("GOOGLE_OAUTH2_CLIENT_SECRET") ## Needs to be in env
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
