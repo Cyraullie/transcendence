@@ -25,6 +25,8 @@ class Friendship(models.Model):
 
     created_at = models.DateField(auto_now_add=True)
     accepted_at = models.DateField(null=True)
+    blocked_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="blocked_by", null=True)
+    blocked_at = models.DateField(null=True)
 
     class Meta:
         unique_together = ("from_user", "to_user")
