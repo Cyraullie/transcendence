@@ -3,11 +3,14 @@ import axios, { AxiosError } from 'axios'
 import { getError, type backendErrorT, type errorT } from '../utils/errorType';
 import host from '../api/host'
 import { check2Pass, checkPass } from './checkAuth';
+import avatar1 from "../assets/avatars/avatar1.png";
 
 export async function profileRequest(): Promise<accountT | errorT> {
 	try {
 		const res = await axios.get(host.http + 'user/', { timeout: 2000, withCredentials: true});
 		const result : accountT = res.data;
+		if (result.avatar === "")
+			changeAvatar(avatar1);
 		return result;
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;

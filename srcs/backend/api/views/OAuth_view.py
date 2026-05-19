@@ -112,8 +112,8 @@ def GitLogin(request):
 	User = get_user_model()
 	
 	user, created = User.objects.get_or_create(email=real_email, defaults={"username":data["login"]})
-	if not created:
-		return Response({f"error":"error creating account"}, status=400)
+	# if not created:
+	# 	return Response({f"error":"error creating account"}, status=400)
 	Stat.objects.get_or_create(user=user)
 
 	refresh = RefreshToken.for_user(user)

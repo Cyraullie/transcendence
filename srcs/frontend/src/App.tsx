@@ -12,9 +12,9 @@ import { NotifPopUp } from "./components/NotifPopUp";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { TermsOfService } from "./pages/TermsOfService";
 import Error404 from "./pages/Error404";
-import { GoogleCallback } from "./pages/GoogleCallback";
-import { FortyTwoCallback } from "./pages/42Callback";
-import { GitCallback } from "./pages/GitCallback";
+import { GoogleCallback } from "./OAuth/GoogleCallback";
+import { FortyTwoCallback } from "./OAuth/42Callback";
+import { GitCallback } from "./OAuth/GitCallback";
 
 function App() {
   return (

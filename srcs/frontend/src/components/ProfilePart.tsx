@@ -7,6 +7,7 @@ import { AvatarSelection } from "./AvatarSelection";
 import { PswdChange } from "./PswdChange";
 import { PseudoChange } from "./PseudoChange";
 import { checkAuth } from "../api/checkAuth";
+import avatar1 from "../assets/avatars/avatar1.png";
 
 export function ProfilePart() {
   const [realAccount, setAccount] = useState<accountT | errorT>({
@@ -29,7 +30,11 @@ export function ProfilePart() {
 			}
 			result = await profileRequest();
 		}
-      }
+      } else {
+		if (result.avatar === "") {
+			result.avatar = avatar1;
+		}
+	  }
 	  setAccount(result);
       return;
     }
@@ -40,6 +45,7 @@ export function ProfilePart() {
   if ("code" in realAccount) {
     return <p>Error: {realAccount.response}</p>; // improve message
   }
+
 
 //   async function updateEmail(in_email:string) {
 // 	const res = await changeEmail(in_email);
