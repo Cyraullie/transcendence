@@ -1,9 +1,10 @@
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { generateFakeAccount } from "../utils/test_funcs/generateTestAccount";
 import { MiniHistory } from "./MiniHistory";
 
 export default function MiniProfile() {
   const fakeAccount = generateFakeAccount();
+  fakeAccount.is_friend = true;
 
   return (
     <div className="modal-box bg-(--nav-color)">
@@ -18,8 +19,8 @@ export default function MiniProfile() {
           </p>
         </div>
         <div className="w-full flex justify-end">
-          <button className={fakeAccount.is_friend ? "btn" : "hidden"}>
-            <FaPlus />
+          <button className={"btn " + (fakeAccount.is_friend ? "del" : "")}  >
+            {fakeAccount.is_friend ? <FaRegTrashAlt /> : <FaPlus />}
           </button>
         </div>
       </div>
