@@ -1,6 +1,6 @@
 import { FaPlus } from "react-icons/fa";
 import { generateFakeAccount } from "../utils/test_funcs/generateTestAccount";
-import { History } from "./HistoryPart";
+import { MiniHistory } from "./MiniHistory";
 
 export default function MiniProfile() {
   const fakeAccount = generateFakeAccount();
@@ -18,7 +18,7 @@ export default function MiniProfile() {
           </p>
         </div>
         <div className="w-full flex justify-end">
-          <button className="btn ">
+          <button className={fakeAccount.is_friend ? "btn" : "hidden"}>
             <FaPlus />
           </button>
         </div>
@@ -48,9 +48,8 @@ export default function MiniProfile() {
       </table>
       {/* {* if friend *} 
 				 need to modify a lot of thing here like the width of the modal ( surement creer un nouveau component history) */}
-      <div>
-        <h3>History</h3>
-        <History />
+      <div className="mt-10">
+		<MiniHistory />
       </div>
     </div>
   );
