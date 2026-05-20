@@ -1,12 +1,24 @@
-import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { generateFakeAccount } from "../utils/test_funcs/generateTestAccount";
 import { MiniHistory } from "./MiniHistory";
+import DeleteBtn from "./DeleteBtn";
+import AddFriendsBtn from "./AddFriendsBtn";
+import BlockBtn from "./BlockBtn";
 
 export default function MiniProfile() {
   const fakeAccount = generateFakeAccount();
-  fakeAccount.is_friend = true;
+  async function changeHandler(req_id: number, func: string) {
+    if (func === "accept") {
+      console.log("it accepts");
+    } else if (func === "block") {
+      console.log("it blocks");
+    } else if (func === "delete") {
+      console.log("it deletes");
+    }
+    return;
+  }
 
   return (
+    <>
     <div className="modal-box bg-(--nav-color)">
       <p className="text-center ">click ESC for close this window</p>
       <div className="flex">
@@ -19,9 +31,10 @@ export default function MiniProfile() {
           </p>
         </div>
         <div className="w-full flex justify-end">
-          <button className={"btn " + (fakeAccount.is_friend ? "del" : "")}  >
-            {fakeAccount.is_friend ? <FaRegTrashAlt /> : <FaPlus />}
-          </button>
+          <div >
+            {fakeAccount.is_friend ? <DeleteBtn req_id={fakeAccount.id} changeHandler={changeHandler}/> : <AddFriendsBtn req_id={fakeAccount.id} changeHandler={changeHandler}/>}
+          </div>
+            <BlockBtn req_id={fakeAccount.id} changeHandler={changeHandler}/>
         </div>
       </div>
       <table className="mt-5">
@@ -48,6 +61,10 @@ export default function MiniProfile() {
 		<MiniHistory />
       </div>
     </div>
+      <form method="dialog" className="modal-backdrop">
+        <button ></button>
+      </form>
+    </>
   );
 }
 
