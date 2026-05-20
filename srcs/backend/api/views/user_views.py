@@ -4,7 +4,8 @@ from ..models import User
 from django.conf import settings
 from game.models import Stat
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from api.auth.authentication import OptionalJWTAuthentication
 from rest_framework.response import Response
 from ..serializers import UserSerializer, FriendProfileSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -55,6 +56,7 @@ def user_data(request, user_id):
     
 
 @api_view(["POST"])
+@authentication_classes([OptionalJWTAuthentication])
 @permission_classes([AllowAny])
 def register(request):
     password = request.data.get("password")
@@ -131,6 +133,7 @@ def logout(request):
     
 
 @api_view(["POST"])
+@authentication_classes([OptionalJWTAuthentication])
 @permission_classes([AllowAny])
 def login(request):
     username = request.data.get("username")
