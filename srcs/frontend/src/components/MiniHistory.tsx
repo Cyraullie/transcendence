@@ -114,7 +114,7 @@ export function MiniHistory() {
             </tr>
           ))}
           <a className="my-auto link" onClick={() => handleMoreLessBtn()}>
-            {gameHistory.length ? (isMore ? "Show less" : "Show more") : ""}
+            {gameHistory.length > 10? (isMore ? "Show less" : "Show more") : ""}
           </a>
         </table>
       </div>
