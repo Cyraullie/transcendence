@@ -15,7 +15,7 @@ urlpatterns = [
 
 	path("logout/", logout),
 	# #OAuth part
-	path("login/google/", GoogleLogin.as_view(), name="google_login"),
+	path("login/google/", GoogleLogin, name="google_login"),
 	path("login/42/", FortyTwoLogin, name="42_login"),
 	path("login/github/", GitLogin, name="GitHub_login"),
 	# path("logout/google/", GoogleLogout.as_view()),
