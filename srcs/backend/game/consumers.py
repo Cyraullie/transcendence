@@ -67,7 +67,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
         )
         participant_users = [p.player for p in participants]
     
-        print(participant_users)
         blocking = await sync_to_async(
             Friendship.objects.filter(
                 Q(from_user= self.user) | Q(to_user= self.user),
@@ -230,9 +229,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                         }
                     }
                 )
-        
-                print(room.host)
-                print(host)
+
                 if room.host != host:
         
                     await self.channel_layer.group_send(
@@ -289,6 +286,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     await self.handle_melds(payload)
                 if action == "verify_melds":
                     await self.handle_verify_melds(payload)
+                if action == "kick":
+                    await self.handle_kick(payload)
             else:
                 await self.send(text_data=json.dumps({
                     "type": "error",
@@ -324,7 +323,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "message": "Only host can start game"
             }))
             return
-        if room.nb_player >= 2:
+        if room.nb_player < 2:
             await self.send(json.dumps({
                 "event": "error",
                 "message": "You need at least 2 player to start game"
@@ -782,7 +781,85 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "valid": False,
                 "message": "Toutes les cartes doivent appartenir à des suites valides"
             }))
+
+    #TODO host can kick everybody except himself
+    async def handle_kick(self, payload: dict):
+
+        room = await get_room_with_host(self.code)
+    
+        if self.user != room.host:
+            await self.send(json.dumps({
+                "event": "error",
+                "message": "Only host can kick player"
+            }))
+            return
+    
+        if room.status == "start":
+            await self.send(json.dumps({
+                "event": "error",
+                "message": "Game started you cannot kick player"
+            }))
+            return
+    
+        player_presence = await sync_to_async(
+            PlayerPresence.objects.select_related("player").filter(
+                room=room,
+                position=payload["playerId"]
+            ).first
+        )()
+    
+        if not player_presence:
+            await self.send(json.dumps({
+                "event": "error",
+                "message": "Player not found"
+            }))
+            return
+    
+        kicked_user = player_presence.player
         
+        if kicked_user == self.user:
+            await self.send(json.dumps({
+                "event": "error",
+                "message": "You cannont kick yourself"
+            }))
+            return
+            
+
+        if player_presence.channel_name:
+    
+            await self.channel_layer.send(
+                player_presence.channel_name,
+                {
+                    "type": "room_event",
+                    "event": "kicked",
+                    "payload": {
+                        "message": "You have been kicked from the room",
+                        "by": self.user.username
+                    }
+                }
+            )
+
+            await self.channel_layer.send(
+                player_presence.channel_name,
+                {
+                    "type": "force_disconnect",
+                }
+            )
+    
+        await remove_player_from_room(kicked_user, room.code)
+
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "room_event",
+                "event": "kick_player",
+                "payload": {
+                    "username": kicked_user.username,
+                    "message": f"{kicked_user.username} has been kicked"
+                }
+            }
+        )
+ 
     async def handle_continue_game(self):
         room = await get_room_with_host(self.code)
     
