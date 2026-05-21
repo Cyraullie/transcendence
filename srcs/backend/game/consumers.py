@@ -20,8 +20,6 @@ CARD_VALUES = {
     "K": 13,
     "A": 14
 }
-    #TODO deny blocked user to join
-    #TODO send to blocked_by a message to allow the user to join
     
 class RoomConsumer(AsyncWebsocketConsumer):
     
@@ -204,7 +202,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 group_name,
                 self.channel_name
             )
-        #FIXME stop send message when a player disconnect because blocker relation
         
         participants = await sync_to_async(list)(
             PlayerPresence.objects.filter(room=room).select_related("player")
@@ -276,6 +273,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
             action = data.get("action")
             payload = data.get("payload", {})
 
+#TODO vote in game to ban a player
+#TODO host can kick player when room's status open
+
             if msg_type == "action":
                 if action == "start_game":
                     await self.handle_start_game()
@@ -324,7 +324,13 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "message": "Only host can start game"
             }))
             return
-    
+        if room.nb_player >= 2:
+            await self.send(json.dumps({
+                "event": "error",
+                "message": "You need at least 2 player to start game"
+            }))
+            return
+        
         if room.status == "start":
             await self.send(json.dumps({
                 "event": "error",
