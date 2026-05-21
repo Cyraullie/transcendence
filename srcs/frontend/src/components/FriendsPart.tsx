@@ -12,10 +12,11 @@ import { RxCheck, RxCross2 } from "react-icons/rx";
 import { AddFriends } from "./AddFriends";
 import MiniProfile from "./MiniProfile";
 import { MdBlock } from "react-icons/md";
+import DeleteBtn from "./DeleteBtn";
+import BlockBtn from "./BlockBtn";
 
 export function Friends({friends, requests, updatedFriends, setUpdate}:{friends:friendT[], requests:requestT[]; updatedFriends:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>}) {
   const addFriendsRef = useRef<HTMLDialogElement>(null);
-  const showMiniProfileRef = useRef<HTMLDialogElement>(null);
   const confirmDelRef = useRef<HTMLDialogElement>(null);
   const confirmBlocklRef = useRef<HTMLDialogElement>(null);
   const [search, setSearch] = useState<string>("");
@@ -154,19 +155,7 @@ export function Friends({friends, requests, updatedFriends, setUpdate}:{friends:
               <TbPointFilled />
             </td>
             <td>
-              <button
-                className="link-hover"
-                onClick={() => showMiniProfileRef.current?.showModal()}
-              >
-                {friend.user.username}
-              </button>
-              <dialog
-                id="showMiniProfile"
-                className="modal"
-                ref={showMiniProfileRef}
-              >
-                <MiniProfile />
-              </dialog>
+                <MiniProfile friend={friend}/>
             </td>
             <td>{friend.status}</td>
 
@@ -176,76 +165,10 @@ export function Friends({friends, requests, updatedFriends, setUpdate}:{friends:
                 : friend.accepted_at}
             </td>
             <td className="w-16">
-              <button
-                onClick={() => confirmDelRef.current?.showModal()}
-                className="btn del "
-              >
-                {" "}
-                <FaRegTrashAlt />{" "}
-              </button>
-              <dialog
-                id="modal_confirm_del"
-                className="modal "
-                ref={confirmDelRef}
-              >
-                <div className="modal-box bg-(--bg-color)">
-                  <h3 className="font-bold text-lg">
-                    Are you sure to delete this user to your friends?
-                  </h3>
-                  <p className="py-4">
-                    Are you sure to delete your friend? You can always add him
-                    again
-                  </p>
-                  <div className="modal-action">
-                    <form method="dialog">
-                      <button
-                        className="btn mr-5 del"
-                        onClick={() => changeHandler(friend.id, "delete")}
-                      >
-                        Confirm
-                      </button>
-                      <button className="btn">Cancel</button>
-                    </form>
-                  </div>
-                </div>
-              </dialog>
+              <DeleteBtn req_id={friend.id} changeHandler={changeHandler}/>
             </td>
             <td>
-              <button
-                onClick={() => confirmBlocklRef.current?.showModal()}
-                className="btn del"
-              >
-                {" "}
-                <MdBlock />{" "}
-              </button>
-              <dialog
-                id="modal_confirm_block"
-                className="modal "
-                ref={confirmBlocklRef}
-              >
-                <div className="modal-box bg-(--bg-color)">
-                  <h3 className="font-bold text-lg">
-                    Are you sure to block this user?
-                  </h3>
-                  <p className="py-4">
-                    You won't be able to play with them and your profile will be
-                    hidden from them.
-                    <br />
-                    You can always unblock them in settings
-                  </p>
-                  <div className="modal-action">
-                    <form method="dialog">
-                      <button
-                        className="btn mr-5 del"
-                        onClick={() => changeHandler(friend.id, "block")}
-                      >
-                        Confirm
-                      </button>
-                      <button className="btn">Cancel</button>
-                    </form>
-                  </div>
-                </div>
-              </dialog>
+              <BlockBtn req_id={friend.id} changeHandler={changeHandler}/>
             </td>
           </tr>
         ))}
