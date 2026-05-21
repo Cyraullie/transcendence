@@ -7,7 +7,7 @@ import {
   friendArray,
   getFriends,
 } from "../api/friend";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type Ref } from "react";
 import { useNavigate } from "react-router-dom";
 import type { errorT } from "../utils/errorType";
 import { checkAuth } from "../api/checkAuth";
@@ -29,6 +29,7 @@ export function Friends() {
   const [requests, setRequests] = useState<requestT[] | null>(null);
   const [updatedFriends, setUpdate] = useState(false);
   const addFriendsRef = useRef<HTMLDialogElement>(null);
+  const showMiniProfileRef = useRef<HTMLDialogElement[] | null>([]);
   const confirmDelRef = useRef<HTMLDialogElement>(null);
   const confirmBlocklRef = useRef<HTMLDialogElement>(null);
   const [search, setSearch] = useState<string>("");
@@ -212,7 +213,7 @@ export function Friends() {
           <th className="w-30 text-left">Status</th>
           <th className="w-30 text-left">From</th>
         </tr>
-        {sortedFriends.slice(0, nbSlice).map((friend: friendT) => (
+        {sortedFriends.slice(0, nbSlice).map((friend: friendT, index:number) => (
           <tr className="h-14">
             <td
               className={
@@ -223,7 +224,19 @@ export function Friends() {
               <TbPointFilled />
             </td>
             <td>
+              <button
+                className="link-hover"
+                onClick={() => showMiniProfileRef.current![index].showModal()}
+              >
+                {friend.user.username}
+              </button>
+              <dialog
+                id="showMiniProfile"
+                className="modal"
+                ref={(elt) => {showMiniProfileRef.current![index] = elt!}}
+              >
                 <MiniProfile friend={friend}/>
+              </dialog>
             </td>
             <td>{friend.status}</td>
 
