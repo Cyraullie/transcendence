@@ -1,24 +1,17 @@
 import { TbPointFilled } from "react-icons/tb";
 import type { friendT, requestT } from "../utils/friendType";
-import {
-  acceptRequest,
-  deleteRequest,
-  denyRequest,
-} from "../api/friend";
+import { changeHandler } from "../api/friend";
 import { useState, useRef } from "react";
 import { IoNotificationsOutline, IoSearch } from "react-icons/io5";
-import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 import { AddFriends } from "./AddFriends";
 import MiniProfile from "./MiniProfile";
-import { MdBlock } from "react-icons/md";
 import DeleteBtn from "./DeleteBtn";
 import BlockBtn from "./BlockBtn";
+import { FaPlus } from "react-icons/fa";
 
-export function Friends({friends, requests, updatedFriends, setUpdate}:{friends:friendT[], requests:requestT[]; updatedFriends:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>}) {
+export function Friends({friends, requests, updatedFriends, setUpdate}:{friends:friendT[]; requests:requestT[]; updatedFriends:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>}) {
   const addFriendsRef = useRef<HTMLDialogElement>(null);
-  const confirmDelRef = useRef<HTMLDialogElement>(null);
-  const confirmBlocklRef = useRef<HTMLDialogElement>(null);
   const [search, setSearch] = useState<string>("");
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(10);
@@ -31,26 +24,6 @@ export function Friends({friends, requests, updatedFriends, setUpdate}:{friends:
       setIsMore(true);
       setNbSlice(sortedFriends.length);
     }
-  }
-  async function changeHandler(req_id: number, func: string) {
-    if (func === "accept") {
-      const res = await acceptRequest(req_id);
-      if ("code" in res) {
-        console.error(res.response);
-      }
-    } else if (func === "deny") {
-      const res = await denyRequest(req_id);
-      if ("code" in res) {
-        console.error(res.response);
-      }
-    } else if (func === "delete") {
-      const res = await deleteRequest(req_id);
-      if ("code" in res) {
-        console.error(res.response);
-      }
-    }
-    setUpdate(!updatedFriends);
-    return;
   }
 
   const searchedFriends = friends.filter((friend) => {
@@ -118,13 +91,13 @@ export function Friends({friends, requests, updatedFriends, setUpdate}:{friends:
                       <div className="btn-accept-or-reject flex gap-3">
                         <button
                           className="btn btn-circle validate"
-                          onClick={() => changeHandler(request.id, "accept")}
+                          onClick={() => changeHandler(request.id, "accept", updatedFriends, setUpdate)}
                         >
                           <RxCheck />
                         </button>
                         <button
                           className="btn btn-circle del"
-                          onClick={() => changeHandler(request.id, "deny")}
+                          onClick={() => changeHandler(request.id, "deny", updatedFriends, setUpdate)}
                         >
                           <RxCross2 />
                         </button>
@@ -165,10 +138,10 @@ export function Friends({friends, requests, updatedFriends, setUpdate}:{friends:
                 : friend.accepted_at}
             </td>
             <td className="w-16">
-              <DeleteBtn req_id={friend.id} changeHandler={changeHandler}/>
+              <DeleteBtn req_id={friend.id} changeHandler={changeHandler} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
             </td>
             <td>
-              <BlockBtn req_id={friend.id} changeHandler={changeHandler}/>
+              <BlockBtn req_id={friend.id} changeHandler={changeHandler} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
             </td>
           </tr>
         ))}
