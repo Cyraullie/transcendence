@@ -62,6 +62,8 @@ INSTALLED_APPS = [
 	"game",
 ]
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 #Following guide for google login, need to doublecheck ..
 # how it would impact us if we want to have email verification later
 ACCOUNT_LOGIN_METHODS = {'email'}
@@ -81,6 +83,7 @@ GIT_OAUTH_CLIENT_SECRET=os.getenv("GIT_OAUTH_CLIENT_SECRET")
 FORTYTWO_OAUTH_CALLBACK_URL=os.getenv("FORTYTWO_OAUTH_CALLBACK_URL")
 FORTYTWO_OAUTH_CLIENT_ID=os.getenv("FORTYTWO_OAUTH_CLIENT_ID")
 FORTYTWO_OAUTH_CLIENT_SECRET=os.getenv("FORTYTWO_OAUTH_CLIENT_SECRET") ## Needs to be in env
+
 
 
 SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
