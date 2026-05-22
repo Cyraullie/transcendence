@@ -270,8 +270,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             action = data.get("action")
             payload = data.get("payload", {})
 
-#TODO vote in game to ban a player
-#TODO host can kick player when room's status open
+#TODO vote in game to ban a player (majorité qui remporte le vote ? tout le monde sauf la cible peut voté)
 
             if msg_type == "action":
                 if action == "start_game":
