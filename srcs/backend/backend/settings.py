@@ -17,9 +17,6 @@ from datetime import timedelta
 
 load_dotenv()
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = "/app/media"
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,7 +36,7 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS","127.0.0.1").split(",")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS","localhost").split(",")
 
 
 # Application definition
@@ -134,11 +131,9 @@ MIDDLEWARE = [
 	'allauth.account.middleware.AccountMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]
+CORS_ALLOWED_ORIGINS =os.environ.get("CORS_ALLOWED_ORIGINS","").split(",")  ### This should only be applicable in dev mode: tbc if we need to remove in prod to be safe
 
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = os.getenv("CORS_ALLOW_CREDENTIALS") == "True"
 
 ROOT_URLCONF = 'backend.urls'
 

@@ -52,7 +52,7 @@ services:
       VITE_GIT_OAUTH_CALLBACK_URL: ${GIT_OAUTH_CALLBACK_URL}
       VITE_GIT_OAUTH_CLIENT_ID: ${GIT_OAUTH_CLIENT_ID}
     ports:
-      - "80:80"
+      - "443:443"
     depends_on:
       - django
     networks:
