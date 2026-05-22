@@ -1,11 +1,25 @@
-import { FaPlus } from "react-icons/fa";
 import { generateFakeAccount } from "../utils/test_funcs/generateTestAccount";
 import { MiniHistory } from "./MiniHistory";
+import DeleteBtn from "./DeleteBtn";
+import AddFriendsBtn from "./AddFriendsBtn";
+import BlockBtn from "./BlockBtn";
+import type { friendT } from "../utils/friendType";
 
-export default function MiniProfile() {
+export default function MiniProfile({friend}:{friend:friendT}) {
   const fakeAccount = generateFakeAccount();
+  async function changeHandler(req_id: number, func: string) {
+    if (func === "accept") {
+      console.log("it accepts");
+    } else if (func === "block") {
+      console.log("it blocks");
+    } else if (func === "delete") {
+      console.log("it deletes");
+    }
+    return;
+  }
 
   return (
+    <>
     <div className="modal-box bg-(--nav-color)">
       <p className="text-center ">click ESC for close this window</p>
       <div className="flex">
@@ -14,13 +28,14 @@ export default function MiniProfile() {
             <img src={fakeAccount.avatar}></img>
           </div>
           <p className="text-green-200 font-extrabold my-2 mx-auto">
-            {fakeAccount.is_online ? "Online" : ""}
+            {friend.user.is_online ? "Online" : ""}
           </p>
         </div>
         <div className="w-full flex justify-end">
-          <button className={fakeAccount.is_friend ? "btn" : "hidden"}>
-            <FaPlus />
-          </button>
+          <div >
+            {fakeAccount.is_friend ? <DeleteBtn req_id={fakeAccount.id} changeHandler={changeHandler}/> : <AddFriendsBtn req_id={fakeAccount.id} changeHandler={changeHandler}/>}
+          </div>
+            <BlockBtn req_id={fakeAccount.id} changeHandler={changeHandler}/>
         </div>
       </div>
       <table className="mt-5">
@@ -30,7 +45,7 @@ export default function MiniProfile() {
         </tr>
         <tr>
           <th className="th-profile">Email:</th>
-          <td>{fakeAccount.email}</td>
+          <td>{friend.user.username}</td>
         </tr>
         <tr>
           <th className="th-profile">Joined on:</th>
@@ -40,11 +55,6 @@ export default function MiniProfile() {
           <th className="th-profile">Last login:</th>
           <td>{fakeAccount.is_online ? "now" : fakeAccount.last_login}</td>
         </tr>
-        <tr> {/* ?????? why? */}
-
-          <th className="th-profile">History :</th>
-          <td>{fakeAccount.is_online ? "now" : fakeAccount.last_login}</td>
-        </tr>
       </table>
       {/* {* if friend *} 
 				 need to modify a lot of thing here like the width of the modal ( surement creer un nouveau component history) */}
@@ -52,6 +62,10 @@ export default function MiniProfile() {
 		<MiniHistory />
       </div>
     </div>
+      <form method="dialog" className="modal-backdrop">
+        <button ></button>
+      </form>
+    </>
   );
 }
 

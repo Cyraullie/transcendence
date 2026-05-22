@@ -80,6 +80,12 @@
   @apply cursor-pointer;
 }
 
+@utility modal-backdrop {
+  button {
+    @apply cursor-default;
+  }
+}
+
 .modal-box {
   scrollbar-color: var(--accent-color) var(--hover-color);
 }

@@ -6,7 +6,6 @@ import { setLoggedIn } from "../api/login_status";
 
 export function FortyTwoCallback() {
   const navigate = useNavigate();
-
   useEffect(() => {
     async function FortyTwoLogin() {
       const params = new URLSearchParams(window.location.search);
@@ -24,7 +23,7 @@ export function FortyTwoCallback() {
           { withCredentials: true }
         );
 		setLoggedIn(true);
-        navigate("/profile");
+        navigate("/profile"); // Improve same functioning as normal login
       } catch (err) {
 		// improve with set state
         console.error("42 login failed:", err);
