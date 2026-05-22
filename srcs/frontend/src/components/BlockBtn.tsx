@@ -1,7 +1,14 @@
 import { useRef } from "react";
 import { MdBlock } from "react-icons/md";
+import { changeHandler } from "../api/friend";
 
-export default function BlockBtn({req_id, changeHandler, updatedFriends, setUpdate}: {req_id: number; updatedFriends:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>; changeHandler: (req_id: number, func: string, updatedFriends:boolean, setUpdate:React.Dispatch<React.SetStateAction<boolean>>) => void}) {
+type Props = {
+  req_id: number;
+  updatedFriends: boolean;
+  setUpdate:React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export default function BlockBtn({req_id, updatedFriends, setUpdate}: Props) {
   const confirmBlocklRef = useRef<HTMLDialogElement>(null);
 
 	return (
