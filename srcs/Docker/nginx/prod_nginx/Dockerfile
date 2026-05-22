@@ -13,7 +13,6 @@ RUN npm run build
 
 
 
-
 FROM nginx:stable-alpine
 
 COPY Docker/nginx/prod_nginx/nginx.conf /etc/nginx/nginx.conf
