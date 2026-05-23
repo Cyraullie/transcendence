@@ -17,6 +17,7 @@ staticfiles/
 
 # Secrets
 .env
+*.env_prod
 *.env
 
 # IDE
