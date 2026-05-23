@@ -11,6 +11,13 @@ export function Presence() {
 	useWebSocket(host.ws + "presence/", {
 		shouldReconnect: () => true,
 		
+		heartbeat: {
+			message: JSON.stringify({ type: "heartbeat" }),
+			returnMessage: JSON.stringify({ type: "acknowledge" }),
+			interval: 30000,
+			timeout: 60000,
+		},
+
 		onOpen: () => {
 			console.log("Presence websocket connected");
 		},
