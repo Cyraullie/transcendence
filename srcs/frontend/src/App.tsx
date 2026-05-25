@@ -15,16 +15,18 @@ import Error404 from "./pages/Error404";
 import { GoogleCallback } from "./OAuth/GoogleCallback";
 import { FortyTwoCallback } from "./OAuth/42Callback";
 import { GitCallback } from "./OAuth/GitCallback";
+import { callNotifPopUp } from "./utils/callNotifPopUp";
+
+
 
 function App() {
+
+	callNotifPopUp("caca", "boudin");
   return (
     <main className="bg-(--bg-color) font-[Cause] text-(--font-color) ContentFooterContainer flex flex-col justify-between min-h-dvh">
       <BrowserRouter>
         <Navbar />
         <NotifPopUp
-          isEnabled={false}
-          title="Tu es seul"
-          body="Et tu dois l'accepter"
         />
         <Routes>
           <Route path="/" element={<Home />} />
