@@ -23,7 +23,7 @@ function App() {
 
 	callNotifPopUp("caca", "boudin");
   return (
-    <main className="bg-(--bg-color) font-[Cause] text-(--font-color) ContentFooterContainer flex flex-col justify-between min-h-dvh">
+    <main className={"bg-(--bg-color) text-(--font-color) ContentFooterContainer flex flex-col justify-between min-h-dvh " + fontChoice}>
       <BrowserRouter>
         <Navbar />
         <NotifPopUp
@@ -33,7 +33,7 @@ function App() {
           <Route path="/game" element={<Game />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/settings" element={<Settings setFontChoice={setFontChoice}/>} />
           <Route path="/rules" element={<Rules />} />
           <Route path="/login" element={<Login />} />
           <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
