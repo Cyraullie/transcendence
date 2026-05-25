@@ -13,3 +13,4 @@ export let bodyNotif = "";
 export function setBodyNotif(newValue: string) {
 	bodyNotif = newValue;
 }
+
