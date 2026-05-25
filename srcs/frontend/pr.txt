@@ -1,0 +1,5 @@
+- Refacto all notif system with context.
+- Created context file for createContext et handle context in /contexts
+- Created useNaviguate() to simplify usage of the context
+- added duration parameter
+- created a tester for notif in settings 
