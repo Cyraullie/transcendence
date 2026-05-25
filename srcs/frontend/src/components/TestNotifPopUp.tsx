@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { callNotifPopUp } from "../utils/callNotifPopUp";
+import { useNotif } from "./hooks/useNotif";
 
 export function TestNotifPopUp() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+	const [duration, setDuration] = useState(10000);
+ const notif  = useNotif();
 
   return (
     <div className="">
@@ -28,7 +30,9 @@ export function TestNotifPopUp() {
           id="body"
           onChange={(e) => setBody(e.target.value)}
         />
-        <button  className="btn mt-4" onClick={() => callNotifPopUp(title, body)}>Submit</button> 
+				<label id="duration">duration</label>
+				<input type="range" min={5000} max={50000} defaultValue={10000} onChange={(e) => setDuration(+e.target.value)}/>
+        <button  className="btn mt-4" onClick={() => notif?.showNotif(title, body, duration)}>Submit</button> 
       </div>
     </div>
   );
