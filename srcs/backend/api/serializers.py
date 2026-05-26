@@ -18,6 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
         allow_null=True,
         read_only=True
     )
+    password = None
 
     class Meta:
         model = User
@@ -25,7 +26,6 @@ class UserSerializer(serializers.ModelSerializer):
             "id",
             "username",
             "email",
-            "password",
             "avatar",
             "date_joined",
             "is_online",
@@ -35,8 +35,13 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
         extra_kwargs = {
-            "password": {"write_only": True},
             "id": {"read_only": True},
+            "elo": {"read_only": True},
+            "date_joined": {"read_only": True},
+            "last_login": {"read_only": True},
+            "email": {"read_only": True},
+            "has_password": {"read_only": True},
+            "is_online": {"read_only": True},
         }
 
     def create(self, validated_data):
@@ -47,14 +52,9 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data):
-        password = validated_data.pop("password", None)
-
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
-
-        if password:
-            instance.set_password(password)
-
+    
         instance.save()
         return instance
 
