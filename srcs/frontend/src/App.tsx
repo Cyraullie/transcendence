@@ -16,10 +16,12 @@ import { GoogleCallback } from "./OAuth/GoogleCallback";
 import { FortyTwoCallback } from "./OAuth/42Callback";
 import { GitCallback } from "./OAuth/GitCallback";
 import { Presence } from "./websockets/presence";
+import { useState } from "react";
 
 function App() {
 
-	callNotifPopUp("caca", "boudin");
+	const [fontChoice, setFontChoice] = useState("font-Cause");
+	// callNotifPopUp("caca", "boudin");
   return (
     <main className="bg-(--bg-color) font-[Cause] text-(--font-color) ContentFooterContainer flex flex-col justify-between min-h-dvh">
 	  <Presence />

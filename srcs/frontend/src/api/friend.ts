@@ -2,6 +2,7 @@ import axios, { AxiosError, type AxiosResponse } from 'axios'
 import { getError, type backendErrorT, type errorT } from '../utils/errorType';
 import host from '../api/host'
 import type { friendT } from '../utils/friendType';
+import type { profileT } from '../utils/profileType';
 
 export async function getFriends() { 
 	try {
@@ -16,6 +17,21 @@ export async function getFriends() {
 		return result;
 	}
 }
+
+export async function getProfile(id: number) {
+	try {
+		const res = await axios.get(host.http + 'user/' + id + '/', { timeout: 2000, withCredentials: true});
+		const result:profileT = res.data;
+		return result;
+	} catch (err) {
+		const error = err as AxiosError<backendErrorT>;
+		const result: errorT = {
+			code: error.response?.status ?? 0,
+			response: getError(error.response?.data),
+		}
+		return result;
+	}
+} 
 
 export function friendArray(friends:AxiosResponse<friendT[]>) {
 	const data = friends.data;

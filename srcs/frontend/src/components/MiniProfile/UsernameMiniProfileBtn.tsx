@@ -1,17 +1,16 @@
 
 import { useRef } from "react";
 import MiniProfile from "./MiniProfile";
-import { generateFakeAccount } from "../../utils/test_funcs/generateTestAccount";
 
 type Props = {
   id: number;
+  name: string;
   // showMiniProfileRef: Ref<HTMLDialogElement>;
   updatedFriends: boolean;
   setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function UsernameMiniProfileBtn({id, updatedFriends, setUpdate}: Props) {
-  const fakeAccount = generateFakeAccount();
+export default function UsernameMiniProfileBtn({id, name, updatedFriends, setUpdate}: Props) {
   const showMiniProfileRef = useRef<HTMLDialogElement>(null);
 
 	return (
@@ -20,7 +19,7 @@ export default function UsernameMiniProfileBtn({id, updatedFriends, setUpdate}: 
       className="link-hover"
       onClick={() => showMiniProfileRef.current?.showModal()}
     >
-    {fakeAccount.username}
+    {name}
     </button>
     <dialog
       id="showMiniProfile"

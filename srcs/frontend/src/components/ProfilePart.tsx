@@ -28,7 +28,7 @@ export function ProfilePart({realAccount, setUpdate, updatedProfile}:{realAccoun
               className="modal"
               ref={dialogPseudoRef}
             >
-			<PseudoChange dialogRef={dialogPseudoRef} updatedProfile={updatedProfile} setUpdate={setUpdate} old_user={realAccount.username}/>
+			<PseudoChange dialogRef={dialogPseudoRef} updatedProfile={updatedProfile} setUpdate={setUpdate} old_user={realAccount.username} has_pass={realAccount.has_password}/>
             </dialog>
           </td>
         </tr>
@@ -36,7 +36,7 @@ export function ProfilePart({realAccount, setUpdate, updatedProfile}:{realAccoun
           <th className="th-profile">Email:</th>
           <td>{realAccount.email}</td>
         </tr>
-        { realAccount.has_pass ? <tr> 
+        { realAccount.has_password ? <tr> 
           <th className="th-profile">Password:</th>
           <td>
             *******
