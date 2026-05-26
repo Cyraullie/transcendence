@@ -77,7 +77,7 @@ export async function changeAvatar(in_avatar:string) {
 
 	try {
 		await axios.patch(host.http + 'user/', formData, { timeout: 2000, withCredentials: true});
-		return {code:200};
+		return {code:200, response:""};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
 		const result: errorT = {

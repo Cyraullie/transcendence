@@ -18,7 +18,6 @@ import { GitCallback } from "./OAuth/GitCallback";
 import { useState } from "react";
 import NotifProvider from "./components/contexts/NotifContext";
 import { Presence } from "./websockets/presence";
-import { useState } from "react";
 
 function App() {
   const [fontChoice, setFontChoice] = useState("font-Cause");

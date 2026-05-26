@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { changePassword } from "../api/profile";
 import type { errorT } from "../utils/errorType";
+import { useNotif } from "./hooks/useNotif";
 
 
 export function PswdChange({dialogRef}:{dialogRef:React.RefObject<HTMLDialogElement| null>}) {
@@ -12,7 +13,8 @@ export function PswdChange({dialogRef}:{dialogRef:React.RefObject<HTMLDialogElem
 	const pass1Change = (e: React.ChangeEvent<HTMLInputElement>) => {setPassword1(e.target.value);};
 	const pass2Change = (e: React.ChangeEvent<HTMLInputElement>) => {setPassword2(e.target.value);};
 	const [reason, setReason] = useState<errorT>({code:200,response:""});
-
+	const notif = useNotif();
+	
 	function clean_close() {
 		setOld("");
 		setPassword1("");
@@ -49,6 +51,8 @@ export function PswdChange({dialogRef}:{dialogRef:React.RefObject<HTMLDialogElem
 		const res = await changePassword(old_pass, pass1, pass2);
 		if (res.code !== 200) {
 			setReason(res);
+			notif?.showNotif("Username change error:", res.response, 5000);
+			clean_close();
 			return ;
 		}
 		clean_close();

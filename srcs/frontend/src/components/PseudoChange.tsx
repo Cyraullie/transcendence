@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { changeUsername } from "../api/profile";
-import type { errorT } from "../utils/errorType";
+import { type errorT } from "../utils/errorType";
+import { useNotif } from "./hooks/useNotif";
 
-export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user, has_pass}:{dialogRef: React.RefObject<HTMLDialogElement| null>; updatedProfile:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>; old_user:string, has_pass:bool}) {
+export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user, has_pass}:{dialogRef: React.RefObject<HTMLDialogElement| null>; updatedProfile:boolean; setUpdate:React.Dispatch<React.SetStateAction<boolean>>; old_user:string, has_pass:boolean}) {
 
 	const [name, setName] = useState("");
 	const [password, setPassword] = useState("");
 	const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => {setName(e.target.value);};
 	const passChange = (e: React.ChangeEvent<HTMLInputElement>) => {setPassword(e.target.value);};
 	const [reason, setReason] = useState<errorT>({code:200,response:""});
+	const notif = useNotif();
 
   function validate_inputs (in_name:string, old_pass:string, old_user:string) {
 	if (in_name.trim().length === 0 && (old_pass.length === 0 && has_pass)) {
@@ -39,6 +41,8 @@ export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user, ha
 	const res = await changeUsername(in_name, old_pass);
 	if (res.code !== 200) {
 		setReason(res);
+		notif?.showNotif("Username change error:", res.response, 5000);
+		clean_close();
 		return ;
 	}
 	setUpdate(!updatedProfile);

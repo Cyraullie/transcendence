@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { notifContext } from "./CreateNotifContext";
+import type { notifT } from "../../utils/notifType";
 
 export interface NotifContextType {
   title: string;
@@ -19,13 +20,32 @@ export default function NotifProvider({
   const [body, setBody] = useState("");
   const [isEnabled, setIsEnabled] = useState(false);
   const [duration, setDuration] = useState(10000);
+  const [queue, setQueue] = useState<notifT[]>([])
 
   function showNotif(title: string, body: string, duration?: number) {
-    setIsEnabled(true);
-    setTitle(title);
-    setBody(body);
-    if (duration) setDuration(duration);
+
+	const new_notif = {title:title, message:body, duration:duration};
+	setQueue(queue => [...queue, new_notif])
+    // setIsEnabled(true);
+    // setTitle(title);
+    // setBody(body);
+    // if (duration) setDuration(duration);
   }
+
+  useEffect(() => {
+	function handle_queue() {
+		if (isEnabled || queue.length === 0) {
+			return ;
+		}
+		setTitle(queue[0].title);
+		setBody(queue[0].message);
+		if (queue[0].duration) setDuration(queue[0].duration);
+		setIsEnabled(true);
+
+		setQueue(prev => prev.slice(1));
+	}
+	handle_queue();
+  }, [queue, isEnabled])
 
   function resetNotif() {
     setIsEnabled(false);
