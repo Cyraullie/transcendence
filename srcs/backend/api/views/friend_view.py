@@ -84,10 +84,9 @@ def accept_friend_request(request, request_id):
             to_user=request.user,
             status="pending"
         )
-        #friendship.status = "accepted"
-        #friendship.accepted_at = timezone.now()
-        #friendship.save()
-
+        friendship.status = "accepted"
+        friendship.accepted_at = timezone.now()
+        friendship.save()
 
         channel_layer = get_channel_layer()
 
