@@ -38,7 +38,7 @@ export function PseudoChange({dialogRef, updatedProfile, setUpdate, old_user, ha
 		setReason(check);
 		return ;
 	}
-	const res = await changeUsername(in_name, old_pass);
+	const res = await changeUsername(in_name, old_pass, has_pass);
 	if (res.code !== 200) {
 		setReason(res);
 		notif?.showNotif("Username change error:", res.response, 5000);

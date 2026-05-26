@@ -38,12 +38,12 @@ export default function MiniProfile({id, updatedFriends, setUpdate}: Props) {
             <img src={account.avatar}></img>
           </div>
           <p className="text-green-200 font-extrabold my-2 mx-auto">
-            {account.is_online ? "Online" : ""}
+            {account.is_online && account.friend ? "Online" : ""}
           </p>
         </div>
         <div className="w-full flex justify-end">
           <div >
-            {account.is_friend ? <DeleteBtn req_id={account.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/> : <AddFriendsBtn req_id={account.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>}
+            {account.friend ? <DeleteBtn req_id={account.friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/> : <AddFriendsBtn req_id={account.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>}
           </div>
             <BlockBtn req_id={account.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
         </div>
@@ -57,10 +57,10 @@ export default function MiniProfile({id, updatedFriends, setUpdate}: Props) {
           <th className="th-profile">Joined on:</th>
           <td>{account.date_joined}</td>
         </tr>
-        <tr>
+        {account.friend ? <tr>
           <th className="th-profile">Last login:</th>
           <td>{account.is_online ? "now" : account.last_login}</td>
-        </tr>
+        </tr> : null}
       </table>
       {/* {* if friend *} 
 				 need to modify a lot of thing here like the width of the modal ( surement creer un nouveau component history) */}

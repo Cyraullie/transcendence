@@ -37,6 +37,9 @@ export function PswdChange({dialogRef}:{dialogRef:React.RefObject<HTMLDialogElem
 		} else if (!(/[A-Z]/.test(pass1)) || !(/[a-z]/.test(pass1)) || !/[^a-zA-Z0-9]/.test(pass1)) {
 			setReason({code: -1, response: "New password must contain at least: 1 uppercase, 1 lowercase and 1 special character"})
 			return false;
+		} else if (pass1 == old_pass) {
+			setReason({code: -1, response: "New password cannot be the same as old password!"});
+			return false;
 		}
 		return true;
 	}

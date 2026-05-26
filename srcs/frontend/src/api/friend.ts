@@ -18,6 +18,21 @@ export async function getFriends() {
 	}
 }
 
+export async function getBlocked() { 
+	try {
+		const res = await axios.get(host.http + 'friends/block/', { timeout: 2000, withCredentials: true});
+		const result = friendArray(res);
+		return result;
+	} catch (err) {
+		const error = err as AxiosError<backendErrorT>;
+		const result: errorT = {
+			code: error.response?.status ?? 0,
+			response: getError(error.response?.data),
+		}
+		return result;
+	}
+}
+
 export async function getProfile(id: number) {
 	try {
 		const res = await axios.get(host.http + 'user/' + id + '/', { timeout: 2000, withCredentials: true});
@@ -74,6 +89,16 @@ export async function changeHandler(req_id: number, func: string, updatedFriends
 		if ("code" in res) {
 		console.error(res.response);
 		}
+	} else if (func === "block") {
+		const res = await blockRequest(req_id);
+		if ("code" in res) {
+		console.error(res.response);
+		}	
+	} else if (func === "unblock") {
+		const res = await unblockRequest(req_id);
+		if ("code" in res) {
+		console.error(res.response);
+		}	
 	}
 	setUpdate(!updatedFriends);
 	return;
@@ -110,6 +135,34 @@ export async function denyRequest(req_id:number) {
 export async function deleteRequest(req_id:number) {
 	try {
 		const res = await axios.post(host.http + 'friends/delete/' + req_id + '/',{}, {timeout: 2000, withCredentials: true});
+		return res;
+	} catch (err) {
+		const error = err as AxiosError<backendErrorT>;
+		const result: errorT = {
+			code: error.response?.status ?? 0,
+			response: getError(error.response?.data),
+		}
+		return result;
+	}
+}
+
+export async function blockRequest(req_id:number) {
+	try {
+		const res = await axios.post(host.http + 'friends/block/' + req_id + '/',{}, {timeout: 2000, withCredentials: true});
+		return res;
+	} catch (err) {
+		const error = err as AxiosError<backendErrorT>;
+		const result: errorT = {
+			code: error.response?.status ?? 0,
+			response: getError(error.response?.data),
+		}
+		return result;
+	}
+}
+
+export async function unblockRequest(req_id:number) {
+	try {
+		const res = await axios.post(host.http + 'friends/unblock/' + req_id + '/',{}, {timeout: 2000, withCredentials: true});
 		return res;
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;

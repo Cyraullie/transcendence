@@ -146,7 +146,9 @@ class FriendProfileSerializer(serializers.ModelSerializer):
         friend = self._get_friendship(obj, "accepted")
         
         if not friend:
-            return None
+            friend = self._get_friendship(obj, "pending") ### I'm not sure if this is used elsewhere than in user_data, but hopefully nothing is broken
+            if not friend:
+                return None
     
         return {
             "id": friend.id,

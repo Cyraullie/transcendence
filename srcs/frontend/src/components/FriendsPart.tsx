@@ -147,7 +147,7 @@ export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
               <DeleteBtn req_id={friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
             </td>
             <td>
-              <BlockBtn req_id={friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
+              <BlockBtn req_id={friend.user.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
             </td>
           </tr>
         ))}
