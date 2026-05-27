@@ -1,29 +1,32 @@
 import { FaPlay } from "react-icons/fa";
-import { createFakeGame } from "../utils/test_funcs/createFakeGameAvailable";
-import UsernameMiniProfileBtn from "./MiniProfile/UsernameMiniProfileBtn";
+import { createFakeGame } from "../../utils/test_funcs/createFakeGameAvailable";
+import UsernameMiniProfileBtn from "../MiniProfile/UsernameMiniProfileBtn";
 import { useState } from "react";
+import FilterGame from "./FilterGames";
 
 export default function CreateOrJoin() {
   const availableGames = createFakeGame();
-const [fakeBool, setFakeBool] = useState<boolean>(false);
+  const [fakeBool, setFakeBool] = useState<boolean>(false);
 
   return (
     <div className=" mt-17 h-screen mr-15">
       <h1 className="">Create or join a game!</h1>
       <div className="w-full flex h-screen">
         <div className="createOrJoinBtn-container w-1/3 flex flex-col justify-center items-center max-h-8/12 ">
-            <button className="btn m-3">Create</button>
-            <p>or</p>
-            <div className="joinCode-container m-3">
-              <input
-                className="input w-2/3 m-3"
-                type="text"
-                placeholder="enter game code here"
-              />
-              <button className="btn">Join</button>
-            </div>
+          <button className="btn m-3 btn-primary">Create</button>
+          <p>or</p>
+          <div className="joinCode-container m-3">
+            <input
+              className="input w-2/3 m-3"
+              type="text"
+              placeholder="enter game code here"
+            />
+            <button className="btn">Join</button>
+          </div>
         </div>
         <div className="listAvailableGame w-2/3 flex justify-center bordered overflow-scroll max-h-8/12">
+		<div className="w-full">
+		<FilterGame />
           <table className="table ml-10">
             <thead>
               <tr>
@@ -54,14 +57,18 @@ const [fakeBool, setFakeBool] = useState<boolean>(false);
                           {game.list_player.map((player) => (
                             <li>
                               <a className="text-(--font-color)">
-                                <UsernameMiniProfileBtn id={player.id} updatedFriends={fakeBool} setUpdate={setFakeBool}/>
+                                <UsernameMiniProfileBtn
+                                  id={player.id}
+                                  name={player.username}
+                                  updatedFriends={fakeBool}
+                                  setUpdate={setFakeBool}
+                                />
                               </a>
                             </li>
                           ))}
                         </ul>
                       </div>
                     </td>
-                    <td></td>
                     <td>
                       <button className="btn">
                         <FaPlay />{" "}
@@ -72,6 +79,7 @@ const [fakeBool, setFakeBool] = useState<boolean>(false);
               })}
             </tbody>
           </table>
+		  </div>
         </div>
       </div>
     </div>

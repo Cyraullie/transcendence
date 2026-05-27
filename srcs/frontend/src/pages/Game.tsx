@@ -1,4 +1,4 @@
-import CreateOrJoin from "../components/CreateOrJoin";
+import CreateOrJoin from "../components/Game/CreateOrJoin";
 
 export function Game() {
 	const isInWaitingRoom = false;

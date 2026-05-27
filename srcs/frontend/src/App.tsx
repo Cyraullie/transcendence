@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router";
 import { Home } from "./pages/Home";
-import { Game } from "./pages/GameDana";
+import { Game } from "./pages/Game";
 import { Leaderboard } from "./pages/Leaderboard";
 import { Profile } from "./pages/Profile";
 import { Navbar } from "./components/Navbar";
