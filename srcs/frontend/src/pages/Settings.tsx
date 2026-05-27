@@ -1,15 +1,26 @@
-import type { Dispatch, SetStateAction } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import BlockList from "../components/settings/BlockList";
 import Appareance from "../components/settings/Appareance";
 import Account from "../components/settings/Account";
 import { TestNotifPopUp } from "../components/TestNotifPopUp";
-import { logged_in } from "../api/login_status";
+import { checkAuth } from "../api/checkAuth";
 
 export function Settings({
   setFontChoice,
 }: {
   setFontChoice: Dispatch<SetStateAction<string>>;
 }) {
+	const [islogged, setLogged] = useState(false);
+
+	useEffect(() => {
+		async function checklog() {
+			if ((await checkAuth())) {
+				setLogged(true);
+			}
+		}
+		checklog();
+	}, []);
+
   return (
     <div className="page-content mt-17">
       <h1 className="text-4xl text-center">Settings</h1>
@@ -37,7 +48,7 @@ export function Settings({
         <div className="collapse-title">
           <h2 className="text-center">BlockList</h2>
         </div>
-        {logged_in ? <div className="collapse-content">
+        {islogged ? <div className="collapse-content">
 		<BlockList />
         </div> : null}
       </div>

@@ -10,14 +10,14 @@ export default function BlockList() {
   const confirmUnblockRef = useRef<HTMLDialogElement>(null);
   const [updatedBlocked, setUpdatedBlocked] = useState(false);
   const notif = useNotif();
-  
   useEffect(() => {
+	
 	async function retrieveBlocked() {
 		const tmpBlocked = await getBlocked();
 		setBlocked(tmpBlocked);
 	}
 	retrieveBlocked();
-  }, []);
+  }, [updatedBlocked]);
 
   if ('code' in blocklist) {
 	notif?.showNotif("Unexpected error:", "Error displaying blocked list.", 5000);
@@ -65,7 +65,7 @@ export default function BlockList() {
                             onClick={() =>
                               changeHandler(
                                 blocked.id,
-                                "unblocked",
+                                "unblock",
                                 updatedBlocked,
                                 setUpdatedBlocked,
 								null,
