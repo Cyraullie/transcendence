@@ -4,17 +4,20 @@ import AddFriendsBtn from "../AddFriendsBtn";
 import BlockBtn from "../BlockBtn";
 import type { profileT } from "../../utils/profileType";
 import type { historyT } from "../../utils/historyType";
+import type { errorT } from "../../utils/errorType";
 
 type Props = {
-  account: profileT;
+  account: profileT | errorT;
   updatedFriends: boolean;
   setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
-  history: historyT[] | null;
+  history: historyT[] | errorT;
   profileRef: React.RefObject<HTMLDialogElement | null>
 };
 
 export default function MiniProfile({account, updatedFriends, setUpdate, history, profileRef}: Props) {
 
+  if ('code' in account)
+	return ;
   return (
     <>
     <div className="modal-box bg-(--nav-color)">

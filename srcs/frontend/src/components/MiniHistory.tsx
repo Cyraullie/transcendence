@@ -2,10 +2,11 @@ import { useState } from "react";
 import type { historyT } from "../utils/historyType";
 import type { playerT } from "../utils/playerType";
 import UsernameMiniProfileBtn from "./MiniProfile/UsernameMiniProfileBtn";
+import type { errorT } from "../utils/errorType";
 
 
 type Props = {
-  history:historyT[] | null;
+  history:historyT[] | errorT;
   updatedProfile:boolean;
   setUpdate:React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -15,12 +16,14 @@ export function MiniHistory({history, updatedProfile, setUpdate}:Props) {
   const [nbSlice, setNbSlice] = useState(10);
 
 
-  if (!history) {
+  if ('code' in history) {
+	if (history.response === "Forbidden: not friends")
+		return <p>Send a friend request to see this person's history!</p>;
     return <p>Error displaying history</p>;
   }
 
   function handleMoreLessBtn() {
-    if (!history) {
+    if ('code' in history) {
       return;
     }
     if (isMore) {
