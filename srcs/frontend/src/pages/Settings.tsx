@@ -2,7 +2,6 @@ import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import BlockList from "../components/settings/BlockList";
 import Appareance from "../components/settings/Appareance";
 import Account from "../components/settings/Account";
-import { TestNotifPopUp } from "../components/TestNotifPopUp";
 import { checkAuth } from "../api/checkAuth";
 
 export function Settings({
@@ -52,7 +51,6 @@ export function Settings({
 		<BlockList />
         </div> : null}
       </div>
-	  <TestNotifPopUp />
     </div>
   );
 }
