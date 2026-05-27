@@ -10,9 +10,10 @@ type Props = {
   updatedFriends: boolean;
   setUpdate: React.Dispatch<React.SetStateAction<boolean>>;
   history: historyT[] | null;
+  profileRef: React.RefObject<HTMLDialogElement | null>
 };
 
-export default function MiniProfile({account, updatedFriends, setUpdate, history}: Props) {
+export default function MiniProfile({account, updatedFriends, setUpdate, history, profileRef}: Props) {
 
   return (
     <>
@@ -29,9 +30,9 @@ export default function MiniProfile({account, updatedFriends, setUpdate, history
         </div>
         <div className="w-full flex justify-end">
           <div >
-            {account.friend ? <DeleteBtn req_id={account.friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/> : <AddFriendsBtn req_id={account.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>}
+            {account.friend ? <DeleteBtn req_id={account.friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={profileRef}/> : <AddFriendsBtn req_id={account.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={profileRef}/>}
           </div>
-            <BlockBtn req_id={account.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
+            <BlockBtn req_id={account.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={profileRef}/>
         </div>
       </div>
       <table className="mt-5">

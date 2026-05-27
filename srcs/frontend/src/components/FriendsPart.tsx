@@ -98,13 +98,13 @@ export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
                       <div className="btn-accept-or-reject flex gap-3">
                         <button
                           className="btn btn-circle validate"
-                          onClick={() => changeHandler(request.id, "accept", updatedFriends, setUpdate)}
+                          onClick={() => changeHandler(request.id, "accept", updatedFriends, setUpdate, null)}
                         >
                           <RxCheck />
                         </button>
                         <button
                           className="btn btn-circle del"
-                          onClick={() => changeHandler(request.id, "deny", updatedFriends, setUpdate)}
+                          onClick={() => changeHandler(request.id, "deny", updatedFriends, setUpdate, null)}
                         >
                           <RxCross2 />
                         </button>
@@ -144,10 +144,10 @@ export function Friends({friends, requests, updatedFriends, setUpdate}: Props) {
                 : friend.accepted_at}
             </td>
             <td className="w-16">
-              <DeleteBtn req_id={friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
+              <DeleteBtn req_id={friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={null}/>
             </td>
             <td>
-              <BlockBtn req_id={friend.user.id} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
+              <BlockBtn req_id={friend.user.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={null}/>
             </td>
           </tr>
         ))}

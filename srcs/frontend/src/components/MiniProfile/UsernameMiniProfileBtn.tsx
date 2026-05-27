@@ -57,7 +57,7 @@ export default function UsernameMiniProfileBtn({id, name, updatedFriends, setUpd
       className="modal"
       ref={showMiniProfileRef}
     >
-      <MiniProfile account={account} updatedFriends={updatedFriends} setUpdate={setUpdate} history={history}/>
+      <MiniProfile account={account} updatedFriends={updatedFriends} setUpdate={setUpdate} history={history} profileRef={showMiniProfileRef}/>
     </dialog>
       </>
 	);

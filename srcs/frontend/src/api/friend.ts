@@ -3,6 +3,7 @@ import { getError, type backendErrorT, type errorT } from '../utils/errorType';
 import host from '../api/host'
 import type { friendT } from '../utils/friendType';
 import type { profileT } from '../utils/profileType';
+import { useNotif } from '../components/hooks/useNotif';
 
 export async function getFriends() { 
 	try {
@@ -73,32 +74,49 @@ export async function friendRequest(id:number) {
 	}
 }
 
-export async function changeHandler(req_id: number, func: string, updatedFriends:boolean, setUpdate:React.Dispatch<React.SetStateAction<boolean>>) {
+function Sendnotif(title:string, message:string) {
+	const notif = useNotif();
+	notif?.showNotif(title, message, 5000);
+}
+
+export async function changeHandler(req_id: number, func: string, updatedFriends:boolean, setUpdate:React.Dispatch<React.SetStateAction<boolean>>,   profileRef: React.RefObject<HTMLDialogElement | null> | null) {
+	
+
 	if (func === "accept") {
 		const res = await acceptRequest(req_id);
 		if ("code" in res) {
-		console.error(res.response);
+			Sendnotif("Accept Error:", "There was an unexpected error accepting the friend request.")
+		} else {
+			profileRef?.current?.close();
 		}
 	} else if (func === "deny") {
 		const res = await denyRequest(req_id);
 		if ("code" in res) {
-		console.error(res.response);
+			Sendnotif("Deny Error:", "There was an unexpected error denying the friend request.")
+		} else {
+			profileRef?.current?.close();
 		}
 	} else if (func === "delete") {
 		const res = await deleteRequest(req_id);
 		if ("code" in res) {
-		console.error(res.response);
+			Sendnotif("Delete Error:", "There was an unexpected error deleting the friend.")
+		} else {
+			profileRef?.current?.close();
 		}
 	} else if (func === "block") {
 		const res = await blockRequest(req_id);
 		if ("code" in res) {
-		console.error(res.response);
+			Sendnotif("Block Error:", "There was an unexpected error blocking this individual.")
+		} else {
+			profileRef?.current?.close();
 		}	
 	} else if (func === "unblock") {
 		const res = await unblockRequest(req_id);
 		if ("code" in res) {
-		console.error(res.response);
-		}	
+			Sendnotif("Unblock Error:", "There was an unexpected error unblocking this person.")
+		} else {
+			profileRef?.current?.close();
+		}
 	}
 	setUpdate(!updatedFriends);
 	return;
