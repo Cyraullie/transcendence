@@ -28,11 +28,16 @@ def create_room(request):
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([IsAuthenticated])
-def add_bot(request, code):
+def add_bot(request, code, nb_bot):
     room = Room.objects.get(
         code=code
     )
-    
+    if room.nb_player + nb_bot >= room.max_player:
+        return Response(
+            {"message": "too many player in that room"},
+            status= 401
+        )
+
     if (room.nb_player == 7):
         return Response(
             {"message": "too many player in that room"},
@@ -40,22 +45,26 @@ def add_bot(request, code):
         )
         
     if (room.host == request.user):
-        last_bot = PlayerPresence.objects.filter(is_human=False, room=room).last()
-        if (last_bot == None):
-            user = User.objects.get(username= "BOT0")
-        else:
-            user = User.objects.get(id= int(last_bot.player_id))
-            
-            result = user.username.removeprefix("BOT")
-            if (result == ""):
-                nbr = 0
+
+        while nb_bot > 0:
+            last_bot = PlayerPresence.objects.filter(is_human=False, room=room).last()
+            if (last_bot == None):
+                user = User.objects.get(username= "BOT0")
             else:
-                nbr = int(result) + 1
-            user = User.objects.get(username= f"BOT{nbr}")
-        add_bot_to_room(user, code)
-        room = Room.objects.get(
-            code=code
-        )
+                user = User.objects.get(id= int(last_bot.player_id))
+                
+                result = user.username.removeprefix("BOT")
+                if (result == ""):
+                    nbr = 0
+                else:
+                    nbr = int(result) + 1
+                user = User.objects.get(username= f"BOT{nbr}")
+            add_bot_to_room(user, code)
+            room = Room.objects.get(
+                code=code
+            )
+            
+            nb_bot -= 1
         ret = {}
         
         for i in range(room.nb_player):
