@@ -4,16 +4,18 @@ services:
     profiles: [dev, prod]
     container_name: mariadb
     restart: unless-stopped
-    
+    ports:
+      - "3306:3306" # TODO: Remove before the end
+
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       start_period: 30s
       interval: 10s
       timeout: 5s
       retries: 3
-    
+
     environment:
-      MYSQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD} #should we replace these with docker secrets?
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
@@ -24,7 +26,7 @@ services:
       - ./Docker/mariadb/tools/init.sh:/docker-entrypoint-initdb.d/init.sh
     networks:
       - transcendence
- 
+
   nginx_dev:
     build:
       context: ./Docker/nginx/dev_nginx
@@ -42,10 +44,18 @@ services:
     build:
       context: .
       dockerfile: Docker/nginx/prod_nginx/Dockerfile
+      args:
+        VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL} #should we replace these with docker secrets?
+        VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+        VITE_42_OAUTH_CALLBACK_URL: ${FORTYTWO_OAUTH_CALLBACK_URL}
+        VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}
+        VITE_GIT_OAUTH_CALLBACK_URL: ${GIT_OAUTH_CALLBACK_URL}
+        VITE_GIT_OAUTH_CLIENT_ID: ${GIT_OAUTH_CLIENT_ID}
+        DOMAIN_NAME: ${DOMAIN_NAME}
     profiles: [prod]
     container_name: nginx_prod
     ports:
-      - "80:80"
+      - "443:443"
     depends_on:
       - django
     networks:
@@ -67,7 +77,7 @@ services:
       DATABASE_ENGINE: ${DB_ENGINE}
       DATABASE_NAME: ${DB_NAME}
       DATABASE_USERNAME: ${DB_USER}
-  
+
       DATABASE_PASSWORD: ${DB_PASSWORD}
       DATABASE_HOST: ${DB_HOST}
       DATABASE_PORT: ${DB_PORT}
@@ -86,6 +96,12 @@ services:
       - "5173:5173"
     environment:
       NODE_ENV: development
+      VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL} #should we replace these with docker secrets?
+      VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+      VITE_42_OAUTH_CALLBACK_URL: ${FORTYTWO_OAUTH_CALLBACK_URL}
+      VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}
+      VITE_GIT_OAUTH_CALLBACK_URL: ${GIT_OAUTH_CALLBACK_URL}
+      VITE_GIT_OAUTH_CLIENT_ID: ${GIT_OAUTH_CLIENT_ID}
     volumes:
       - ./frontend:/app
       - /app/node_modules

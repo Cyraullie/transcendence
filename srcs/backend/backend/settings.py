@@ -17,9 +17,6 @@ from datetime import timedelta
 
 load_dotenv()
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = "/app/media"
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,7 +36,8 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS","127.0.0.1").split(",")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS","localhost").split(",")
+CSRF_TRUSTED_ORIGINS = os.environ.get("DJANGO_TRUSTED_ORIGINS", "http://localhost:5173").split(",")
 
 
 # Application definition
@@ -53,11 +51,69 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'django.contrib.sites',
     "rest_framework",
+	'rest_framework.authtoken',
+	'allauth',
+	'allauth.account',
+	'allauth.socialaccount',
+	'allauth.socialaccount.providers.google',
+	'dj_rest_auth.registration',
 	"api",
 	"game",
 ]
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+#Following guide for google login, need to doublecheck ..
+# how it would impact us if we want to have email verification later
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+ACCOUNT_EMAIL_VERIFCATION = "none"
+
+# BASE_APP_URL=os.getenv("BASE_APP_URL")
+# BASE_API_URI=os.getenv("BASE_API_URI")
+GOOGLE_OAUTH_CALLBACK_URL=os.getenv("GOOGLE_OAUTH_CALLBACK_URL")
+GOOGLE_OAUTH_CLIENT_ID=os.getenv("GOOGLE_OAUTH_CLIENT_ID") 
+GOOGLE_OAUTH_CLIENT_SECRET=os.getenv("GOOGLE_OAUTH_CLIENT_SECRET") 
+
+GIT_OAUTH_CALLBACK_URL=os.getenv("GIT_OAUTH_CALLBACK_URL")
+GIT_OAUTH_CLIENT_ID=os.getenv("GIT_OAUTH_CLIENT_ID") 
+GIT_OAUTH_CLIENT_SECRET=os.getenv("GIT_OAUTH_CLIENT_SECRET") 
+
+FORTYTWO_OAUTH_CALLBACK_URL=os.getenv("FORTYTWO_OAUTH_CALLBACK_URL")
+FORTYTWO_OAUTH_CLIENT_ID=os.getenv("FORTYTWO_OAUTH_CLIENT_ID")
+FORTYTWO_OAUTH_CLIENT_SECRET=os.getenv("FORTYTWO_OAUTH_CLIENT_SECRET") ## Needs to be in env
+
+
+
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+SOCIALACCOUNT_PROVIDERS = {
+	"google": {
+		"APPS": [
+			{
+				"client_id": GOOGLE_OAUTH_CLIENT_ID,
+				"secret": GOOGLE_OAUTH_CLIENT_SECRET,
+				"key": "",
+			},
+		],
+		"SCOPE": ["profile", "email"],
+		"AUTH_PARAMS": {
+			"access_type": "online",
+		},
+	}
+}
+
+# django.contrib.sites
+SITE_ID = 1
+
+REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_COOKIE": "access",
+    "JWT_AUTH_REFRESH_COOKIE": "refresh",
+    "JWT_AUTH_HTTPONLY": True,
+}
 
 CHANNEL_LAYERS = {
     "default": {
@@ -76,13 +132,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'allauth.account.middleware.AccountMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]
+CORS_ALLOWED_ORIGINS =os.environ.get("CORS_ALLOWED_ORIGINS","").split(",")  ### This should only be applicable in dev mode: tbc if we need to remove in prod to be safe
 
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = os.getenv("CORS_ALLOW_CREDENTIALS") == "True"
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -147,7 +202,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'api.authentication.CookieAuth',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',

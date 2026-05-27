@@ -1,55 +1,14 @@
-import { profileRequest } from "../api/profile"; // changeEmail
 import type { accountT } from "../utils/accountType";
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import type { errorT } from "../utils/errorType";
+import { useRef } from "react";
 import { AvatarSelection } from "./AvatarSelection";
 import { PswdChange } from "./PswdChange";
 import { PseudoChange } from "./PseudoChange";
-import { refreshAuth } from "../api/checkAuth";
 
-export function ProfilePart() {
-  const [realAccount, setAccount] = useState<accountT | errorT>({
-    code: 0,
-    response: "",
-  });
-  const navigate = useNavigate();
-  const [updatedProfile, setUpdate] = useState(false);
+
+export function ProfilePart({realAccount, setUpdate, updatedProfile}:{realAccount:accountT; setUpdate:React.Dispatch<React.SetStateAction<boolean>>; updatedProfile:boolean}) {
+
   const dialogPswdRef = useRef<HTMLDialogElement>(null);
   const dialogPseudoRef = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    async function getProfile() {
-      let result = await profileRequest();
-
-	  if ("code" in result) {
-		if (result.code === 401) {
-			if (!(await refreshAuth())) {
-				navigate('/login');
-			}
-			result = await profileRequest();
-		}
-      }
-	  setAccount(result);
-      return;
-    }
-
-    getProfile();
-  }, [updatedProfile, navigate]);
-
-  if ("code" in realAccount) {
-    return <p>Error: {realAccount.response}</p>; // improve message
-  }
-
-//   async function updateEmail(in_email:string) {
-// 	const res = await changeEmail(in_email);
-// 	if (!res) {
-// 		console.error('email failure');
-// 		return ;
-// 	}
-// 	setUpdate(!updatedProfile);
-// 	return ;
-//   }
 
   return (
     <div>
@@ -69,7 +28,7 @@ export function ProfilePart() {
               className="modal"
               ref={dialogPseudoRef}
             >
-			<PseudoChange dialogRef={dialogPseudoRef} updatedProfile={updatedProfile} setUpdate={setUpdate} old_user={realAccount.username}/>
+			<PseudoChange dialogRef={dialogPseudoRef} updatedProfile={updatedProfile} setUpdate={setUpdate} old_user={realAccount.username} has_pass={realAccount.has_password}/>
             </dialog>
           </td>
         </tr>
@@ -77,7 +36,7 @@ export function ProfilePart() {
           <th className="th-profile">Email:</th>
           <td>{realAccount.email}</td>
         </tr>
-        <tr>
+        { realAccount.has_password ? <tr> 
           <th className="th-profile">Password:</th>
           <td>
             *******
@@ -96,7 +55,7 @@ export function ProfilePart() {
               <PswdChange dialogRef={dialogPswdRef} />
             </dialog>
           </td>
-        </tr>
+        </tr> : null }
         <tr>
           <th className="th-profile">Joined on:</th>
           <td>{realAccount.date_joined}</td>

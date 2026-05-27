@@ -1,52 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { historyT } from "../utils/historyType";
-import type { errorT } from "../utils/errorType";
-import { getHistory, historyArray } from "../api/history";
 import type { playerT } from "../utils/playerType";
-import { useNavigate } from "react-router-dom";
-import { refreshAuth } from "../api/checkAuth";
+import UsernameMiniProfileBtn from "./MiniProfile/UsernameMiniProfileBtn";
 
-export function History() {
+type Props = {
+  gameHistory:historyT[];
+  updatedProfile:boolean;
+  setUpdate:React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export function History({gameHistory, updatedProfile, setUpdate}: Props) {
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(10)
-  const [gameHistory, setHistory] = useState< historyT[] | errorT>({code: 0, response: ''});
-  const navigate = useNavigate();
-
-  	useEffect(() => {
-		async function retrieveHistory() {
-			let res = await getHistory();
-			if ('code' in res) {
-				if (res.code === 401) {
-					if (!(await refreshAuth())) {
-						navigate('/login');
-					}
-					res = await getHistory();
-				}
-				if ('code' in res) {
-					setHistory(res);
-				}
-				else {
-					const arr = await historyArray(res);
-					setHistory(arr);
-				}
-			} else {
-				const arr = await historyArray(res);
-				setHistory(arr);
-			}	
-		}
-
-		retrieveHistory();
-
-	}, [navigate])
-
-	if ('code' in gameHistory) {
-		return <p>Error: {String(gameHistory.response)}</p>;
-	} 
 
   function handleMoreLessBtn() {
-	  if ('code' in gameHistory) {
-		return ;
-	  }
 	  if (isMore) {
 		  setIsMore(false);
 		  setNbSlice(10);
@@ -97,7 +64,7 @@ export function History() {
               >
                 {game.players.map((player: playerT) => (
                   <li>
-                    <a className="text-(--font-color)">{player.username}</a>
+			  			<UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={updatedProfile} setUpdate={setUpdate}/>
                   </li>
                 ))}
               </ul>
@@ -106,7 +73,7 @@ export function History() {
         </tr>
       ))}
       <a className="my-auto link" onClick={() => handleMoreLessBtn()}>
-        {gameHistory.length ? (isMore ? "Show less" : "Show more") : ""}
+        {gameHistory.length > 10? (isMore ? "Show less" : "Show more") : ""}
         
       </a>
     </table>
