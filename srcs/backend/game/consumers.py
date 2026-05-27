@@ -6,6 +6,8 @@ from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
 from game_engine.bot.bot import bot
 import copy
+import time
+from channels.exceptions import ChannelFull
 
 CARD_VALUES = {
     "6": 6,
@@ -247,27 +249,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
         )
         await self.send_init()
 
-        p = await sync_to_async(PlayerPresence.objects.get)(
-            room=room,
-            position= game_state["playing"]
-        )
-        while (not p.is_human):
-            position = game_state["playing"]
-            legal = game.handleAction("legal", game_state, idPlayer= position)
-            card = bot(game_state, position, legal, p.difficulty)
-            game_state = game.handleAction("play", game_state, idPlayer= position, idCard= card)
-            await save_room_state(room.uuid, game_state)
-
-            await self.send_data()
-            p = await sync_to_async(PlayerPresence.objects.get)(
-                room=room,
-                position= game_state["playing"]
-            )
-        self.send_data()
+        await self.playBot(game_state, room, game)
 
     async def end(self, room, game):
         player_finished = 0
-        game_state = room.game_states
+        game_state = room.game_state
         for player_id, player_data in game_state["players"].items():
             if len(player_data["cards"]) == 0:
                 player_finished += 1
@@ -378,57 +364,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
             stat.prefered_trick = preferred
             await sync_to_async(stat.save)()
 
-        if (self.end(room, game)):
-            return 
-
         await self.send_data()
 
-        p = await sync_to_async(PlayerPresence.objects.get)(
-            room=room,
-            position= await get_player_pos(self.user, room.code)
-        )
-        while (not p.is_human or not p.is_online):
-            position = str(game_state["playing"])
-            card = bot(game_state, position, legal, p.difficulty)
-            game_state = game.handleAction("play", game_state, idPlayer= position, idCard= card)
-            await save_room_state(room.uuid, game_state)
+        print("before play bot")
+        await self.playBot(game_state, room, game)
 
-            if (self.end(room, game)):
-                return
-
-            await self.send_data()
-
-            player_finished = 0
-            for player_id, player_data in game_state["players"].items():
-                p = await sync_to_async(PlayerPresence.objects.get)(
-                    room=room,
-                    position= await get_player_pos(self.user, room.code)
-                )
-                if len(player_data["cards"]) == 0:
-                    player_finished += 1
-
-            p = await sync_to_async(PlayerPresence.objects.get)(
-                room=room,
-                position=int(game_state["playing"])
-            )
-                
-        if player_finished == room.nb_player:
-            stat = await sync_to_async(Stat.objects.get)(user_id=p.player_id)
-            stat.nb_last_take += 1
-            await sync_to_async(stat.save)()
-            game_state = game.handleAction("point", game_state)
-            await save_room_state(room.uuid, game_state)
-            await self.channel_layer.group_send(
-                self.group_name,
-                {
-                    "type": "room_event",
-                    "event": "message",
-                    "payload": {
-                        "message": "game finished do you want continue or stop ?"
-					}
-                }
-            )
-            return
         await self.send_data()
 
     async def handle_melds(self, payload: dict):
@@ -672,10 +612,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }))
             return
         
-        # for player_id, player_data in room.game_state["players"].items():
-        #     if len(player_data["cards"]) != 0:
-        #         return
-        
         game = GameEngine(room.uuid)
         game_state = game.handleAction("start", room.game_state, await count_player(room.code))
                 
@@ -693,22 +629,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         )
         await self.send_data()
 
-        p = await sync_to_async(PlayerPresence.objects.get)(
-            room=room,
-            position= game_state["playing"]
-        )
-        while (not p.is_human):
-            position = str(game_state["playing"])
-            legal = game.handleAction("legal", game_state, idPlayer= position)
-            card = bot(game_state, position, legal, p.difficulty)
-            game_state = game.handleAction("play", game_state, idPlayer= position, idCard= card)
-            await save_room_state(room.uuid, game_state)
-
-            await self.send_data()
-            p = await sync_to_async(PlayerPresence.objects.get)(
-                room=room,
-                position= game_state["playing"]
-            )
+        await self.playBot(game_state, room, game)
 
     async def handle_end_game(self):
         room = await get_room_with_host(self.code)
@@ -739,6 +660,28 @@ class RoomConsumer(AsyncWebsocketConsumer):
 				}
             }
         )
+
+    async def playBot(self, game_state, room, game):
+        p = await sync_to_async(PlayerPresence.objects.get)(
+            room=room,
+            position=int(game_state["playing"])
+        )
+        while (not p.is_human or not p.is_online):
+            position = str(game_state["playing"])
+            legal = game.handleAction("legal", game_state, idPlayer= position)
+            card = bot(game_state, position, legal, p.difficulty)
+            game_state = game.handleAction("play", game_state, idPlayer= position, idCard= card)
+            await save_room_state(room.uuid, game_state)
+            
+            if (await self.end(room, game)):
+                return
+            
+            await self.send_data()
+
+            p = await sync_to_async(PlayerPresence.objects.get)(
+                room=room,
+                position=int(game_state["playing"])
+            )
 
     async def get_position(self, cardId):
         room = await get_room_with_host(self.code)
@@ -804,41 +747,44 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 room=room,
                 position=int(player_id)
             )
-            if int(player_id) == game_state["playing"]:
-                legal = game.handleAction("legal", game_state, idPlayer=str(player_id))
-                if p.channel_name:
-                    await self.channel_layer.send(
-                        p.channel_name,
+            try:
+                if int(player_id) == game_state["playing"]:
+                    legal = game.handleAction("legal", game_state, idPlayer=str(player_id))
+                    if p.channel_name:
+                        await self.channel_layer.send(
+                            p.channel_name,
+                            {
+                                "type": "private_event",
+                                "event": "init_cards",
+                                "payload": {
+                                    "hand": player_data["cards"],
+                                    "board": game_state["board"],
+                                    "taken": player_data["taken"],
+                                    "puntos": player_data["puntos"],
+                                    "legal": legal,
+                                }
+                            }
+                        )
+                else:
+                    player_puntos = {}
+
+                    for player_id, player_data in game_state["players"].items():
+                        player_puntos[player_id] = player_data["puntos"]
+                    
+                    await self.channel_layer.group_send(
+                        self.group_name,
                         {
-                            "type": "private_event",
-                            "event": "init_cards",
+                            "type": "room_event",
+                            "event": "board_data",
                             "payload": {
-                                "hand": player_data["cards"],
                                 "board": game_state["board"],
-                                "taken": player_data["taken"],
-                                "puntos": player_data["puntos"],
-                                "legal": legal,
+                                "puntos": player_puntos
                             }
                         }
                     )
-            else:
-                player_puntos = {}
+            except ChannelFull:
+                print("Channel is full. Dropping message.")
 
-                for player_id, player_data in game_state["players"].items():
-                    player_puntos[player_id] = player_data["puntos"]
-                
-                await self.channel_layer.group_send(
-                    self.group_name,
-                    {
-                        "type": "room_event",
-                        "event": "board_data",
-                        "payload": {
-                            "board": game_state["board"],
-                            "puntos": player_puntos
-                        }
-                    }
-                )
-    
     def get_username(self):
         user = self.scope.get("user")
         return user.username if user and user.is_authenticated else "anonymous"
