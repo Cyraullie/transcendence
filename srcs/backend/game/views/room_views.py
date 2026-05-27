@@ -84,42 +84,41 @@ def is_presence(request):
         "presence": presence
     }, status=200)
 
-@api_view(["GET"])
-@authentication_classes([OptionalJWTAuthentication])
-@permission_classes([IsAuthenticated])
-def list_public_room(request):
+
+
+def list_public_room(request, data):
     rooms = Room.objects.filter(
         is_private=0,
         status="open"
     )
-    data = []
     
     for room in rooms:
-        players = PlayerPresence.objects.filter(
-			room=room
-		)
-        list_player = [
-			{
-				"username": player.player.username,
-			}
-            for player in players
-		]
-        data.append(
-            {
-                "id": room.id,
-                "code": room.code,
-                "nb_player": room.nb_player,
-                "list_player": list_player,
-                "host": room.host.username,
-            }
-		)
+        if not any(x["code"] == room.code for x in data):
+            players = PlayerPresence.objects.filter(
+		    	room=room
+		    )
+            list_player = [
+		    	{
+		    		"id": player.player.id,
+		    		"username": player.player.username,
+		    	}
+                for player in players
+		    ]
+        
+            data.append(
+                {
+                    "id": room.id,
+                    "code": room.code,
+                    "type": "public",
+                    "nb_player": room.nb_player,
+                    "list_player": list_player,
+                    "host": room.host.username,
+                }
+		    )
     
-    return Response(data, status=200)
+    return data
 
-@api_view(["GET"])
-@authentication_classes([OptionalJWTAuthentication])
-@permission_classes([IsAuthenticated])
-def list_friend_room(request):
+def list_friend_room(request, data):
 
     friendships = Friendship.objects.filter(
         Q(from_user=request.user) | Q(to_user=request.user),
@@ -157,10 +156,8 @@ def list_friend_room(request):
 
         room_map[room_id]["players"].append(p)
 
-        if p.player in friends:
+        if p.room.host in friends:
             room_map[room_id]["has_friend"] = True
-
-    data = []
 
     for value in room_map.values():
 
@@ -171,6 +168,7 @@ def list_friend_room(request):
 
         list_player = [
             {
+                "id": p.player.id,
                 "username": p.player.username
             }
             for p in value["players"]
@@ -179,13 +177,27 @@ def list_friend_room(request):
         data.append({
             "id": room.id,
             "code": room.code,
+            "type": "friends",
             "nb_player": room.nb_player,
             "list_player": list_player,
             "host": room.host.username if room.host else None,
         })
 
-    return Response(data, status=200)
+    return data
 
+#TODO add type
+@api_view(["GET"])
+@authentication_classes([OptionalJWTAuthentication])
+@permission_classes([IsAuthenticated])
+def list_room(request):
+    data = []
+    data = list_friend_room(request, data)
+    data = list_public_room(request, data)
+
+    return Response(data, status=200)
+    
+
+#TODO only one game start at the time in the db by user
 @api_view(["GET"])
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([IsAuthenticated])
