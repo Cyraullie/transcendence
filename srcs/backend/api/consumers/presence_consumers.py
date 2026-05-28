@@ -31,9 +31,8 @@ class PresenceConsumer(AsyncWebsocketConsumer):
                 status="accepted"
             ).select_related("from_user", "to_user")
         )
-        print(friendships)
+        
         for friendship in friendships:
-            print(friendship)
             target = (
                 friendship.to_user
                 if friendship.from_user == self.user
