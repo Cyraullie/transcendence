@@ -225,7 +225,7 @@ class FriendSerializer(serializers.ModelSerializer):
             "id": friend.id,
             "username": friend.username,
             "avatar": friend.avatar,
-            "is_online": friend.is_online
+            "is_online": friend.is_online if obj.status == "accepted" else False
         }
 
     def get_can_accept(self, obj):
