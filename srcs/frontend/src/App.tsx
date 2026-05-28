@@ -18,6 +18,7 @@ import { GitCallback } from "./OAuth/GitCallback";
 import { useState } from "react";
 import NotifProvider from "./components/contexts/NotifContext";
 import { Presence } from "./websockets/presence";
+import { Notifications } from "./websockets/notifcations";
 
 function App() {
   const [fontChoice, setFontChoice] = useState("font-Cause");
@@ -31,6 +32,7 @@ function App() {
         }
       >
         <Presence />
+		<Notifications />
         <BrowserRouter>
           <Navbar />
           <NotifPopUp />

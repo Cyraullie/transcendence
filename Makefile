@@ -79,6 +79,7 @@ fclean:
 
 prod-build: down
 	@$(COMPOSE) build --no-cache django
+	@$(PROD_COMPOSE) build --no-cache nginx_prod
 	@$(MAKE) prod-up
 
 dev-build: down
