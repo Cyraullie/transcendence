@@ -41,7 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
             "elo": {"read_only": True},
             "date_joined": {"read_only": True},
             "last_login": {"read_only": True},
-            "email": {"read_only": True},
+            # "email": {"read_only": True},
             "has_password": {"read_only": True},
             "is_online": {"read_only": True},
         }

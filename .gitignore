@@ -19,6 +19,7 @@ staticfiles/
 # Secrets
 .env
 .env_prod
+.env_ip_test
 *.env
 
 # IDE
