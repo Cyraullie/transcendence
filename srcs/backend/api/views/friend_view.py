@@ -184,7 +184,20 @@ def block_friend(request, user_id):
             blocked_by=request.user,
             blocked_at=timezone.now(),
         )
-
+    target = (
+        friendship.to_user
+        if friendship.from_user == request.user
+        else friendship.from_user
+    )
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f"user_{target.id}",
+        {
+            "type": "notify",
+            "type_notify": "friend_blocked",
+            "event": "update"
+        }
+    )
     return Response({
         "message": "User blocked"
     })
