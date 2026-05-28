@@ -14,14 +14,10 @@ import uuid
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([IsAuthenticated])
 def create_room(request):
-    private = request.data.get("private")
-    if private == None:
-        private = 0
     room_code = str(uuid.uuid4())[:8]
     room = Room.objects.create(
         code=room_code,
-        host=request.user,
-        is_private=private,
+        host=request.user
     )
     return Response(RoomSerializer(room).data, status=201)
 
@@ -361,10 +357,24 @@ def update_params(request, code):
                 {"message": "Invalid number of player max"},
                 status= 401
             )
-            
+    if "type" in request.data:
+        if request.data["type"] != "public" and request.data["type"] != "private" and request.data["type"] != "friends_only":
+            return Response(
+                {"message": "Invalid type of game"},
+                status= 401
+            )
+    
+    if "status" in request.data:
+        if request.data["status"] != "created" and request.data["status"] != "open" and request.data["status"] != "start" and request.data["status"] != "close":
+            return Response(
+                {"message": "Invalid status of game"},
+                status= 401
+            )
+    
     room = Room.objects.get(code=code)
     serializer = RoomSerializer(room, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
     return Response(serializer.errors, status=400)
+
