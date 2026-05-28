@@ -13,17 +13,7 @@ export default function FilterGame({
 }) {
   const [search, setSearch] = useState<string>("");
   const [dispFilter, setDispFilter] = useState<boolean>(false);
-  const [maxPlayers, setMaxPlayers] = useState<number>(2);
-
-  const searchedGames = rawList.filter((game: availableGameT) => {
-    if (!search) return true;
-    const lower = search.toLocaleLowerCase();
-    return game.host.toLocaleLowerCase().includes(lower);
-  });
-
-  const filteredGames = searchedGames.filter((game: availableGameT) => {
-    return game.max_player >= maxPlayers;
-  });
+  const [maxPlayers, setMaxPlayers] = useState<number>(0);
 
   useEffect(() => {
     const searchedGames = rawList.filter((game: availableGameT) => {
@@ -35,8 +25,9 @@ export default function FilterGame({
     const filteredGames = searchedGames.filter((game: availableGameT) => {
       return game.max_player >= maxPlayers + 2;
     });
+
     setFilteredGames(filteredGames);
-  }, [filteredGames, setFilteredGames, maxPlayers, rawList, search]);
+  }, [maxPlayers, search]);
 
   return (
     <div className="filterGame flex justify-between my-2 items-center sticky -top-10 bg-(--bg-color) z-10 p-3 rounded-4xl shadow-2xl -mt-12">
@@ -48,7 +39,6 @@ export default function FilterGame({
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
-            setFilteredGames(searchedGames);
           }}
         />
       </label>
