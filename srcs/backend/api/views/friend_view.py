@@ -134,7 +134,7 @@ def delete_friend_request(request, request_id):
                 "event": "update"
             }
         )
-        #friendship.delete()
+        friendship.delete()
 
         return Response({"message": "Friend request delete"})
 

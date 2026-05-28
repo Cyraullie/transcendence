@@ -1,7 +1,10 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
-from ..models import User
+from ..models import User, Friendship
 import json
 from asgiref.sync import sync_to_async
+from django.db.models import Q
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 from django.contrib.auth import get_user_model
 
@@ -20,6 +23,34 @@ class PresenceConsumer(AsyncWebsocketConsumer):
         await sync_to_async(
             User.objects.filter(id=self.user.id).update
         )(is_online=True)
+                
+        friendships = await sync_to_async(list)(
+            Friendship.objects.filter(
+                Q(from_user=self.user) |
+                Q(to_user=self.user),
+                status="accepted"
+            ).select_related("from_user", "to_user")
+        )
+        print(friendships)
+        for friendship in friendships:
+            print(friendship)
+            target = (
+                friendship.to_user
+                if friendship.from_user == self.user
+                else friendship.from_user
+            )
+    
+            if target.is_online:
+    
+                await self.channel_layer.group_send(
+                    f"user_{target.id}",
+                    {
+                        "type": "notify",
+                        "type_notify": "friend_online",
+                        "event": "update",
+                    }
+                )
+        
 
     async def disconnect(self, close_code):
 
