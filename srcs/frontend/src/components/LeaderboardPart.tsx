@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { leaderboardT } from "../utils/leaderboardType";
 import UsernameMiniProfileBtn from "./MiniProfile/UsernameMiniProfileBtn";
 
-export function LeaderboardPart({tmp_leaderboard}:{tmp_leaderboard:leaderboardT}) {
+export function LeaderboardPart({tmp_leaderboard, logged_in}:{tmp_leaderboard:leaderboardT, logged_in:boolean}) {
 
   const current = tmp_leaderboard.current;
   const leaderboard = tmp_leaderboard.leaderboard;
@@ -24,7 +24,7 @@ export function LeaderboardPart({tmp_leaderboard}:{tmp_leaderboard:leaderboardT}
         {leaderboard.map((player) => (
           <tr className="h-10 border-y border-(--bg-color)">
             <td className="text-center">{leaderboard.indexOf(player) + 1}</td>
-            <td className="text-center"><UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={fake} setUpdate={setFake}/></td>
+            <td className="text-center"><UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={fake} logged_in={logged_in} setUpdate={setFake}/></td>
             <td className="text-center">{player.score}</td>
           </tr>
         ))}

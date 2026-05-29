@@ -15,13 +15,40 @@ import Error404 from "./pages/Error404";
 import { GoogleCallback } from "./OAuth/GoogleCallback";
 import { FortyTwoCallback } from "./OAuth/42Callback";
 import { GitCallback } from "./OAuth/GitCallback";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NotifProvider from "./components/contexts/NotifContext";
 import { Presence } from "./websockets/presence";
 import { Notifications } from "./websockets/notifcations";
+import { checkAuth } from "./api/checkAuth";
 
 function App() {
   const [fontChoice, setFontChoice] = useState("font-Cause");
+  const [logged_in, setLogged] = useState(false);
+  const [logging, setLogging] = useState(false);
+  const [authChecked, setChecked] = useState(false);
+  const [updatedProfile, setProfile] = useState(false);
+
+  useEffect(() => {
+	if (logging) {
+		return ;
+	}
+
+	async function getAuth() {
+		const authed = await checkAuth();
+		setLogged(authed);
+		setChecked(true);
+	}
+
+	getAuth();
+  }, [logging]);
+
+  if (!authChecked && !logging) {
+	return (
+	<div className="page-content flex items-center justify-center min-h-screen">
+		<span className="loading loading-spinner loading-xl"></span>
+	</div>
+	);
+  }
 
   return (
     <NotifProvider>
@@ -31,27 +58,27 @@ function App() {
           fontChoice
         }
       >
-        <Presence />
-		<Notifications />
         <BrowserRouter>
-          <Navbar />
+		  <Presence loggedIn={logged_in} />
+		  <Notifications loggedIn={logged_in} setProfile={setProfile} updatedProfile={updatedProfile} />
+          <Navbar logged_in={logged_in} setLoggedIn={setLogged} setLogging={setLogging}/>
           <NotifPopUp />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/game" element={<Game />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/leaderboard" element={<Leaderboard logged_in={logged_in}  />} />
+            <Route path="/profile" element={<Profile logged_in={logged_in} logging={logging} setUpdate={setProfile} updatedProfile={updatedProfile} />} />
             <Route
               path="/settings"
-              element={<Settings setFontChoice={setFontChoice} />}
+              element={<Settings islogged={logged_in}  setFontChoice={setFontChoice} />}
             />
             <Route path="/rules" element={<Rules />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<Login loggedIn={logged_in} setLoggedIn={setLogged}/>} />
             <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
             <Route path="/termsOfService" element={<TermsOfService />} />
-            <Route path="/login/google/callback" element={<GoogleCallback />} />
-            <Route path="/login/42/callback" element={<FortyTwoCallback />} />
-            <Route path="/login/github/callback" element={<GitCallback />} />
+            <Route path="/login/google/callback" element={<GoogleCallback setLoggedIn={setLogged}/>} />
+            <Route path="/login/42/callback" element={<FortyTwoCallback setLoggedIn={setLogged}/>} />
+            <Route path="/login/github/callback" element={<GitCallback setLoggedIn={setLogged}/>} />
             <Route path="*" element={<Error404 />} />
           </Routes>
           <Footer />

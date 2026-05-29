@@ -1,6 +1,5 @@
-import { useLocation, useNavigate } from "react-router";
-import { useState, useEffect } from "react";
-import { checkAuth } from "../api/checkAuth";
+import { useNavigate } from "react-router";
+import React, { useState, useEffect, type SetStateAction } from "react";
 import { Friends } from "../components/FriendsPart";
 import { History } from "../components/HistoryPart";
 import { ProfilePart } from "../components/ProfilePart";
@@ -34,7 +33,7 @@ function getRequests(friend_list: friendT[]): {
     return { friends: friends, requests: requests };
   }
 
-export function Profile() {
+export function Profile({logged_in, logging, updatedProfile, setUpdate}:{logged_in:boolean, logging:boolean, updatedProfile:boolean, setUpdate:React.Dispatch<SetStateAction<boolean>>}) {
 
 	const [valid, setValid] = useState<boolean | null>(null);
 	const [stats, setStats] = useState<statisticsT>(defaultStat);
@@ -43,17 +42,21 @@ export function Profile() {
 	const [requests, setRequests] = useState<requestT[]>([]);
 	const [gameHistory, setHistory] = useState<historyT[]>([])
 	const [profile, setProfile] = useState<accountT>(defaultAccount);
-	const [updatedProfile, setUpdate] = useState(false);
   	const [updatedFriends, setFriendUpdate] = useState(false);
 	const navigate = useNavigate();
-	const location = useLocation();
 	const notif = useNotif();
 
 	useEffect(() => {
 
+		if (!logged_in) {
+			return login_error("Authentication error:", "Please log in again.");
+		}
+
 		function login_error(title:string, message:string) {
-			navigate('/login', {state: "/profile"});
-			notif?.showNotif(title, message, 5000);
+			if (!logging) {
+				navigate('/login', {state: "/profile"});
+				notif?.showNotif(title, message, 5000);
+			}
 			setValid(false);
 			return ;
 		}
@@ -66,9 +69,6 @@ export function Profile() {
 		}
 
 		async function verify() {
-			if (!(await checkAuth())) {
-				return login_error("Authentication error:", "Please log in again.");
-			}
 			const account = await profileRequest();
 			if ("code" in account) {
 				if (account.code === 401) {
@@ -123,7 +123,7 @@ export function Profile() {
 			setValid(true);
 		}
 		verify();
-	}, [updatedFriends, updatedProfile, navigate, location, notif])
+	}, [updatedFriends, updatedProfile, navigate, notif, logged_in, logging])
 
 	if (valid === null) {
 		return (
@@ -157,7 +157,7 @@ export function Profile() {
           <h2 className="text-center">Friends</h2>
         </div>
         <div className="collapse-content overflow-auto">
-          <Friends friends={friends} requests={requests} recs={recs} updatedFriends={updatedFriends} setUpdate={setFriendUpdate}/>
+          <Friends logged_in={logged_in} friends={friends} requests={requests} recs={recs} updatedFriends={updatedFriends} setUpdate={setFriendUpdate}/>
         </div>
       </div>
       <div className="bordered collapse collapse-arrow">
@@ -166,7 +166,7 @@ export function Profile() {
           <h2 className="text-center">History</h2>
         </div>
         <div className="collapse-content">
-          <History gameHistory={gameHistory} setUpdate={setUpdate} updatedProfile={updatedProfile}/>
+          <History logged_in={logged_in} gameHistory={gameHistory} setUpdate={setUpdate} updatedProfile={updatedProfile}/>
         </div>
       </div>
       <div className="bordered collapse collapse-arrow">

@@ -4,7 +4,7 @@ import { defaultLeaderboard, type leaderboardT } from "../utils/leaderboardType"
 import { useEffect, useState } from "react";
 import { getLeaderboard, leaderboardArray } from "../api/leaderboard";
 
-export function Leaderboard() {
+export function Leaderboard({logged_in}:{logged_in:boolean}) {
 
 	const navigate = useNavigate();
 	const [valid, setValid] = useState<boolean | null>(null);
@@ -22,7 +22,7 @@ export function Leaderboard() {
 
 		async function load_leaderboard() {
 			
-			const tmp_leaderboard = await getLeaderboard();
+			const tmp_leaderboard = await getLeaderboard(logged_in);
 			if ("code" in tmp_leaderboard) {
 				return other_error(tmp_leaderboard.response);
 			}
@@ -51,7 +51,7 @@ export function Leaderboard() {
   return (
     <div className="page-content my-17">
       <h1>Leaderboard</h1>
-      <LeaderboardPart tmp_leaderboard={leaderboard} />
+      <LeaderboardPart tmp_leaderboard={leaderboard} logged_in={logged_in} />
     </div>
   );
 }
