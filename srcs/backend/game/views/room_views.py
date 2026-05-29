@@ -7,6 +7,8 @@ from ..models import Room, PlayerPresence, GameLog
 from api.models import User, Friendship
 from ..serializers import RoomSerializer
 from django.db.models import Q
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 from ..db import add_bot_to_room
 import uuid
 
@@ -386,3 +388,50 @@ def update_params(request, code):
         return Response(serializer.data)
     return Response(serializer.errors, status=400)
 
+@api_view(["POST"])
+@authentication_classes([OptionalJWTAuthentication])
+@permission_classes([IsAuthenticated])
+def invite_friend(request, friend_id):
+    
+    if not Friendship.objects.filter(
+            Q(from_user=request.user) | Q(to_user=request.user),
+            id=friend_id,
+        ).exists():
+        return Response(
+            {"message": "This is not your friend"},
+            status= 404
+		)
+    
+    friendship = Friendship.objects.get(
+            Q(from_user=request.user) | Q(to_user=request.user),
+            id=friend_id,
+        )
+    target = (
+        friendship.to_user
+        if friendship.from_user == request.user
+        else friendship.from_user
+    )
+    p = PlayerPresence.objects.filter(
+		player=request.user,
+        room__status="open"
+	).select_related("player", "room").first()
+    
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f"user_{target.id}",
+        {
+            "type": "notify",
+            "event": "notification",
+            "type_notify": "friend_accepted",
+    
+            "payload": {
+                "code": p.room.code,
+                "from_user": request.user.username,
+                "from_user_id": request.user.id,
+                "message": f"{request.user.username} invite you"
+            }
+        }
+    )
+    
+    
+    return Response({"success": True}, status=200)
