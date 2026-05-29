@@ -4,7 +4,15 @@ import host from '../api/host';
 import { useNotif } from "../components/hooks/useNotif";
 import type { SetStateAction } from "react";
 
-export function Notifications({loggedIn, setProfile, updatedProfile}:{loggedIn: boolean, setProfile:React.Dispatch<SetStateAction<boolean>>, updatedProfile:boolean}) {
+type Props = {
+	loggedIn: boolean;
+	setProfile: React.Dispatch<SetStateAction<boolean>>;
+	updatedProfile: boolean;
+	updateLeaderboard: boolean;
+	setLeaderboard: React.Dispatch<SetStateAction<boolean>>;
+}
+
+export function Notifications({loggedIn, setProfile, updatedProfile, updateLeaderboard, setLeaderboard}:Props) {
 
 	const { default: useWebSocket = useWebSocketModule } = useWebSocketModule as unknown as {
 		default: typeof useWebSocketModule;
@@ -39,8 +47,10 @@ export function Notifications({loggedIn, setProfile, updatedProfile}:{loggedIn: 
 			if (data.event === "notification") {
 				if (data.type === "friend_request") {
 					notif?.showNotif("New Friend Request", payload.from_user + " has sent you a friend request!", 5000);
+					setProfile(!updatedProfile);
 				} else if (data.type === "friend_accepted") {
 					notif?.showNotif("Friend Request Accepted", payload.from_user + " has accepted your friend request!", 5000);
+					setProfile(!updatedProfile);
 				} else {
 					console.debug("type not implemented. Format: ", data)
 				}
@@ -48,11 +58,11 @@ export function Notifications({loggedIn, setProfile, updatedProfile}:{loggedIn: 
 				if (data.type === "friend_delete") {
 					setProfile(!updatedProfile);
 				} else if (data.type === "friend_block") {
-					setProfile(!updatedProfile);
+					setProfile(!updatedProfile); // change to update blocklist once implemented
 				} else if (data.type === "friend_online") {
 					setProfile(!updatedProfile);
 				} else if (data.type === "game_finished") {
-					console.log("update leaderboard")
+					setLeaderboard(!updateLeaderboard);
 				}
 			} else {
 				console.debug("event not implemented. Format: ", data)

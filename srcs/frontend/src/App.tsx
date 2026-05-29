@@ -27,6 +27,7 @@ function App() {
   const [logging, setLogging] = useState(false);
   const [authChecked, setChecked] = useState(false);
   const [updatedProfile, setProfile] = useState(false);
+  const [updateLeaderboard, setLeaderboard] = useState(false);
 
   useEffect(() => {
 	if (logging) {
@@ -60,13 +61,13 @@ function App() {
       >
         <BrowserRouter>
 		  <Presence loggedIn={logged_in} />
-		  <Notifications loggedIn={logged_in} setProfile={setProfile} updatedProfile={updatedProfile} />
+		  <Notifications loggedIn={logged_in} setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard}/>
           <Navbar logged_in={logged_in} setLoggedIn={setLogged} setLogging={setLogging}/>
           <NotifPopUp />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/game" element={<Game />} />
-            <Route path="/leaderboard" element={<Leaderboard logged_in={logged_in}  />} />
+            <Route path="/leaderboard" element={<Leaderboard logged_in={logged_in}  updateLeaderboard={updateLeaderboard} />} />
             <Route path="/profile" element={<Profile logged_in={logged_in} logging={logging} setUpdate={setProfile} updatedProfile={updatedProfile} />} />
             <Route
               path="/settings"

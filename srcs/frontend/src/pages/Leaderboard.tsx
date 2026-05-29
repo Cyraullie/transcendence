@@ -3,19 +3,24 @@ import { LeaderboardPart } from "../components/LeaderboardPart";
 import { defaultLeaderboard, type leaderboardT } from "../utils/leaderboardType";
 import { useEffect, useState } from "react";
 import { getLeaderboard, leaderboardArray } from "../api/leaderboard";
+import { useNotif } from "../components/hooks/useNotif";
 
-export function Leaderboard({logged_in}:{logged_in:boolean}) {
+type Props = {
+	logged_in: boolean;
+	updateLeaderboard: boolean;
+}
+export function Leaderboard({logged_in, updateLeaderboard}:Props) {
 
 	const navigate = useNavigate();
 	const [valid, setValid] = useState<boolean | null>(null);
 	const [leaderboard, setLeaderboard] = useState<leaderboardT>(defaultLeaderboard)
+	const notif = useNotif();
 
 	useEffect(() => {
 
 		function other_error(message:string) {
 			navigate('/', {state: location.pathname});
-			// notif bar
-			console.debug(message);
+			notif?.showNotif("Unknown Error", message, 5000);
 			setValid(false);
 			return ;
 		}
@@ -30,7 +35,7 @@ export function Leaderboard({logged_in}:{logged_in:boolean}) {
 			setValid(true);
 		}
 		load_leaderboard();
-	}, [navigate])
+	}, [navigate, logged_in, notif, updateLeaderboard])
 
 	if (valid === null) {
 	  return (
