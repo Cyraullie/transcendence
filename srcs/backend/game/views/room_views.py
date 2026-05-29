@@ -21,6 +21,41 @@ def create_room(request):
         code=room_code,
         host=request.user
     )
+    
+    friendships = list(
+        Friendship.objects.filter(
+            Q(from_user=request.user) |
+            Q(to_user=request.user),
+            status="accepted"
+        ).select_related("from_user", "to_user")
+    )
+    channel_layer = get_channel_layer()
+    for friendship in friendships:
+        target = (
+            friendship.to_user
+            if friendship.from_user == request.user
+            else friendship.from_user
+        )
+
+        if target.is_online:
+
+            async_to_sync(channel_layer.group_send)(
+                f"user_{target.id}",
+                {
+                    "type": "notify",
+                    "event": "notification",
+                    "type_notify": "game_created",
+            
+                    "payload": {
+                        "code": room_code,
+                        "from_user": request.user.username,
+                        "from_user_id": request.user.id,
+                        "message": f"{request.user.username} create a game"
+                    }
+                }
+            )
+    
+    
     return Response(RoomSerializer(room).data, status=201)
 
 @api_view(["POST"])
@@ -422,7 +457,7 @@ def invite_friend(request, friend_id):
         {
             "type": "notify",
             "event": "notification",
-            "type_notify": "friend_accepted",
+            "type_notify": "friend_invite",
     
             "payload": {
                 "code": p.room.code,
