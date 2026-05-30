@@ -1,4 +1,4 @@
-COMPOSE = docker compose -f ./srcs/docker-compose.yml
+COMPOSE = docker compose -f ./srcs/docker-compose.yml --env-file "./srcs/secrets/.env"
 DEV_COMPOSE = $(COMPOSE) --profile dev
 PROD_COMPOSE = $(COMPOSE) --profile prod
 
@@ -40,7 +40,7 @@ header:
 
 prod-up:
 	@$(COMPOSE) --profile "*" down
-	@if [ -f ./srcs/.env ] && [ -f ./srcs/Docker/nginx/prod_nginx/ssl.crt ] && [ -f ./srcs/Docker/nginx/prod_nginx/ssl.key ]; then \
+	@if [ -f ./srcs/secrets/.env ] && [ -f ./srcs/Docker/nginx/prod_nginx/ssl.crt ] && [ -f ./srcs/Docker/nginx/prod_nginx/ssl.key ]; then \
 		sed -i 's/DEBUG=True/DEBUG=False/g' ./srcs/.env; \
 		echo "$(YELLOW)Launching docker container...$(RESET)"; \
 		$(PROD_COMPOSE) up -d; \
@@ -53,7 +53,7 @@ prod-up:
 
 dev-up:
 	@$(COMPOSE) --profile "*" down
-	@if [ -f ./srcs/.env ]; then \
+	@if [ -f ./srcs/secrets/.env ]; then \
 		sed -i 's/DEBUG=False/DEBUG=True/g' ./srcs/.env; \
 		echo "$(YELLOW)Launching docker container...$(RESET)"; \
 		$(DEV_COMPOSE) up -d; \
