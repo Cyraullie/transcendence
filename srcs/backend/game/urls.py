@@ -3,7 +3,7 @@ from .views.room_views import create_room, get_game_scorelog, list_room, add_bot
 
 
 urlpatterns = [
-    path('rooms/', create_room, name='create-room'),
+    path('room/', create_room, name='create-room'),
     path('rooms/list/', list_room),
     path('rooms/my/', list_my_started_room),
     

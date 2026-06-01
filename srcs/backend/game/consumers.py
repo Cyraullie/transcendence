@@ -363,7 +363,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "event": "game_started",
                 "payload": {
                     "user": self.get_username(),
-				}
+                }
             }
         )
         await self.send_init()
@@ -461,34 +461,35 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 room=room,
                 position=int(taker)
             )
-            stat = await sync_to_async(Stat.objects.get)(user_id=p.player_id)
-            stat.board_meld_points = stat.board_meld_points + melds
-            if stat.highest_board_meld < melds:
-                stat.highest_board_meld = melds
-            stat.nb_taken += 1
-            await sync_to_async(stat.save)()
+
+            if (p.is_human):
+                stat = await sync_to_async(Stat.objects.get)(user_id=p.player_id)
+                stat.board_meld_points = stat.board_meld_points + melds
+                if stat.highest_board_meld < melds:
+                    stat.highest_board_meld = melds
+                stat.nb_taken += 1
+                await sync_to_async(stat.save)()
 
         tricks = copy.deepcopy(state["tricks"])
         game_state = game.handleAction("play", state, idPlayer= str(position), idCard= int(idx))
         await save_room_state(room.uuid, game_state)
-        if game_state["tricks"] != tricks and game_state["tricks"] != "none":
+        if game_state["tricks"] != tricks and game_state["tricks"] != "none" and taker != -1:
             p = await sync_to_async(PlayerPresence.objects.get)(
                 room=room,
                 position=int(taker)
             )
-            stat = await sync_to_async(Stat.objects.get)(user_id=p.player_id)
-            stat.nb_trick_choose += 1
-            stat.tricks[game_state["tricks"]] += 1
-            preferred = max(stat.tricks, key=stat.tricks.get)
-            stat.prefered_trick = preferred
-            await sync_to_async(stat.save)()
+
+            if (p.is_human):
+                stat = await sync_to_async(Stat.objects.get)(user_id=p.player_id)
+                stat.nb_trick_choose += 1
+                stat.tricks[game_state["tricks"]] += 1
+                preferred = max(stat.tricks, key=stat.tricks.get)
+                stat.prefered_trick = preferred
+                await sync_to_async(stat.save)()
 
         await self.send_data()
 
-        print("before play bot")
         await self.playBot(game_state, room, game)
-
-        await self.send_data()
 
     async def handle_melds(self, payload: dict):
         room = await get_room_with_host(self.code)
@@ -859,21 +860,24 @@ class RoomConsumer(AsyncWebsocketConsumer):
         )
 
     async def playBot(self, game_state, room, game):
+        if (await self.end(room, game)):
+            return
+
         p = await sync_to_async(PlayerPresence.objects.get)(
             room=room,
             position=int(game_state["playing"])
         )
-        while (not p.is_human or not p.is_online):
+        while (await self.end(room, game) and not p.is_human or not p.is_online):
             position = str(game_state["playing"])
             legal = game.handleAction("legal", game_state, idPlayer= position)
             card = bot(game_state, position, legal, p.difficulty)
             game_state = game.handleAction("play", game_state, idPlayer= position, idCard= card)
             await save_room_state(room.uuid, game_state)
             
+            await self.send_data()
+            
             if (await self.end(room, game)):
                 return
-            
-            await self.send_data()
 
             p = await sync_to_async(PlayerPresence.objects.get)(
                 room=room,
