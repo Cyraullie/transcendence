@@ -73,7 +73,8 @@ def add_bot(request, code, nb_bot):
     room = Room.objects.get(
         code=code
     )
-    if room.nb_player + nb_bot >= room.max_player:
+
+    if (room.nb_player + nb_bot) > room.max_player:
         return Response(
             {"message": "too many player in that room"},
             status= 401
@@ -468,5 +469,5 @@ def invite_friend(request, friend_id):
         }
     )
     
-    
     return Response({"success": True}, status=200)
+
