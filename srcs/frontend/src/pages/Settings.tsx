@@ -1,24 +1,16 @@
-import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import BlockList from "../components/settings/BlockList";
 import Appareance from "../components/settings/Appareance";
 import Account from "../components/settings/Account";
-import { checkAuth } from "../api/checkAuth";
+
 
 export function Settings({
   setFontChoice,
+  islogged,
 }: {
   setFontChoice: Dispatch<SetStateAction<string>>;
+  islogged:boolean;
 }) {
-	const [islogged, setLogged] = useState(false);
-
-	useEffect(() => {
-		async function checklog() {
-			if ((await checkAuth())) {
-				setLogged(true);
-			}
-		}
-		checklog();
-	}, []);
 
   return (
     <div className="page-content mt-17">
