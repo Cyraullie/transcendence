@@ -137,6 +137,13 @@ export async function changeHandler(req_id: number, func: string, updatedFriends
 		} else {
 			profileRef?.current?.close();
 		}
+	} else if (func === "request") {
+		const res = await friendRequest(req_id);
+		if ("code" in res) {
+			notif?.showNotif("Request Error:", "There was an unexpected error sending a friend request to this person.")
+		} else {
+			profileRef?.current?.close();
+		}
 	}
 	setUpdate(!updatedFriends);
 	return;

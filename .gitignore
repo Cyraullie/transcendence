@@ -21,7 +21,9 @@ secrets
 .env
 .env_ip_test
 .env_prod
+.env_ip_test
 *.env
+.env_prod
 
 # IDE
 .vscode/

@@ -16,11 +16,12 @@ type Props = {
   friends:friendT[];
   requests:requestT[];
   recs:recommendationT[];
+  logged_in:boolean;
   updatedFriends:boolean;
   setUpdate:React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function Friends({friends, requests, recs, updatedFriends, setUpdate}: Props) {
+export function Friends({friends, requests, recs, updatedFriends, logged_in, setUpdate}: Props) {
   const addFriendsRef = useRef<HTMLDialogElement>(null);
   const [search, setSearch] = useState<string>("");
   const [isMore, setIsMore] = useState<boolean>(false);
@@ -108,7 +109,7 @@ export function Friends({friends, requests, recs, updatedFriends, setUpdate}: Pr
                         </button>
                         <button
                           className="btn btn-circle del"
-                          onClick={() => changeHandler(request.id, "deny", updatedFriends, setUpdate, null, notif)}
+                          onClick={() => changeHandler(request.id, "delete", updatedFriends, setUpdate, null, notif)}
                         >
                           <RxCross2 />
                         </button>
@@ -139,7 +140,7 @@ export function Friends({friends, requests, recs, updatedFriends, setUpdate}: Pr
               <TbPointFilled />
             </td>
             <td>
-              <UsernameMiniProfileBtn id={friend.user.id} name={friend.user.username} updatedFriends={updatedFriends} setUpdate={setUpdate}/>
+              <UsernameMiniProfileBtn id={friend.user.id} name={friend.user.username} updatedFriends={updatedFriends} setUpdate={setUpdate} logged_in={logged_in}/>
             </td>
             <td>{friend.status}</td>
             <td>

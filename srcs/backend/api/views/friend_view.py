@@ -59,8 +59,8 @@ def send_friend_request(request, user_id):
             f"user_{target.id}",
             {
                 "type": "notify",
-        
-                "event": "friend_request",
+                "type_notify": "friend_request",
+                "event": "notification",
         
                 "payload": {
                     "from_user": request.user.username,
@@ -94,10 +94,12 @@ def accept_friend_request(request, request_id):
             f"user_{friendship.from_user.id}",
             {
                 "type": "notify",
-        
-                "event": "friend_accepted",
+                "event": "notification",
+                "type_notify": "friend_accepted",
         
                 "payload": {
+                    "from_user": request.user.username,
+                    "from_user_id": request.user.id,
                     "message": f"{request.user.username} accept your friend request"
                 }
             }
@@ -117,7 +119,21 @@ def delete_friend_request(request, request_id):
             Q(status="accepted") | Q(status="pending") | Q(status="blocked"),
             id=request_id,
         )
+        target = (
+            friendship.to_user
+            if friendship.from_user == request.user
+            else friendship.from_user
+        )
+        channel_layer = get_channel_layer()
 
+        async_to_sync(channel_layer.group_send)(
+            f"user_{target.id}",
+            {
+                "type": "notify",
+                "type_notify": "friend_delete",
+                "event": "update"
+            }
+        )
         friendship.delete()
 
         return Response({"message": "Friend request delete"})
@@ -168,7 +184,20 @@ def block_friend(request, user_id):
             blocked_by=request.user,
             blocked_at=timezone.now(),
         )
-
+    target = (
+        friendship.to_user
+        if friendship.from_user == request.user
+        else friendship.from_user
+    )
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f"user_{target.id}",
+        {
+            "type": "notify",
+            "type_notify": "friend_blocked",
+            "event": "update"
+        }
+    )
     return Response({
         "message": "User blocked"
     })
