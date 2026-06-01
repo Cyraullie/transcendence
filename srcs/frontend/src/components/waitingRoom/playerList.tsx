@@ -1,10 +1,8 @@
-import { useState } from "react";
 import generateFakePlayerList from "../../utils/test_funcs/generateFakePlayerList";
 import UsernameMiniProfileBtn from "../MiniProfile/UsernameMiniProfileBtn";
 
-export default function PlayerList() {
+export default function PlayerList({logged_in} : {logged_in : boolean}) {
   const fakePlayers = generateFakePlayerList();
-  const [fakeBool, setFakeBool] = useState<boolean>(false);
 
   return (
     <div className="bordered">
@@ -20,7 +18,7 @@ export default function PlayerList() {
                   {fakePlayers.indexOf(player) + 1}
                 </td>
                 <td >
-                  <UsernameMiniProfileBtn id={player.id} name={player.username} updatedFriends={fakeBool} setUpdate={setFakeBool} />
+                  <UsernameMiniProfileBtn id={player.id} name={player.username} logged_in={logged_in}/>
                 </td>
               </tr>
             ))}

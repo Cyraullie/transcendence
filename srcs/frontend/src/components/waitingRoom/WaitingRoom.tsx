@@ -1,9 +1,9 @@
-import Chrono from "./waitingRoom/Chrono";
-import InviteYourFriends from "./waitingRoom/InviteYourFriends";
-import ParameterRoom from "./waitingRoom/parameterRoom";
-import PlayerList from "./waitingRoom/playerList";
+import Chrono from "./Chrono";
+import InviteYourFriends from "./InviteYourFriends";
+import ParameterRoom from "./parameterRoom";
+import PlayerList from "./playerList";
 
-export default function WaitingRoom() {
+export default function WaitingRoom({logged_in} : {logged_in : boolean}) {
 
     return (
       <>  
@@ -20,7 +20,7 @@ export default function WaitingRoom() {
             <Chrono />
           </div>
           <div className=" space-y-6">
-            <PlayerList />
+            <PlayerList logged_in={logged_in}/>
             <InviteYourFriends />
           </div>
           <div className="col-span-2">
