@@ -149,7 +149,7 @@ def remove_player_from_room(user, code):
                 room=room
             ).update(is_online=False)
             return
-
+#TODO dont delete room if started !!!!
         pos = PlayerPresence.objects.filter(
             player=user,
             room=room
@@ -182,6 +182,10 @@ def remove_player_from_room(user, code):
 
 @sync_to_async
 def get_room_with_host(code):
+    if not sync_to_async(
+        Room.objects.filter(code=code).exists
+    )():
+        return None
     return Room.objects.select_related("host").get(code=code)
 
 @sync_to_async
