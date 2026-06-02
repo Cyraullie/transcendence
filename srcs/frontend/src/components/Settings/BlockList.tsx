@@ -4,7 +4,7 @@ import { getBlocked } from "../../api/http/friend";
 import { useNotif } from "../hooks/useNotif";
 import type { friendT } from "../../utils/type/friendType";
 import type { errorT } from "../../utils/type/errorType";
-import UnblockBtn from "../UnblockBtn";
+import UnblockBtn from "./UnblockBtn";
 
 export default function BlockList() {
   const [blocklist, setBlocked] = useState<friendT[] | errorT>([]);
