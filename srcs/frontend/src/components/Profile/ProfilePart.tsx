@@ -1,8 +1,8 @@
-import type { accountT } from "../../utils/accountType";
+import type { accountT } from "../../utils/type/accountType";
 import { useRef } from "react";
-import { AvatarSelection } from "../AvatarSelection";
+import { AvatarSelection } from "./AvatarSelection";
 import { PswdChange } from "./PswdChange";
-import { PseudoChange } from "../PseudoChange";
+import { PseudoChange } from "./PseudoChange";
 
 
 export function ProfilePart({realAccount, setUpdate, updatedProfile}:{realAccount:accountT; setUpdate:React.Dispatch<React.SetStateAction<boolean>>; updatedProfile:boolean}) {

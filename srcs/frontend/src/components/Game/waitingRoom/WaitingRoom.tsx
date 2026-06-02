@@ -1,7 +1,7 @@
 import InfoAndActionPart from "./InfoAndActionPart";
 import InviteYourFriends from "./InviteYourFriends";
 import ParameterRoom from "./ParameterRoom";
-import PlayerList from "./playerList";
+import PlayerList from "./PlayerList";
 
 export default function WaitingRoom({logged_in, logging} : {logged_in : boolean, logging: boolean}) {
 
