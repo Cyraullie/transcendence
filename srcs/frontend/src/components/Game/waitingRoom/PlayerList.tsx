@@ -21,7 +21,7 @@ export default function PlayerList({logged_in} : {logged_in : boolean}) {
           <th>List of players</th>
         </thead>
         <tbody >
-          {fakePlayers.map((player, index) => {
+          {fakePlayers.map((player) => {
             return (
               <tr className="h-10 text-lg">
                 <td className="w-1/12">
@@ -35,7 +35,7 @@ export default function PlayerList({logged_in} : {logged_in : boolean}) {
                   <button className="btn"onClick={() => removePlayer(player.id)}>
                     <MdClose />
                   </button>)
-                  : (<></>)
+                  : (<p className="text-(--hover-color)">Host</p>)
                   }
                 </td>
               </tr>
