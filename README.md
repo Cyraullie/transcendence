@@ -244,6 +244,20 @@ Card design ? 1
 ### Dana Vauthey
 
 ### Anouar Kabbaj
+OAuth
+API Connections from Frontend
+Realtime updates and notifications using websockets
+Online offline detection in backend websockets
+Cookie management in backend
+Logic for front with logged in states and various states
+Devops docker and makefile
+Readme
+
+chaellenges:
+being absent/catching up
+working between and front - communication
+SELinux issues
+Refactors accross back and front when changes to DB information or cookies etc.
 
 
 Detailed breakdown of what each team member contributed.
