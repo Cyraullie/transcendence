@@ -62,7 +62,7 @@ function App() {
       >
         <BrowserRouter>
 		  <Presence loggedIn={logged_in} />
-		  <Notifications loggedIn={logged_in} setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard}/>
+		  {!isGamePage ? <Notifications loggedIn={logged_in} setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard}/> : <></>}
 		  {!isGamePage ? <Navbar logged_in={logged_in} setLoggedIn={setLogged} setLogging={setLogging}/> : <></>}
           <NotifPopUp />
           <Routes>
