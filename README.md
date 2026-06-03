@@ -53,7 +53,7 @@ The following features are implemented on Popcards:
 		- `git_secret.txt`
 		- `42_secret.txt`
 - To create valid OAuth clients please follow the instructions provided by the related services in order to create a valid client. Once created you will be able to subsitute the correct values in the .env and secret files.
-- For Selinux users there may be additional requirements. Please see below.
+- For SELinux users there may be additional requirements. Please see below.
 
 ### Setup
 1. Clone the repository:
@@ -71,8 +71,15 @@ This will build the project in docker compose, using the self-signed SSL certifi
 4. For developper features such as clearing the DBs, run `make` to see all commands available.
 
 
-### Selinux
-I don't like you
+### SELinux
+
+Certain users with operating systems which use SELinux may run into permissions issues when running the Docker containers. To solve this our recommended solution is to modify the `docker-compose.yml` file, or create a new one.
+
+A template has been provided for this file. The key changes are: `:Z` has been added to bind mounted volumes. Secrets have been converted to bind mounted volumes to allow for this.
+
+We did not use this as our default `docker-compose.yml` as we preferred to implement docker secrets in a clean way as intended, rather than reproducing their behaviour with bind mounts.
+
+There is also a "quick and dirty" method to solve this issue, however it is not a best practice and is not endorsed by the Popcode team. This method **which should only be used for development with permission from your administrator** is to disable SELinux specifically for the docker service. As it is not recommended we will not be providing information on how to do this. 😉
 
 ## Resources
 An “Instructions” section containing any relevant information about compilation,
@@ -127,10 +134,13 @@ The team collaborated by having initial meetings to decide on the general direct
 - **React + TypeScript**:
 - **Tailwind CSS**:
 - **Websockets**:
+- **ThreeJS**
+- **Daisy**
 
 ### Backend
 - **Django**:
-- **Daphne?**: Is this a separate technology?
+- **REST**
+- **Daphne?**:
 
 ### Database
 - **MariaDB**:
@@ -139,7 +149,8 @@ The team collaborated by having initial meetings to decide on the general direct
 - **Docker + Docker Compose**:
 - **NGINX**:
 
-### Other?
+### Other
+Procreate
 
 
 Frontend technologies and frameworks used.
@@ -163,7 +174,7 @@ Visual representation or description of the database structure.
 | Cookie-based JWT Authentication | | Cyril, Anouar |
 | Cookie-based OAuth Authentication | | Anouar |
 | Modifiable Site Settings | | Alex |
-| User Profiles | | Everyone |
+| User Profiles | | Cyril, Alex, Dana, Anouar |
 | Friend Management | | Cyril, Alex, Dana, Anouar |
 | Blocked Users Management | | Cyril, Alex, Anouar |
 | Leaderboard, Statistics & Game History | | Everyone |
@@ -189,8 +200,8 @@ Complete list of implemented features.
 Front framework 1
 Back framework 1
 Real time features 2
-User Interactions? 2
-ORM 1
+User Interactions 2
+ORM? 1
 Notification system? 1
 Custom Design 1
 Search ? 1
@@ -253,7 +264,7 @@ Logic for front with logged in states and various states
 Devops docker and makefile
 Readme
 
-chaellenges:
+challenges:
 being absent/catching up
 working between and front - communication
 SELinux issues
@@ -267,6 +278,10 @@ Detailed breakdown of what each team member contributed.
 
 ## Resources
 
+### Frontend
+
+### Backend
+
 ## AI Usage
 
 The README.md is a critical part of your project evaluation. It
@@ -276,3 +291,5 @@ should be:
 • Professional and easy to read.
 • Honest about contributions and challenges.
 A poor or incomplete README can negatively impact your evaluation.
+
+
