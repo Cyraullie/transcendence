@@ -10,9 +10,9 @@ export default function WaitingRoom({logged_in, logging} : {logged_in : boolean,
         <h1>Waiting Room</h1>
         <div className="grid grid-cols-3 gap-6">
           <InfoAndActionPart />
-          <div className=" space-y-6">
+          <div className=" space-y-6 bordered">
             <PlayerList logged_in={logged_in}/>
-			<InviteYourFriends logging={logging}/>
+            <InviteYourFriends logging={logging}/>
           </div>
           <div className="col-span-2">
             <ParameterRoom />

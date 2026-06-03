@@ -10,7 +10,7 @@ export default function StartGameBtn() {
         className="btn"
       >
         {" "}
-        start game
+        Start game
       </button>
       <dialog id="modal_confirm_del" className="modal " ref={confirmStartRef}>
         <div className="modal-box bg-(--bg-color)">

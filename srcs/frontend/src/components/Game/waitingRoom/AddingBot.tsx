@@ -1,12 +1,12 @@
 export default function AddingBot() {
   return (
-    <div className="w-full max-w-xs ">
+    <div className="w-full ">
       <input
         type="range"
         min="0"
         max="100"
         defaultValue="0"
-        className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
+        className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass w-full"
         step="50" />
       <div className="flex justify-between px-2.5 mt-2 text-xs">
         <span>|</span>

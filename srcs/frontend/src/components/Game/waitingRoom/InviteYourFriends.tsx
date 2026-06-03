@@ -76,7 +76,7 @@ export default function InviteYourFriends({logging}:{logging:boolean}) {
 	}
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center border-t border-(--hover-color) pt-6">
       <button
         className="btn "
         onClick={() => showFriendsList.current?.showModal()}
