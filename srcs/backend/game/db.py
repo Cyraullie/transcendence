@@ -171,6 +171,9 @@ def remove_player_from_room(user, code):
             p.position -= 1
             p.save()
 
+        room.nb_player -= 1
+        room.save()
+        
         PlayerPresence.objects.filter(
             player=user,
             room=room

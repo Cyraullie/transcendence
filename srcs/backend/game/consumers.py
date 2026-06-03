@@ -9,6 +9,7 @@ from game_engine.bot.bot import bot
 from django.db.models import Q
 import copy
 from .services.game_service import GameService
+from .services.room_service import RoomService
 
 CARD_VALUES = {
     "6": 6,
@@ -772,51 +773,29 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
     #TODO host can kick everybody except himself
     async def handle_kick(self, payload: dict):
-
         room = await get_room_with_host(self.code)
     
-        if self.user != room.host:
-            await self.send(json.dumps({
-                "event": "error",
-                "message": "Only host can kick player"
-            }))
-            return
+        result = await RoomService.kick_player(
+            room=room,
+            host=self.user,
+            player_position=payload["playerId"]
+        )
     
-        if room.status == "start":
-            await self.send(json.dumps({
-                "event": "error",
-                "message": "Game started you cannot kick player"
-            }))
-            return
+        if result["error"]:
+            return await self.error(result["error"])
     
-        player_presence = await sync_to_async(
-            PlayerPresence.objects.select_related("player").filter(
-                room=room,
-                position=payload["playerId"]
-            ).first
-        )()
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "room_event",
+                "event": "kick_player",
+                "payload": result["payload"]
+            }
+        )
     
-        if not player_presence:
-            await self.send(json.dumps({
-                "event": "error",
-                "message": "Player not found"
-            }))
-            return
-    
-        kicked_user = player_presence.player
-        
-        if kicked_user == self.user:
-            await self.send(json.dumps({
-                "event": "error",
-                "message": "You cannont kick yourself"
-            }))
-            return
-            
-
-        if player_presence.channel_name:
-    
+        if result["kicked_channel"]:
             await self.channel_layer.send(
-                player_presence.channel_name,
+                result["kicked_channel"],
                 {
                     "type": "room_event",
                     "event": "kicked",
@@ -826,28 +805,14 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     }
                 }
             )
-
+    
             await self.channel_layer.send(
-                player_presence.channel_name,
+                result["kicked_channel"],
                 {
                     "type": "force_disconnect",
                 }
             )
-    
-        await remove_player_from_room(kicked_user, room.code)
-
-        await self.channel_layer.group_send(
-            self.group_name,
-            {
-                "type": "room_event",
-                "event": "kick_player",
-                "payload": {
-                    "username": kicked_user.username,
-                    "message": f"{kicked_user.username} has been kicked"
-                }
-            }
-        )
- 
+     
     async def handle_continue_game(self, payload=None):
         room = await get_room_with_host(self.code)
     
