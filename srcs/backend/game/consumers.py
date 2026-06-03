@@ -10,6 +10,8 @@ from django.db.models import Q
 import copy
 from .services.game_service import GameService
 from .services.room_service import RoomService
+from .services.meld_service import MeldService
+from .services.room_connection_service import RoomConnectionService
 
 CARD_VALUES = {
     "6": 6,
@@ -83,7 +85,48 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
     
     #TODO avoid does not exist error on room connection
+    
     async def connect(self):
+        self.code = self.scope["url_route"]["kwargs"]["code"]
+        self.group_name = f"room_{self.code}"
+        self.user = self.scope.get("user")
+    
+        result = await RoomConnectionService.handle_connect(
+            user=self.user,
+            code=self.code,
+            channel_name=self.channel_name
+        )
+    
+        if result.get("close"):
+            await self.accept()
+            await self.send_json(result.get("message", {}))
+            await self.close(code=result["code"])
+            return
+    
+        await self.accept()
+        await self.channel_layer.group_add(self.group_name, self.channel_name)
+    
+        await RoomConnectionService.finalize_join(
+            user=self.user,
+            code=self.code,
+            channel_name=self.channel_name
+        )
+    
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "room_event",
+                "event": "user_joined",
+                "payload": {"user": self.get_username()},
+            }
+        )
+    
+        room = await sync_to_async(Room.objects.get)(code=self.code)
+    
+        if room.status == "start":
+            await self.send_data()
+
+    async def connect_old(self):
         self.code = self.scope["url_route"]["kwargs"]["code"]
         self.group_name = f"room_{self.code}"
         self.user = self.scope.get("user")
@@ -125,97 +168,96 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await self.send_json({"event": "game_started", "message": "already started"})
             await self.close(code=4003)
             return
-    
-        participants = await sync_to_async(list)(
-            PlayerPresence.objects.filter(room=room).select_related("player")
-        )
-        participant_users = [p.player for p in participants]
-    
-        blocking = await sync_to_async(
-            Friendship.objects.filter(
-                Q(from_user= self.user) | Q(to_user= self.user),
-                status="blocked",
-                blocked_by__in=participant_users,
-            ).select_related("from_user", "to_user", "blocked_by").first
-        )()
         
-        if blocking:
-            blocker = blocking.blocked_by
-    
-            blocker_presence = await sync_to_async(
-                PlayerPresence.objects.filter(
-                    player=blocker,
-                    room=room
-                ).first
+        if room.status != "start":
+            participants = await sync_to_async(list)(
+                PlayerPresence.objects.filter(room=room).select_related("player")
+            )
+            participant_users = [p.player for p in participants]
+        
+            blocking = await sync_to_async(
+                Friendship.objects.filter(
+                    Q(from_user= self.user) | Q(to_user= self.user),
+                    status="blocked",
+                    blocked_by__in=participant_users,
+                ).select_related("from_user", "to_user", "blocked_by").first
             )()
-            print(blocker_presence)
-            if blocker_presence and blocker_presence.channel_name:
-                await self.channel_layer.send(
-                    blocker_presence.channel_name,
-                    {
-                        "type": "room_event",
-                        "event": "blocked_user_join_attempt",
-                        "payload": {
-                            "username": self.user.username
-                        }
-                    }
-                )
-    
-            await self.accept()
-            await self.send_json({
-                "event": "blocked",
-                "message": "You cannot join this room"
-            })
-            await self.close(code=4008)
-            return
-    
-        blocked_friendships = await sync_to_async(list)(
-            Friendship.objects.filter(
-                Q(from_user__in=participant_users) |
-                Q(to_user__in=participant_users),
-                status="blocked",
-                blocked_by=self.user,
-            ).select_related("to_user", "from_user", "blocked_by")
-        )
+            if blocking:
+                blocker = blocking.blocked_by
         
-        if blocked_friendships:
-        
-            blocked_users = []
-        
-            for f in blocked_friendships:
-        
-                blocked_user = (
-                    f.to_user
-                    if f.from_user == self.user
-                    else f.from_user
-                )
-        
-                presence = await sync_to_async(
+                blocker_presence = await sync_to_async(
                     PlayerPresence.objects.filter(
-                        player=blocked_user,
+                        player=blocker,
                         room=room
-                    ).exists
+                    ).first
                 )()
-        
-                if presence:
-                    blocked_users.append(blocked_user.username)
-        
-            if blocked_users:
+                if blocker_presence and blocker_presence.channel_name:
+                    await self.channel_layer.send(
+                        blocker_presence.channel_name,
+                        {
+                            "type": "room_event",
+                            "event": "blocked_user_join_attempt",
+                            "payload": {
+                                "username": self.user.username
+                            }
+                        }
+                    )
         
                 await self.accept()
-        
-                await self.send(text_data=json.dumps({
-                    "event": "blocked_users_present",
-                    "message": "You cannot join this room",
-                    "payload": {
-                        "blocked_users": blocked_users,
-                        "by": self.user.username
-                    }
-                }))
-        
+                await self.send_json({
+                    "event": "blocked",
+                    "message": "You cannot join this room"
+                })
                 await self.close(code=4008)
                 return
-               
+        
+            blocked_friendships = await sync_to_async(list)(
+                Friendship.objects.filter(
+                    Q(from_user__in=participant_users) |
+                    Q(to_user__in=participant_users),
+                    status="blocked",
+                    blocked_by=self.user,
+                ).select_related("to_user", "from_user", "blocked_by")
+            )
+            
+            if blocked_friendships:
+            
+                blocked_users = []
+            
+                for f in blocked_friendships:
+            
+                    blocked_user = (
+                        f.to_user
+                        if f.from_user == self.user
+                        else f.from_user
+                    )
+            
+                    presence = await sync_to_async(
+                        PlayerPresence.objects.filter(
+                            player=blocked_user,
+                            room=room
+                        ).exists
+                    )()
+            
+                    if presence:
+                        blocked_users.append(blocked_user.username)
+            
+                if blocked_users:
+            
+                    await self.accept()
+            
+                    await self.send(text_data=json.dumps({
+                        "event": "blocked_users_present",
+                        "message": "You cannot join this room",
+                        "payload": {
+                            "blocked_users": blocked_users,
+                            "by": self.user.username
+                        }
+                    }))
+            
+                    await self.close(code=4008)
+                    return
+                   
         await self.accept()
     
         await self.channel_layer.group_add(
@@ -349,7 +391,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "type": "error",
                 "message": "Invalid JSON"
             }))
-
 
     async def handle_start_game(self, payload=None):
         room = await get_room_with_host(self.code)
@@ -988,7 +1029,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
         
         game = GameEngine(room.uuid)
         for player_id, player_data in game_state["players"].items():
-            p = await sync_to_async(PlayerPresence.objects.get)(
+            p = await sync_to_async(
+                PlayerPresence.objects.select_related("player").get
+            )(
                 room=room,
                 position=int(player_id)
             )
@@ -1015,7 +1058,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                         {
                             "type": "notify",
                             "event": "notification",
-                            "type_notify": "friend_accepted",
+                            "type_notify": "your_turn",
                     
                             "payload": {
                                 "message": f"It's your time to play"
