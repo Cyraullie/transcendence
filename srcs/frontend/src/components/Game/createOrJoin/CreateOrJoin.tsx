@@ -6,7 +6,7 @@ import FilterGame from "./FilterGames";
 import type { availableGameT } from "../../../utils/type/availableGameType";
 import { createFakeGame } from "../../../utils/test_funcs/createFakeGameAvailable.tsx";
 
-export default function CreateOrJoin({logged_in, setIsInGame}: {logged_in: boolean, setIsInGame: React.Dispatch<SetStateAction<boolean>>}) {
+export default function CreateOrJoin({setIsInGame}: {setIsInGame: React.Dispatch<SetStateAction<boolean>>}) {
   const availableGames = createFakeGame();
   const [filteredGames, setFilteredGames] = useState<availableGameT[]>([])
 
@@ -64,7 +64,6 @@ export default function CreateOrJoin({logged_in, setIsInGame}: {logged_in: boole
                                 <UsernameMiniProfileBtn
                                   id={player.id}
                                   name={player.username}
-								  logged_in={logged_in}
                                 />
                               </a>
                             </li>

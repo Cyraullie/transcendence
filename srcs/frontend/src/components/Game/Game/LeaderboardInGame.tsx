@@ -41,7 +41,6 @@ export default function LeadderboardInGame() {
                   <UsernameMiniProfileBtn
                     id={player.id}
                     name={player.username}
-                    logged_in={true}
                   />
                 </td>
                 <td className="text-center">{player.score}</td>

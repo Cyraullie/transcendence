@@ -3,25 +3,25 @@ import useWebSocketModule from "react-use-websocket";
 import host from '../http/host';
 import { useNotif } from "../../components/hooks/useNotif";
 import type { SetStateAction } from "react";
+import { useAuth } from "../../components/hooks/useAuth";
 
 type Props = {
-	loggedIn: boolean;
 	setProfile: React.Dispatch<SetStateAction<boolean>>;
 	updatedProfile: boolean;
 	updateLeaderboard: boolean;
 	setLeaderboard: React.Dispatch<SetStateAction<boolean>>;
 }
 
-export function Notifications({loggedIn, setProfile, updatedProfile, updateLeaderboard, setLeaderboard}:Props) {
+export function Notifications({ setProfile, updatedProfile, updateLeaderboard, setLeaderboard}:Props) {
 
 	const { default: useWebSocket = useWebSocketModule } = useWebSocketModule as unknown as {
 		default: typeof useWebSocketModule;
 	};
-
+	const auth = useAuth();
 	const notif = useNotif();
 	
-	useWebSocket(loggedIn ? (host.ws + "notification/") : null, {
-		shouldReconnect: () => loggedIn,
+	useWebSocket(auth.logged_in ? (host.ws + "notification/") : null, {
+		shouldReconnect: () => auth.logged_in ? true : false,
 		reconnectAttempts: 30,
 		reconnectInterval: 1000,
 		
