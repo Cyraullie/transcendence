@@ -399,7 +399,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         
         game = GameEngine(room.uuid)
         for player_id, player_data in game_state["players"].items():
-            p = await sync_to_async(PlayerPresence.objects.get)(
+            p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
                 room=room,
                 position=int(player_id)
             )
@@ -418,6 +418,20 @@ class RoomConsumer(AsyncWebsocketConsumer):
                                 "puntos": player_data["puntos"],
                                 "legal": legal,
                                 
+                            }
+                        }
+                    )
+
+        
+                    await self.channel_layer.group_send(
+                        f"user_{p.player.id}",
+                        {
+                            "type": "notify",
+                            "event": "notification",
+                            "type_notify": "your_turn",
+                    
+                            "payload": {
+                                "message": f"It's your time to play"
                             }
                         }
                     )
