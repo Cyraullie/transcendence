@@ -36,8 +36,10 @@ class RoomConnectionService:
             ).exists
         )()
 
+        if room.status == "start" and is_member:
+            return {"close": False}
         # ROOM FULL
-        if room.nb_player == 7:
+        if room.nb_player == room.max_player:
             return {
                 "close": True,
                 "code": 4003,
@@ -61,8 +63,6 @@ class RoomConnectionService:
             }
 
         # BLOCKING LOGIC
-        if room.status == "start":
-            return {"close": False}
         return await RoomConnectionService.check_blocking(user, room)
 
 
