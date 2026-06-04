@@ -11,7 +11,7 @@ from django.conf import settings
 @authentication_classes([OptionalJWTAuthentication])
 def VerifyCookie(request):
 	if request.user.is_authenticated:
-		return Response({"status":"succes"})
+		return Response({"status":"success"})
 	else:
 		return Response({"status":"failed"})
 
