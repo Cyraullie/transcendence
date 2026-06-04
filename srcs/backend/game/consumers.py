@@ -60,29 +60,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
             "type": "error",
             "message": message
         }))
-
-    #async def end(self, room, game):
-    #    player_finished = 0
-    #    game_state = room.game_states
-    #    for player_id, player_data in game_state["players"].items():
-    #        if len(player_data["cards"]) == 0:
-    #            player_finished += 1
-    #    if player_finished == room.nb_player:
-    #        game_state = game.handleAction("point", game_state)
-    #        await save_room_state(room.uuid, game_state)
-    #        await self.channel_layer.group_send(
-    #            self.group_name,
-    #            {
-    #                "type": "room_event",
-    #                "event": "message",
-    #                "payload": {
-    #                    "message": "game finished do you want continue or stop ?"
-	#				}
-    #            }
-    #        )
-    #        return True
-    #    return False
-
     
     #TODO avoid does not exist error on room connection
     
@@ -820,18 +797,20 @@ class RoomConsumer(AsyncWebsocketConsumer):
     async def send_data(self):
         room = await get_room_with_host(self.code)
         game_state = room.game_state
-        
+
         game = GameEngine(room.uuid)
-        for player_id, player_data in game_state["players"].items():
-            p = await sync_to_async(
-                PlayerPresence.objects.select_related("player").get
-            )(
-                room=room,
-                position=int(player_id)
-            )
-            if int(player_id) == game_state["playing"]:
-                legal = game.handleAction("legal", game_state, idPlayer=str(player_id))
+        
+        p = await sync_to_async(
+            PlayerPresence.objects.select_related("player").get
+        )(
+            room=room,
+            position=int(game_state["playing"])
+        )
+        try:
+            if p.position == game_state["playing"]:
+                legal = game.handleAction("legal", game_state, idPlayer=str(p.position))
                 if p.channel_name:
+                    player_data = game_state["players"][str(p.position)]
                     await self.channel_layer.send(
                         p.channel_name,
                         {
@@ -859,23 +838,24 @@ class RoomConsumer(AsyncWebsocketConsumer):
                             }
                         }
                     )
-            else:
-                player_puntos = {}
-
-                for player_id, player_data in game_state["players"].items():
-                    player_puntos[player_id] = player_data["puntos"]
-                
-                await self.channel_layer.group_send(
-                    self.group_name,
-                    {
-                        "type": "room_event",
-                        "event": "board_data",
-                        "payload": {
-                            "board": game_state["board"],
-                            "puntos": player_puntos
-                        }
+            
+            player_puntos = {}
+            for player_id, player_data in game_state["players"].items():
+                player_puntos[player_id] = player_data["puntos"]
+            
+            await self.channel_layer.group_send(
+                self.group_name,
+                {
+                    "type": "room_event",
+                    "event": "board_data",
+                    "payload": {
+                        "board": game_state["board"],
+                        "puntos": player_puntos
                     }
-                )
+                }
+            )
+        except ChannelFull:
+            print("Channel is full. Dropping message.")
     
     def get_username(self):
         user = self.scope.get("user")
