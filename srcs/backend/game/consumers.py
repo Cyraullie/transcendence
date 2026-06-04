@@ -11,7 +11,10 @@ import copy
 from .services.game_service import GameService
 from .services.room_service import RoomService
 from .services.meld_service import MeldService
+from .services.bot_service import BotService
 from .services.room_connection_service import RoomConnectionService
+
+from channels.exceptions import ChannelFull
 
 CARD_VALUES = {
     "6": 6,
@@ -35,7 +38,6 @@ ACTION_HANDLERS = {
     "kick": "handle_kick",
 }
 #TODO vote in game to ban a player (majorité qui remporte le vote ? tout le monde sauf la cible peut voté)
-
 class RoomConsumer(AsyncWebsocketConsumer):
     
     async def send_json(self, data):
@@ -102,248 +104,58 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
         if room.status == "start":
             await self.send_data()
-
-    async def connect_old(self):
-        self.code = self.scope["url_route"]["kwargs"]["code"]
-        self.group_name = f"room_{self.code}"
-        self.user = self.scope.get("user")
     
-        if not await sync_to_async(
-            Room.objects.filter(code=self.code).exists
-            )():
-            await self.close(code=4001)
-            return
-            
-    
-        if not self.user or not self.user.is_authenticated:
-            await self.close(code=4001)
-            return
-    
-        room = await sync_to_async(Room.objects.get)(code=self.code)
-    
-        is_member = await sync_to_async(
-            PlayerPresence.objects.filter(
-                player=self.user,
-                room=room
-            ).exists
-        )()
-    
-        if room.nb_player == 7:
-            await self.accept()
-            await self.send_json({"event": "game_event", "message": "room full"})
-            await self.close(code=4003)
-            return
-    
-        if room.status == "end":
-            await self.accept()
-            await self.send_json({"event": "game_ended", "message": "ended"})
-            await self.close(code=4003)
-            return
-    
-        if room.status == "start" and not is_member:
-            await self.accept()
-            await self.send_json({"event": "game_started", "message": "already started"})
-            await self.close(code=4003)
-            return
-        
-        if room.status != "start":
-            participants = await sync_to_async(list)(
-                PlayerPresence.objects.filter(room=room).select_related("player")
-            )
-            participant_users = [p.player for p in participants]
-        
-            blocking = await sync_to_async(
-                Friendship.objects.filter(
-                    Q(from_user= self.user) | Q(to_user= self.user),
-                    status="blocked",
-                    blocked_by__in=participant_users,
-                ).select_related("from_user", "to_user", "blocked_by").first
-            )()
-            if blocking:
-                blocker = blocking.blocked_by
-        
-                blocker_presence = await sync_to_async(
-                    PlayerPresence.objects.filter(
-                        player=blocker,
-                        room=room
-                    ).first
-                )()
-                if blocker_presence and blocker_presence.channel_name:
-                    await self.channel_layer.send(
-                        blocker_presence.channel_name,
-                        {
-                            "type": "room_event",
-                            "event": "blocked_user_join_attempt",
-                            "payload": {
-                                "username": self.user.username
-                            }
-                        }
-                    )
-        
-                await self.accept()
-                await self.send_json({
-                    "event": "blocked",
-                    "message": "You cannot join this room"
-                })
-                await self.close(code=4008)
-                return
-        
-            blocked_friendships = await sync_to_async(list)(
-                Friendship.objects.filter(
-                    Q(from_user__in=participant_users) |
-                    Q(to_user__in=participant_users),
-                    status="blocked",
-                    blocked_by=self.user,
-                ).select_related("to_user", "from_user", "blocked_by")
-            )
-            
-            if blocked_friendships:
-            
-                blocked_users = []
-            
-                for f in blocked_friendships:
-            
-                    blocked_user = (
-                        f.to_user
-                        if f.from_user == self.user
-                        else f.from_user
-                    )
-            
-                    presence = await sync_to_async(
-                        PlayerPresence.objects.filter(
-                            player=blocked_user,
-                            room=room
-                        ).exists
-                    )()
-            
-                    if presence:
-                        blocked_users.append(blocked_user.username)
-            
-                if blocked_users:
-            
-                    await self.accept()
-            
-                    await self.send(text_data=json.dumps({
-                        "event": "blocked_users_present",
-                        "message": "You cannot join this room",
-                        "payload": {
-                            "blocked_users": blocked_users,
-                            "by": self.user.username
-                        }
-                    }))
-            
-                    await self.close(code=4008)
-                    return
-                   
-        await self.accept()
-    
-        await self.channel_layer.group_add(
-            self.group_name,
-            self.channel_name
-        )
-    
-        await add_player_to_room(self.user, self.code)
-    
-        await sync_to_async(
-            PlayerPresence.objects.filter(
-                player=self.user,
-                room=room
-            ).update
-        )(channel_name=self.channel_name)
-    
-        await self.channel_layer.group_send(
-            self.group_name,
-            {
-                "type": "room_event",
-                "event": "user_joined",
-                "payload": {
-                    "user": self.get_username(),
-                }
-            }
-        )
-    
-        if room.status == "start":
-            await self.send_data()
-                    
     async def disconnect(self, close_code):
     
-        group_name = getattr(self, "group_name", None)
-        code = getattr(self, "code", None)
-        user = getattr(self, "user", None)
-    
-        if not user or not user.is_authenticated:
+        if not self.user.is_authenticated:
             return
     
-        if not code:
-            return
-    
-        room = await get_room_with_host(code)
-    
-        if group_name:
+        if self.group_name:
             await self.channel_layer.group_discard(
-                group_name,
+                self.group_name,
                 self.channel_name
             )
-        
-        participants = await sync_to_async(list)(
-            PlayerPresence.objects.filter(room=room).select_related("player")
+    
+        result = await RoomService.handle_player_disconnect(
+            self.user,
+            self.code
         )
-        participant_users = [p.player for p in participants]
-        
-        host = copy.deepcopy(room.host)
-        await remove_player_from_room(user, code)
-        room = await get_room_with_host(code)
-        await sync_to_async(PlayerPresence.objects.filter(
-            player=user,
-            room__code=code
-        ).update)(
-            channel_name=None
-        )
-        
-        if group_name:
-            if user in participant_users:
+    
+        room = result["room"]
+    
+        if self.group_name:
+    
+            await self.channel_layer.group_send(
+                self.group_name,
+                {
+                    "type": "room_event",
+                    "event": "user_left",
+                    "payload": {
+                        "user": self.get_username(),
+                    }
+                }
+            )
+    
+            if result["host_changed"]:
                 await self.channel_layer.group_send(
-                    group_name,
+                    self.group_name,
                     {
                         "type": "room_event",
-                        "event": "user_left",
+                        "event": "host_changed",
                         "payload": {
-                            "user": self.get_username(),
+                            "new_host": room.host.username
                         }
                     }
                 )
-
-                if room.host != host:
-        
-                    await self.channel_layer.group_send(
-                        group_name,
-                        {
-                            "type": "room_event",
-                            "event": "host_changed",
-                            "payload": {
-                                "new_host": room.host.username if room.host else None
-                            }
-                        }
-                    )
     
-        if room:
-    
-            try:
-                position = get_player_pos(user, room.code)
-    
-                if room.game_state and str(position) == str(room.game_state.get("playing")):
-    
-                    game = GameEngine(room.uuid)
-                    legal = game.handleAction("legal", room.game_state, idPlayer=str(position))
-    
-                    payload = {
-                        "cardId": bot(room.game_state, int(position), legal)
-                    }
-    
-                    await sync_to_async(self.handle_play_card)(payload)
-    
-            except Exception:
-                pass
+        try:
+            await BotService.replace_disconnected_player(
+                room,
+                self.user,
+                self.handle_play_card
+            )
+        except Exception:
+            pass
 
     async def receive(self, text_data):
         try:
@@ -389,7 +201,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
         
         for player in players:
         
-        
             await self.channel_layer.group_send(
                 f"user_{player.player.id}",
                 {
@@ -416,7 +227,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
         )
 
         await self.send_init()
+        game = GameEngine(room.uuid)
 
+        game_state = await BotService.play_until_human(room, game_state, game, send_data_callback=self.send_data)
 
     async def handle_play_card(self, payload):
         room = await get_room_with_host(self.code)
@@ -435,128 +248,14 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
         await self.send_data()
 
-        #TODO bots après move
-        #await BotService.run_if_needed(room)
-
-
-        
-    async def handle_play_card_old(self, payload: dict):
         room = await get_room_with_host(self.code)
-        position = await get_player_pos(self.user, room.code)
-
-        if int(position) != int(room.game_state["playing"]):
-            p = await sync_to_async(PlayerPresence.objects.get)(
-                room=room,
-                position=int(position)
-            )
-            await self.channel_layer.send(
-                p.channel_name,
-                {
-                    "type": "room_event",
-                    "event": "message",
-                    "payload": {
-                        "message": "ce n'est pas à toi de jouer"
-					}
-                }
-            )
-            return
-
+        game_state = room.game_state
         game = GameEngine(room.uuid)
+        game_state = await BotService.play_until_human(room, game_state, game, send_data_callback=self.send_data)
         
-        legal = game.handleAction("legal", room.game_state, idPlayer=str(position))
-        idx = await self.get_position(payload["cardId"])
-        if idx >= len(legal) or idx < 0:
-            p = await sync_to_async(PlayerPresence.objects.get)(
-                room=room,
-                position=int(position)
-            )
-            await self.channel_layer.send(
-                p.channel_name,
-                {
-                    "type": "room_event",
-                    "event": "message",
-                    "payload": {
-                        "message": "il n'y a pas de carte a cette position"
-					}
-                }
-            )
-            return
         
-        if not legal[idx]:
-            p = await sync_to_async(PlayerPresence.objects.get)(
-                room=room,
-                position=int(position)
-            )
-            await self.channel_layer.send(
-                p.channel_name,
-                {
-                    "type": "room_event",
-                    "event": "message",
-                    "payload": {
-                        "message": "tu ne peux pas jouer cette carte"
-					}
-                }
-            )
-            return
-
-        taker = -1
-        state = copy.deepcopy(room.game_state)
-        if len(state["board"]) == room.nb_player:
-            melds = game.handleAction("board_meld", state, idPlayer= str(position), idCard= int(idx))
-            taker = game.handleAction("who_take", state, idPlayer= str(position), idCard= int(idx))
-
-            p = await sync_to_async(PlayerPresence.objects.get)(
-                room=room,
-                position=int(taker)
-            )
-            stat = await sync_to_async(Stat.objects.get)(user_id=p.player_id)
-            stat.board_meld_points = stat.board_meld_points + melds
-            if stat.highest_board_meld < melds:
-                stat.highest_board_meld = melds
-            stat.nb_taken += 1
-            await sync_to_async(stat.save)()
-
-        tricks = copy.deepcopy(state["tricks"])
-        game_state = game.handleAction("play", state, idPlayer= str(position), idCard= int(idx))
-        await save_room_state(room.uuid, game_state)
-        if game_state["tricks"] != tricks and game_state["tricks"] != "none":
-            p = await sync_to_async(PlayerPresence.objects.get)(
-                room=room,
-                position=int(taker)
-            )
-            stat = await sync_to_async(Stat.objects.get)(user_id=p.player_id)
-            stat.nb_trick_choose += 1
-            stat.tricks[game_state["tricks"]] += 1
-            preferred = max(stat.tricks, key=stat.tricks.get)
-            stat.prefered_trick = preferred
-            await sync_to_async(stat.save)()
-
-        if (self.end(room, game)):
-            return 
-
-        await self.send_data()
-
-        #p = await sync_to_async(PlayerPresence.objects.get)(
-        #    room=room,
-        #    position= await get_player_pos(self.user, room.code)
-        #)
-        #while (not p.is_human or not p.is_online):
-        #    position = str(game_state["playing"])
-        #    card = bot(game_state, position, legal, p.difficulty)
-        #    game_state = game.handleAction("play", game_state, idPlayer= position, idCard= card)
-        #    await save_room_state(room.uuid, game_state)
-
-        #    if (self.end(room, game)):
-        #        return
-
-        #    await self.send_data()
-
-        #    p = await sync_to_async(PlayerPresence.objects.get)(
-        #        room=room,
-        #        position=int(game_state["playing"])
-        #    )
-        #
-        #await self.send_data()
+        
+        
 
     async def handle_melds(self, payload):
         room = await get_room_with_host(self.code)
@@ -583,7 +282,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
         await self.send(json.dumps(result))
 
-    #TODO host can kick everybody except himself
     async def handle_kick(self, payload: dict):
         room = await get_room_with_host(self.code)
     
@@ -624,7 +322,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     "type": "force_disconnect",
                 }
             )
-     
+
+    
+    #TODO refacto this shit
     async def handle_continue_game(self, payload=None):
         room = await get_room_with_host(self.code)
     
@@ -634,11 +334,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "message": "Only host can start game"
             }))
             return
-        
-        # for player_id, player_data in room.game_state["players"].items():
-        #     if len(player_data["cards"]) != 0:
-        #         return
-        
+
         game = GameEngine(room.uuid)
         game_state = game.handleAction("start", room.game_state, await count_player(room.code))
                 
@@ -748,8 +444,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }
         )
 
-
-
     async def send_init(self):
         room = await get_room_with_host(self.code)
         game_state = room.game_state
@@ -794,6 +488,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
                         }
                     )
 
+#TODO send all melds possible
+#TODO add id player on board data
+#TODO send one board by people not multiple time on the group
     async def send_data(self):
         room = await get_room_with_host(self.code)
         game_state = room.game_state
