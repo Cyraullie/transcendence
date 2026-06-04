@@ -1,11 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import host from "../api/host";
-import { setLoggedIn } from "../api/login_status";
+import host from "../api/http/host";
+import { useNotif } from "../components/hooks/useNotif";
+import { useAuth } from "../components/hooks/useAuth";
 
 export function GoogleCallback() {
   const navigate = useNavigate();
+  const auth = useAuth();
   const location = useLocation();
 
   useEffect(() => {
@@ -24,22 +26,18 @@ export function GoogleCallback() {
           { code },
           { withCredentials: true }
         );
-		setLoggedIn(true);
-
-		if (location.state) {
-        	navigate(location.state);
-		} else {
-			navigate("/");
-		}
-      } catch (err) {
-		// improve with set state
-        console.error("Google login failed:", err); // notification popup
-        navigate("/login", {state: location.pathname});
+		auth.setLoggedIn(true);
+		const redirect = sessionStorage.getItem("login_redirect") || "/";
+		sessionStorage.removeItem("login_redirect");		
+		navigate(redirect);
+      } catch {
+		notif?.showNotif("Login Error", "OAuth Login failed please try again.", 5000)
+        navigate("/login");
       }
     }
 
     GoogleLogin();
-  }, [navigate, location]);
+  }, [navigate, location, auth.setLoggedIn, notif, auth]);
 
 return (
 	<div className="page-content flex items-center justify-center min-h-screen">

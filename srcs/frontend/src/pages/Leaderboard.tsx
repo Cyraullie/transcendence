@@ -1,14 +1,21 @@
 import { useNavigate } from "react-router";
-import { LeaderboardPart } from "../components/LeaderboardPart";
-import { defaultLeaderboard, type leaderboardT } from "../utils/leaderboardType";
+import { LeaderboardPart } from "../components/Leaderboard/LeaderboardPart";
+import { defaultLeaderboard, type leaderboardT } from "../utils/type/leaderboardType";
 import { useEffect, useState } from "react";
-import { getLeaderboard, leaderboardArray } from "../api/leaderboard";
+import { getLeaderboard, leaderboardArray } from "../api/http/leaderboard";
+import { useNotif } from "../components/hooks/useNotif";
+import { useAuth } from "../components/hooks/useAuth";
 
-export function Leaderboard() {
+type Props = {
+	updateLeaderboard: boolean;
+}
+export function Leaderboard({updateLeaderboard}:Props) {
 
 	const navigate = useNavigate();
 	const [valid, setValid] = useState<boolean | null>(null);
 	const [leaderboard, setLeaderboard] = useState<leaderboardT>(defaultLeaderboard)
+	const notif = useNotif();
+	const auth = useAuth();
 
 	useEffect(() => {
 
@@ -22,7 +29,7 @@ export function Leaderboard() {
 
 		async function load_leaderboard() {
 			
-			const tmp_leaderboard = await getLeaderboard();
+			const tmp_leaderboard = await getLeaderboard(auth.logged_in);
 			if ("code" in tmp_leaderboard) {
 				return other_error(tmp_leaderboard.response);
 			}
@@ -30,7 +37,7 @@ export function Leaderboard() {
 			setValid(true);
 		}
 		load_leaderboard();
-	}, [navigate])
+	}, [navigate, auth.logged_in, notif, updateLeaderboard])
 
 	if (valid === null) {
 	  return (
@@ -51,7 +58,7 @@ export function Leaderboard() {
   return (
     <div className="page-content my-17">
       <h1>Leaderboard</h1>
-      <LeaderboardPart tmp_leaderboard={leaderboard} />
+      <LeaderboardPart tmp_leaderboard={leaderboard} logged_in={auth.logged_in} />
     </div>
   );
 }

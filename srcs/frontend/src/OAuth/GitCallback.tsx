@@ -1,12 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import host from "../api/host";
-import { setLoggedIn } from "../api/login_status";
+import host from "../api/http/host";
+import { useNotif } from "../components/hooks/useNotif";
+import { useAuth } from "../components/hooks/useAuth";
 
 export function GitCallback() {
   const navigate = useNavigate();
   const location = useLocation();
+  const notif = useNotif();
+  const hasRun = useRef(false);
+  const auth = useAuth();
 
   useEffect(() => {
     async function GitLogin() {
@@ -24,21 +28,18 @@ export function GitCallback() {
           { code },
           { withCredentials: true }
         );
-		setLoggedIn(true);
-		if (location.state) {
-        	navigate(location.state, {state: location.pathname});
-		} else {
-			navigate("/");
-		}
-      } catch (err) {
-		// improve with set state
-        console.error("GitHub login failed:", err);
+		auth.setLoggedIn(true);
+		const redirect = sessionStorage.getItem("login_redirect") || "/";
+		sessionStorage.removeItem("login_redirect");
+		navigate(redirect);
+      } catch {
+		notif?.showNotif("Login Error", "OAuth Login failed please try again.", 5000)
         navigate("/login");
       }
     }
 
-    GitLogin();
-  }, [navigate, location]);
+    gitLogin();
+  }, [navigate, location, auth.setLoggedIn, notif]);
 
 return (
 	<div className="page-content flex items-center justify-center min-h-screen">
