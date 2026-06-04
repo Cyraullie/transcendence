@@ -2,6 +2,7 @@ from .player import Player, Hand
 from .card import Card
 from .board import Board
 from .deck import Deck
+import copy
 
 class GameEngine:
 	def __init__(self, roomID: str):
@@ -218,7 +219,8 @@ class GameEngine:
 
 		return data
 
-	def board_melds(self, data: dict, idPlayer: int , idCard: int):
+	def board_melds(self, state: dict, idPlayer: int , idCard: int):
+		data = copy.deepcopy(state)
 		card = data["players"][idPlayer]["cards"][idCard].copy()
 		del data["players"][idPlayer]["cards"][idCard]
 		if (len(data["board"]) == 0):
@@ -241,7 +243,8 @@ class GameEngine:
 			data["board"]["asked"] = asked
 			return melds
 
-	def who_take(self, data: dict, idPlayer: int , idCard: int):
+	def who_take(self, state: dict, idPlayer: int , idCard: int):
+		data = copy.deepcopy(state)
 		card = data["players"][idPlayer]["cards"][idCard].copy()
 		del data["players"][idPlayer]["cards"][idCard]
 		if (len(data["board"]) == 0):
