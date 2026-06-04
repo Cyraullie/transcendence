@@ -1,6 +1,6 @@
 import json
 import tempfile
-from datetime import datetime
+import os
 from django.utils import timezone
 from pathlib import Path
 from api.models import User
@@ -62,9 +62,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 		file = self.getFile()
 		if (file.exists()):
-			content = file.read_text()
-			self.send(content)
-
+			content = file.open().readlines()
+			await self.send(json.dumps(content))
 
 	async def disconnect(self, close_code):
 		await self.channel_layer.group_discard(
@@ -91,14 +90,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 				time = timezone.now().strftime('%H:%M')
 
-				await self.channel_layer.group_send(self.group_name, {
+				event = {
 					"type": "message",
 					"user": user_data,
 					"message": message,
 					"time": time
-				})
+				}
 
-				# file.write_text(save)
+				await self.channel_layer.group_send(self.group_name, event)
+
+				data = str(event)
+				if (file.exists()):
+					data = file.read_text() + data
+				file.write_text(data + os.linesep)
+				print(file.open().readlines())
 
 		except json.JSONDecodeError:
 			await self.send(text_data=json.dumps({
