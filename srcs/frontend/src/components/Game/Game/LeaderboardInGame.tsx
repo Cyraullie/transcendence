@@ -8,7 +8,7 @@ import type {
   detailedRoundT,
 } from "../../../utils/type/detailedGame";
 
-export default function LeadderboardInGame() {
+export default function LeaderboardInGame() {
   const listPlayer = generateFakeUsersInGame();
   const detailedGame = generateFakeDetailedGame();
   const current = { id: 4, username: "alexouille", score: 69 };
