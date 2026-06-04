@@ -1,6 +1,7 @@
 import json
 import tempfile
 import os
+from .models import PlayerPresence, Room
 from django.utils import timezone
 from pathlib import Path
 from api.models import User
@@ -38,7 +39,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		self.user = self.scope["user"]
 
 		if not self.user.is_authenticated:
-			print("not connecter")
+			await self.close()
+			return
+		
+		room = await sync_to_async(Room.objects.get)(code=self.code)
+		is_member = await sync_to_async(
+			PlayerPresence.objects.filter(
+				player=self.user,
+				room=room
+			).exists
+		)()
+		if (not is_member):
 			await self.close()
 			return
 
