@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+import tempfile
 from asgiref.sync import sync_to_async
 from .models import PlayerPresence, Room, PlayerScore, Stat
 from api.models import User
@@ -123,6 +126,14 @@ def add_bot_to_room(user, code, difficulty):
     except Room.DoesNotExist:
         return False
 
+def getFile(code):
+		tmp_dir = Path(tempfile.gettempdir())
+
+		file_name = f"chat_{code}.tmp"
+		file = tmp_dir / file_name
+
+		return file
+
 @sync_to_async
 def remove_player_from_room(user, code):
     if not user or not code:
@@ -141,6 +152,11 @@ def remove_player_from_room(user, code):
                 room.save()
             else:
                 room.delete()
+                
+                file = getFile(code)
+                if (file.exists()):
+                    os.remove(file)
+
                 return
 
         if room.status in ["start", "end"]:
