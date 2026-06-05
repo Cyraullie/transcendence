@@ -27,7 +27,7 @@ CARD_VALUES = {
     "K": 13,
     "A": 14
 }
-
+#TODO bug on open room to reconnect if server down
 ACTION_HANDLERS = {
     "start_game": "handle_start_game",
     "play_card": "handle_play_card",
@@ -413,9 +413,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
                             "event": "init_cards",
                             "payload": {
                                 "hand": player_data["cards"],
-                                "board": game_state["board"],
-                                "taken": player_data["taken"],
-                                "puntos": player_data["puntos"],
                                 "legal": legal,
                                 
                             }
@@ -444,12 +441,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
                             "event": "init_cards",
                             "payload": {
                                 "hand": player_data["cards"],
-                                "board": game_state["board"],
-                                "taken": player_data["taken"],
-                                "puntos": player_data["puntos"],
                             }
                         }
                     )
+        await self.send_board(game_state, room)
 
 #TODO send all melds possible
 #TODO add id player on board data
@@ -477,9 +472,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
                             "event": "init_cards",
                             "payload": {
                                 "hand": player_data["cards"],
-                                "board": game_state["board"],
-                                "taken": player_data["taken"],
-                                "puntos": player_data["puntos"],
                                 "legal": legal,
                             }
                         }
@@ -498,29 +490,47 @@ class RoomConsumer(AsyncWebsocketConsumer):
                         }
                     )
             
-            player_puntos = {}
-            player_list = {}
-            for player_id, player_data in game_state["players"].items():
-                player_puntos[player_id] = player_data["puntos"]
-                player_list[player_id] = len(player_data["cards"])
+            await self.send_board(game_state, room)
             
-            await self.channel_layer.group_send(
-                self.group_name,
-                {
-                    "type": "room_event",
-                    "event": "board_data",
-                    "payload": {
-                        "board": game_state["board"],
-                        "puntos": player_puntos,
-                        "playing": game_state["playing"],
-                        "player_list": player_list,
-                        "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
-                        "round_time": game_state["round_time"]
-                    }
-                }
-            )
         except ChannelFull:
             print("Channel is full. Dropping message.")
+    
+     
+    async def send_board(self, game_state, room):
+        player_puntos = {}
+        player_list = {}
+        for player_id, player_data in game_state["players"].items():
+            
+            p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+				room_id=room.id,
+                player=self.user
+			)
+            
+            player_puntos[str(player_id)] = player_data["puntos"]
+            player_list[str(player_id)] = {
+                "hand": len(player_data["cards"]),
+                "user": {"id": p.player.id, "username": p.player.username, "avatar": p.player.avatar}
+			    #TODO add last_fold
+            }
+        
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "room_event",
+                "event": "board_data",
+                "payload": {
+                    "board": game_state["board"],
+                    "puntos": player_puntos,
+                    "playing": game_state["playing"],
+                    "player_list": player_list,
+                    "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
+                    "round_time": game_state["round_time"]
+                    #TODO add round
+                }
+            }
+        )
+    
+    
     
     def get_username(self):
         user = self.scope.get("user")
