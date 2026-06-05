@@ -8,7 +8,7 @@ from game_engine.bot.bot import bot
 class BotService:
 
     @staticmethod
-    async def play_until_human(room, game_state, game, send_data_callback=None, check_end=None):
+    async def play_until_human(room, game_state, game, send_data_callback=None, check_end=None, check_take_fold_callback=None):
 
         is_end, gs = await check_end(room, game)
         if is_end:
@@ -33,7 +33,12 @@ class BotService:
             
             if send_data_callback:
                 await send_data_callback()
-            
+
+            if (check_take_fold_callback):
+                take_fold, game_state = await check_take_fold_callback(game_state, room)
+                if (take_fold and send_data_callback):
+                    await send_data_callback()
+
             is_end, gs = await check_end(room, game)
             if is_end:
                 return
