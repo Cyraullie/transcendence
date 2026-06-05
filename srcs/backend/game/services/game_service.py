@@ -35,7 +35,11 @@ class GameService:
         if send_init_callback:
                 await send_init_callback()
                 
-        game_state = await BotService.play_until_human(room, game_state, game, send_data_callback=send_data_callback, check_end=GameService.check_game_end)
+        game_state = await BotService.play_until_human(room, game_state, game, 
+                                                       send_data_callback=send_data_callback, 
+                                                       check_end=GameService.check_game_end, 
+                                                       check_take_fold_callback=GameService.check_take_fold
+                                                       )
 
         return game_state
     
@@ -98,6 +102,21 @@ class GameService:
         return {"state": state}
 
     @staticmethod
+    async def check_take_fold(game_state, room):
+        card_on_board = len(game_state["board"]) - 1
+        nb_players = len(game_state["players"])
+
+        if (card_on_board == nb_players):
+            game = GameEngine(room.uuid)
+
+            game_state = game.handleAction("take_fold", game_state)
+            await save_room_state(room.uuid, game_state)
+
+            return True, game_state
+        
+        return False, game_state
+
+    @staticmethod
     async def get_card_index(user, room, card_id):
         room = await get_room_with_host(room.code)
         position = await get_player_pos(user, room.code)
@@ -130,6 +149,7 @@ class GameService:
             }
         )
     
+
     @staticmethod
     async def check_game_end(room, game):
         game_state = room.game_state
@@ -174,7 +194,8 @@ class GameService:
             game_state,
             game,
             send_data_callback,
-            check_end=GameService.check_game_end
+            check_end=GameService.check_game_end,
+            check_take_fold_callback=GameService.check_take_fold
         )
 
         return game_state

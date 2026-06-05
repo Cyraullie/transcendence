@@ -249,9 +249,18 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
         room = await get_room_with_host(self.code)
         game_state = room.game_state
+
+        take_fold, game_state = await GameService.check_take_fold(game_state, room)
+        if (take_fold):
+            await self.send_data()
+
         game = GameEngine(room.uuid)
-        game_state = await BotService.play_until_human(room, game_state, game, send_data_callback=self.send_data, check_end=GameService.check_game_end)
-        
+        game_state = await BotService.play_until_human(room, game_state, game, 
+                                                       send_data_callback=self.send_data, 
+                                                       check_end=GameService.check_game_end, 
+                                                       check_take_fold_callback=GameService.check_take_fold
+                                                       )
+
         is_end, gs = await GameService.check_game_end(room, game)
         
         if (is_end):
