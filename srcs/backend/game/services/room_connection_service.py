@@ -68,7 +68,7 @@ class RoomConnectionService:
                 room__status="start"
             ).first
         )()
-        print(presence)
+
         if presence:
             return {
                 "close": True,

@@ -499,8 +499,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     )
             
             player_puntos = {}
+            player_list = {}
             for player_id, player_data in game_state["players"].items():
                 player_puntos[player_id] = player_data["puntos"]
+                player_list[player_id] = len(player_data["cards"])
             
             await self.channel_layer.group_send(
                 self.group_name,
@@ -509,7 +511,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     "event": "board_data",
                     "payload": {
                         "board": game_state["board"],
-                        "puntos": player_puntos
+                        "puntos": player_puntos,
+                        "playing": game_state["playing"],
+                        "player_list": player_list,
+                        "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
+                        "round_time": game_state["round_time"]
                     }
                 }
             )

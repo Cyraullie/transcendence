@@ -6,13 +6,13 @@ from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
 from game_engine.bot.bot import bot
 from django.db.models import Q
+from django.utils import timezone
+from datetime import timedelta
 import copy
 from .board_service import BoardService
 from .stats_service import StatsService
 from .bot_service import BotService
 from channels.layers import get_channel_layer
-
-
 
 class GameService:
 
@@ -25,6 +25,8 @@ class GameService:
             room.game_state,
             await count_player(room.code)
         )
+
+        game_state["round_time"] = (timezone.now() + timedelta(seconds=30)).strftime("%H:%M:%S")
 
         await start_room(room.uuid, game_state)
 
@@ -74,7 +76,9 @@ class GameService:
         prev_tricks = copy.deepcopy(state["tricks"])
 
         state = game.handleAction("play", state, idPlayer=str(position), idCard=idx)
-
+        
+        state["round_time"] = (timezone.now() + timedelta(seconds=30)).strftime("%H:%M:%S")
+            
         await save_room_state(room.uuid, state)
 
         await StatsService.update_after_play(
