@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Card() {
+export default function PCard() {
   const [active, setActive] = useState<boolean>(false);
   const [hover, setHover] = useState<boolean>(false);
   return (

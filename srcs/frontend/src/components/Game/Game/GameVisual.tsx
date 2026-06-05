@@ -1,12 +1,14 @@
 import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
-import Card from "./GameVisual/Card";
+import Hand from "./GameVisual/Hand";
+import Board from "./GameVisual/Board";
 
 export default function GameVisual() {
   return (
     <Canvas className="bg-(--green-color) w-3/4">
       <ambientLight />
-      <Card />
+	  <Hand />
+	  <Board />
     </Canvas>
   );
 }
