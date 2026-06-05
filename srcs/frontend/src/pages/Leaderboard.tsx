@@ -57,11 +57,7 @@ export function Leaderboard({updateLeaderboard}:Props) {
   return (
     <div className="page-content my-17">
       <h1>Leaderboard</h1>
-<<<<<<< HEAD
-      <LeaderboardPart tmp_leaderboard={leaderboard} />
-=======
-      <LeaderboardPart tmp_leaderboard={leaderboard} logged_in={auth.logged_in} />
->>>>>>> 5a92c62f0819fabcd1a6f3986814c05ed8a33e7f
+      <LeaderboardPart tmp_leaderboard={leaderboard}/>
     </div>
   );
 }
