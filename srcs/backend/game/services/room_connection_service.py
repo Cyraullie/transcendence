@@ -62,6 +62,22 @@ class RoomConnectionService:
                 "message": {"event": "game_started", "message": "already started"}
             }
 
+        presence = await sync_to_async(
+        PlayerPresence.objects.select_related("room").filter(
+                player=user,
+                room__status="start"
+            ).first
+        )()
+        print(presence)
+        if presence:
+            return {
+                "close": True,
+                "code": 4003,
+                "message": {
+                    "type": "error",
+                    "message": "You are already playing in another room"
+                }
+            }
         # BLOCKING LOGIC
         return await RoomConnectionService.check_blocking(user, room)
 

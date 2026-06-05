@@ -236,7 +236,6 @@ def list_public_room(request, data):
         ]
 
         data.append({
-            "id": room.id,
             "code": room.code,
             "type": "public",
             "is_friend": value["has_friend"],
@@ -306,7 +305,6 @@ def list_friend_room(request, data):
         ]
 
         data.append({
-            "id": room.id,
             "code": room.code,
             "type": "friends_only",
             "is_friend": True,
@@ -335,54 +333,14 @@ def list_room(request):
 @permission_classes([IsAuthenticated])
 def list_my_started_room(request):
 
-    rooms = Room.objects.filter(
-        status="start"
-    )
+    presence = PlayerPresence.objects.select_related("room").filter(
+        player=request.user,
+        room__status="start"
+    ).first()
 
-    presences = PlayerPresence.objects.filter(
-        room__in=rooms,
-    ).select_related("player", "room")
-
-    room_map = {}
-
-    for p in presences:
-        room_id = p.room.id
-
-        if room_id not in room_map:
-            room_map[room_id] = {
-                "room": p.room,
-                "players": [],
-                "present": False
-            }
-
-        room_map[room_id]["players"].append(p)
-
-        if request.user == p.player:
-            room_map[room_id]["present"] = True
-
-    data = []
-
-    for value in room_map.values():
-
-        if not value["present"]:
-            continue
-
-        room = value["room"]
-
-        list_player = [
-            {
-                "username": p.player.username
-            }
-            for p in value["players"]
-        ]
-
-        data.append({
-            "id": room.id,
-            "code": room.code,
-            "nb_player": room.nb_player,
-            "list_player": list_player,
-            "host": room.host.username if room.host else None,
-        })
+    data ={
+        "code": presence.room.code,
+    }
 
     return Response(data, status=200)
 
