@@ -512,14 +512,13 @@ class RoomConsumer(AsyncWebsocketConsumer):
             
             p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
 				room_id=room.id,
-                player=self.user
+                position=int(player_id)
 			)
             
             player_puntos[str(player_id)] = player_data["puntos"]
             player_list[str(player_id)] = {
                 "hand": len(player_data["cards"]),
                 "user": {"id": p.player.id, "username": p.player.username, "avatar": p.player.avatar}
-			    #TODO add last_fold
             }
         
         await self.channel_layer.group_send(
@@ -533,8 +532,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     "playing": game_state["playing"],
                     "player_list": player_list,
                     "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
-                    "round_time": game_state["round_time"]
-                    #TODO add round
+                    "round_time": game_state["round_time"],
+                    "round": game_state["round"],
+                    "last_fold": game_state.get("last_fold")
                 }
             }
         )
