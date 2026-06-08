@@ -8,6 +8,7 @@ from django.db.models import Q
 import copy
 from .board_service import BoardService
 from .stats_service import StatsService
+from .room_service import RoomService
 #from .bot_service import BotService
 from channels.layers import get_channel_layer
 
@@ -38,7 +39,7 @@ class RoomConnectionService:
 
         if room.status == "start" and is_member:
             return {"close": False}
-        # ROOM FULL
+
         if room.nb_player == room.max_player:
             return {
                 "close": True,
@@ -46,7 +47,6 @@ class RoomConnectionService:
                 "message": {"event": "game_event", "message": "room full"}
             }
 
-        # GAME ENDED
         if room.status == "end":
             return {
                 "close": True,
@@ -54,7 +54,6 @@ class RoomConnectionService:
                 "message": {"event": "game_ended", "message": "ended"}
             }
 
-        # STARTED BUT NOT MEMBER
         if room.status == "start" and not is_member:
             return {
                 "close": True,
@@ -78,9 +77,8 @@ class RoomConnectionService:
                     "message": "You are already playing in another room"
                 }
             }
-        # BLOCKING LOGIC
-        return await RoomConnectionService.check_blocking(user, room)
 
+        return await RoomConnectionService.check_blocking(user, room)
 
     @staticmethod
     async def check_blocking(user, room):
@@ -184,3 +182,22 @@ class RoomConnectionService:
                 room=room
             ).update
         )(channel_name=channel_name)
+
+    @staticmethod
+    async def broadcast_player_list(room, channel_layer):
+        players = await RoomService.get_players(room)
+
+        await channel_layer.group_send(
+            f"room_{room.code}",
+            {
+                "type": "list_player_event",
+                "event": "update",
+                "payload": {
+                    "players": players
+                }
+            }
+        )
+        
+        
+        
+        

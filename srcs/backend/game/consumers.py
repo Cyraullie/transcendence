@@ -45,7 +45,21 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
     async def private_event(self, event):
         await self.send(text_data=json.dumps({
+            "type": "list_player",
+            "event": event["event"],
+            "payload": event["payload"]
+        }))
+
+    async def list_player_event(self, event):
+        await self.send(text_data=json.dumps({
             "type": "private",
+            "event": event["event"],
+            "payload": event["payload"]
+        }))
+    
+    async def params_event(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "params",
             "event": event["event"],
             "payload": event["payload"]
         }))
@@ -94,7 +108,12 @@ class RoomConsumer(AsyncWebsocketConsumer):
             code=self.code,
             channel_name=self.channel_name
         )
-    
+        room = await get_room_with_host(self.code)
+        await RoomConnectionService.broadcast_player_list(
+            room,
+            self.channel_layer
+        )
+        
         await self.channel_layer.group_send(
             self.group_name,
             {
@@ -103,7 +122,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "payload": {"user": self.get_username()},
             }
         )
-    
+        
         room = await sync_to_async(Room.objects.get)(code=self.code)
     
         if room.status == "start":
@@ -126,6 +145,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
         )
     
         room = result["room"]
+    
+        await RoomConnectionService.broadcast_player_list(
+            room,
+            self.channel_layer
+        )
     
         if self.group_name:
     
