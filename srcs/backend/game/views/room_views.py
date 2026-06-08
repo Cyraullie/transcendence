@@ -355,6 +355,14 @@ def update_params(request, code):
             {"message": "No room with this code"},
             status= 401
         )
+    room = Room.objects.get(code=code)
+    
+    if room.host != request.user:
+        return Response(
+            {"message": "Only host can do this"},
+            status= 403
+        )
+    
     if "max_player" in request.data:
         if request.data["max_player"] > 7 or request.data["max_player"] < 1:
             return Response(
@@ -375,7 +383,7 @@ def update_params(request, code):
                 status= 401
             )
     
-    room = Room.objects.get(code=code)
+    
     serializer = RoomSerializer(room, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
