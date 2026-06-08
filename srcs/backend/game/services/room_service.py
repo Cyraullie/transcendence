@@ -97,7 +97,8 @@ class RoomService:
             players.append({
 				"id": p.player.id,
                 "username": p.player.username,
-                "is_host": p.player == room.host
+                "is_host": p.player == room.host,
+                "position": p.position
 			})
 
 
