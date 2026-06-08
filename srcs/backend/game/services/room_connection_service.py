@@ -197,7 +197,19 @@ class RoomConnectionService:
                 }
             }
         )
+    
+    @staticmethod
+    async def broadcast_room_params(room, channel_layer):
+        snapshot = await RoomService.get_room_snapshot(room)
         
+        await channel_layer.group_send(
+            f"room_{room.code}",
+            {
+                "type": "params_event",
+                "event": "update",
+                "payload": snapshot
+            }
+        )
         
         
         

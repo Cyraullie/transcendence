@@ -104,7 +104,15 @@ class RoomService:
 
         return players
 
-
+    @staticmethod
+    async def get_room_snapshot(room):
+        
+        return {
+            "code": room.code,
+            "status": room.status,
+            "max_player": room.max_player,
+            "type": room.type
+        }
 
 
 
