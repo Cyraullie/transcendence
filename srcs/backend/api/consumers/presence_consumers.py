@@ -70,7 +70,7 @@ class PresenceConsumer(AsyncWebsocketConsumer):
         
         await sync_to_async(
             User.objects.filter(id=self.user.id).update
-		)(presence_game=F("presence") - 1)
+		)(presence=F("presence") - 1)
 
         if (old_presence <= 1):  
             await sync_to_async(
