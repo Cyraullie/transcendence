@@ -6,7 +6,7 @@ import { generateFakeDetailedGame } from "../../../../utils/test_funcs/generateF
 import type {
   detailedGameT,
   detailedRoundT,
-} from "../../../utils/type/detailedGame";
+} from "../../../../utils/type/detailedGame";
 import Time from "./Time";
 
 export default function LeaderboardInGame() {
