@@ -24,10 +24,8 @@ export default function RoomSize({maxSize, setSize}: Props) {
         <span>|</span>
         <span>|</span>
         <span>|</span>
-        <span>|</span>
       </div>
       <div className="flex justify-between px-2.5 mt-2 text-xs">
-        <span>1</span>
         <span>2</span>
         <span>3</span>
         <span>4</span>

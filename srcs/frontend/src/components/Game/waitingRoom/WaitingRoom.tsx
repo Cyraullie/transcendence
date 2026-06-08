@@ -20,12 +20,13 @@ type Props = {
 
 export default function WaitingRoom({kickPlayer, startGame, roomCode, listPlayer, mode, maxSize, setMode, setSize} : Props) {
 	
-	const private_room = 0; const public_room = 1;
+	const private_room = 0; const friend_room = 1;
 	const notif = useNotif();
 
 	async function updateSettings() {
-		const roomMode = mode === private_room ? "private" : mode === public_room ? "public" : "friends_only";
-		const res = await updateParams(roomCode, JSON.stringify({type:roomMode, max_player:maxSize}))
+		const roomMode = mode === private_room ? "private" : mode === friend_room ? "friends_only" : "public";
+		console.debug(roomCode, "params: ", JSON.stringify({type:roomMode, max_player:maxSize}))
+		const res = await updateParams(roomCode, {type:roomMode, max_player:maxSize})
 		if ("code" in res) {
 			notif?.showNotif("Settings Error", res.response, 5000);
 		}

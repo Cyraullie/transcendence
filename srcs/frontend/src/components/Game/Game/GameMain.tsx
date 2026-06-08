@@ -1,7 +1,5 @@
-import type React from "react"
 import GameVisual from "./GameVisual"
 import Interface from "./Interface"
-import type { SetStateAction } from "react"
 
 type Props = {
 	playCard: (cardId: number) => void;

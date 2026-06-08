@@ -66,9 +66,9 @@ export async function addBot(code:string, n_bot:number, dif:string) {
 	}
 }
 
-export async function updateParams(code:string, params:string) {
+export async function updateParams(code:string, params) {
 	try {
-		await axios.post(host.http + 'room/params/' + code + '/', params, {timeout: 2000, withCredentials:true});
+		await axios.patch(host.http + 'room/params/' + code + '/', params, {timeout: 2000, withCredentials:true});
 		return {success: true};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;
@@ -82,7 +82,7 @@ export async function updateParams(code:string, params:string) {
 
 export async function inviteFriend(code:string, id:number) {
 	try {
-		await axios.post(host.http + 'room/params/' + code + '/', params, {timeout: 2000, withCredentials:true});
+		await axios.post(host.http + 'room/' + id + '/invite/', {}, {timeout: 2000, withCredentials:true});
 		return {success: true};
 	} catch (err) {
 		const error = err as AxiosError<backendErrorT>;

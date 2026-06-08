@@ -5,7 +5,7 @@ import host from "../../api/http/host";
 import { useAuth } from "../hooks/useAuth";
 import { useNotif } from "../hooks/useNotif";
 import { useState } from "react";
-import { playerT } from "../../utils/type/playerType";
+import { type playerT } from "../../utils/type/playerType";
 
 export default function GameWebSocket({code} : {code:string}) {
 
@@ -15,8 +15,7 @@ export default function GameWebSocket({code} : {code:string}) {
 			default: typeof useWebSocketModule;
 		};
 		const auth = useAuth();
-		const private_room = 0; const public_room = 1; const friend_room = 2;
-		const [mode, setMode] = useState(private_room);
+		const [mode, setMode] = useState(0);
 		const [maxSize, setSize] = useState(2);
 		const [listPlayer, setPlayers] = useState<playerT[]>([]);
 		
@@ -39,6 +38,7 @@ export default function GameWebSocket({code} : {code:string}) {
 			},
 
 			onMessage: (event) => {
+				setPlayers([]); // to remove
 				const data = JSON.parse(event.data);
 				if (data.type == "acknowledge") {
 					return
@@ -95,7 +95,7 @@ export default function GameWebSocket({code} : {code:string}) {
 	return (
 		<>
 		{auth.in_game ? <GameMain playCard={playCard} continueGame={continueGame} endGame={endGame} annonces={annonces}/> 
-		: <WaitingRoom roomCode={""} kickPlayer={kickPlayer} startGame={startGame} listPlayer={listPlayer} mode={mode} setMode={setMode} maxSize={maxSize} setSize={setSize}/>}
+		: <WaitingRoom roomCode={code} kickPlayer={kickPlayer} startGame={startGame} listPlayer={listPlayer} mode={mode} setMode={setMode} maxSize={maxSize} setSize={setSize}/>}
 		</>
 	);
 }
