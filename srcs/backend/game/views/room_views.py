@@ -347,6 +347,31 @@ def list_my_started_room(request):
 
     return Response(data, status=200)
 
+@api_view(["GET"])
+@authentication_classes([OptionalJWTAuthentication])
+@permission_classes([IsAuthenticated])
+def validate_room(request, code):
+    room = Room.objects.filter(
+        code=code,
+        status="open"
+    ).first()
+
+    if not room:
+        return Response({
+            "valid": False,
+            "error": "Room no longer joinable",
+        }, status=404)
+    
+    if room.max_player == room.nb_player:
+        return Response({
+            "valid": False,
+            "error": "Room is full",
+        }, status=401)
+
+    return Response({
+        "valid": True,
+    }, status=200)
+
 @api_view(["PATCH"])
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([IsAuthenticated])
@@ -449,7 +474,7 @@ def invite_friend(request, friend_id):
                 "code": p.room.code,
                 "from_user": request.user.username,
                 "from_user_id": request.user.id,
-                "message": f"{request.user.username} invite you"
+                "message": f"{request.user.username} invited you"
             }
         }
     )

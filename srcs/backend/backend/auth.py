@@ -12,7 +12,7 @@ from django.conf import settings
 def VerifyCookie(request):
 
 	if request.user.is_authenticated:
-		return Response({"status":"success"})
+		return Response({"status":"success", "id":request.user.id})
 	return RefreshCookie(request)
 
 @permission_classes([AllowAny])
@@ -33,7 +33,7 @@ def RefreshCookie(request):
 	access = serializer.validated_data['access']
 
 	res = Response()
-	res.data = {'status': "success"}
+	res.data = {'status': "success",  "id":request.user.id}
 	res.set_cookie(
 		key='access_token',
 		value=access,

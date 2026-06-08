@@ -2,7 +2,7 @@ import Chrono from "./Chrono";
 import CopyBtn from "./CopyBtn";
 import StartGameBtn from "./StartGameBtn";
 
-export default function InfoAndActionPart({roomCode, startGame}:{roomCode:string; startGame:() => void}) {
+export default function InfoAndActionPart({roomCode, startGame, leaveGame}:{roomCode:string; startGame:() => void; leaveGame:() => void}) {
   return (
     <div className=" mt-10 -mb-10 col-span-3 flex justify-between items-end">
       <div className="flex gap-3 flex-col justify-center items-center text-center w-fit">
@@ -12,6 +12,9 @@ export default function InfoAndActionPart({roomCode, startGame}:{roomCode:string
         </p>
       </div>
       <Chrono />
+	  <div className="flex justify-center">
+        <button className="btn mr-5" onClick={leaveGame}>Leave Game</button>
+      </div>
       <div className="flex justify-center">
         <StartGameBtn startGame={startGame}/>
       </div>

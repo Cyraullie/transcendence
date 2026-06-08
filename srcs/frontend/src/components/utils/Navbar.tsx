@@ -30,6 +30,7 @@ export function Navbar() {
 		}
 		auth.setLoggedIn(false);
 		localStorage.removeItem("code");
+		auth.setUserID(null);
 		navigate("/login", {state: current_location.pathname});
 		setTimeout(() => {
 			auth.setLogging(false);

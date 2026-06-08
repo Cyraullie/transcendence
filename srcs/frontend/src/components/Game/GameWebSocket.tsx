@@ -10,6 +10,11 @@ import { type playerT } from "../../utils/type/playerType";
 export default function GameWebSocket({code, setCode} : {code:string; setCode:React.Dispatch<SetStateAction<string>>}) {
 	
 	const notif = useNotif();
+	const auth = useAuth();
+	const [mode, setMode] = useState(0);
+	const [maxSize, setSize] = useState(2);
+	const [listPlayer, setPlayers] = useState<playerT[]>([]);
+	const [connected, setConnected] = useState(false);
 
 	useEffect(() => {
 		localStorage.setItem("code", code);
@@ -23,13 +28,15 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 	const { default: useWebSocket = useWebSocketModule } = useWebSocketModule as unknown as {
 			default: typeof useWebSocketModule;
 		};
-		const auth = useAuth();
-		const [mode, setMode] = useState(0);
-		const [maxSize, setSize] = useState(2);
-		const [listPlayer, setPlayers] = useState<playerT[]>([]);
 		
 		const { sendJsonMessage } = useWebSocket(auth.logged_in ? (host.ws + "room/" + code + '/') : null, {
-			shouldReconnect: () => auth.logged_in ? true : false,
+			shouldReconnect: (event) => {
+				if (event.code === 4001) {
+					leaveRoom();
+					return false;
+				}
+				return auth.logged_in ? true : false
+			},
 			reconnectAttempts: 30,
 			reconnectInterval: 1000,
 			
@@ -41,26 +48,30 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 			},
 	
 			onOpen: () => {
-				
+				setConnected(true);
 			},
 	
-			onClose: () => {
-				setCode("");
+			onClose: (event) => {
+				console.log("WebSocket closed");
+				console.log("code:", event.code);
+				console.log("reason:", event.reason);
 			},
 
 			onMessage: (event) => {
-				setPlayers([]); // to remove
 				const data = JSON.parse(event.data);
 				if (data.type == "acknowledge") {
 					return
 				}
 				const payload = data.payload;
 
-				if (data.event === "private") {
-					console.debug("Private event: ", payload);
+				if (data.type === "list_player") {
+					setConnected(true);
+					setPlayers(payload.players)
 				}
-				else if (data.event === "event") {
-					console.debug("Room event: ", payload);
+				else if (data.type === "params") {
+					setSize(payload.max_player);
+					const type = payload.type;
+					setMode(type === "private" ? 0 : type === "public" ? 2 : 1);
 				} else if (data.event === "error") {
 					notif?.showNotif("Game Error", data.message);
 				} else {
@@ -70,8 +81,8 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 	
 		});
 
-		function sendJson(action:string, message?:string) {
-			sendJsonMessage({type: "action", action: action, message: message })
+		function sendJson(action:string, message?:object) {
+			sendJsonMessage({type: "action", action: action, payload: message })
 		}
 
 		function startGame() {
@@ -79,7 +90,7 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 		}
 
 		function playCard(cardId:number) {
-			sendJson("play_card", JSON.stringify({cardId: cardId}));
+			sendJson("play_card", {cardId: cardId});
 		}
 
 		function continueGame() {
@@ -95,13 +106,18 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 			cards.forEach((card) => {
 				parsed_cards.push({cardId: card})
 			})
-			sendJson("melds", JSON.stringify(parsed_cards));
+			sendJson("melds", parsed_cards);
 		}
 		
 		function kickPlayer(playerId:number) { //RoomId of player/ position
-			sendJson("kick", JSON.stringify({playerId : playerId}));
+			sendJson("kick", {playerId : playerId});
 		}
 
+	if (connected === false)
+	  return (
+		<div className="page-content flex items-center justify-center min-h-screen">
+			<span className="loading loading-spinner loading-xl"></span>
+		</div>)
 	
 	return (
 		<>

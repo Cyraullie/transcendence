@@ -4,7 +4,7 @@ import UsernameMiniProfileBtn from "../../miniProfile/UsernameMiniProfileBtn";
 import React, { useState, type SetStateAction } from "react";
 import FilterGame from "./FilterGames";
 import type { availableGameT } from "../../../utils/type/availableGameType";
-import { createRoom } from "../../../api/http/game";
+import { createRoom, validateRoom } from "../../../api/http/game";
 import { useNotif } from "../../hooks/useNotif";
 // import { createFakeGame } from "../../../utils/test_funcs/createFakeGameAvailable.tsx";
 
@@ -34,7 +34,12 @@ const codeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 	return ;
   }
 
-  function joinRoom(code: string) {
+  async function joinRoom(code: string) {
+	const res = await validateRoom(code);
+	if (res.code !== 200) {
+		notif?.showNotif("Error Joining Room", res.response, 5000);
+		return ;
+	}
 	setJoined(code);
   }
 

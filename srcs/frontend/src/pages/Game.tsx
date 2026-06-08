@@ -5,7 +5,7 @@ import { useAuth } from "../components/hooks/useAuth";
 import { useLocation, useNavigate } from "react-router";
 import { useNotif } from "../components/hooks/useNotif";
 import { type availableGameT } from "../utils/type/availableGameType";
-import { getJoinedRoom, listRooms } from "../api/http/game";
+import { getJoinedRoom, listRooms, validateRoom } from "../api/http/game";
 
 export function Game() {
 
@@ -41,34 +41,52 @@ export function Game() {
 		}
 
 		async function get_info() {
-
 			let tmp_joined = await getJoinedRoom();
+
 			if ("code" in tmp_joined) {
 				if (tmp_joined.code === 401) {
 					return login_error("Authentication error:", "Please log in again.");
-				} else if (tmp_joined.code === 404) {
-					tmp_joined = {room: ""};
-				} else {
+				}
+				else if (tmp_joined.code === 404) {
+					tmp_joined = { room: "" };
+				}
+				else {
 					return other_error("Error " + tmp_joined.code + ":", tmp_joined.response);
 				}
 			}
-			if (localStorage.getItem("code")) {
-				tmp_joined.room = localStorage.getItem("code")
-			}
-			setJoined(tmp_joined.room);
-			if (tmp_joined.room !== "")
-			{
+
+			if (tmp_joined.room !== "") {
+				setJoined(tmp_joined.room);
 				setValid(true);
-				return ;
+				return;
 			}
+
+			const storedCode = localStorage.getItem("code");
+
+			if (storedCode) {
+				const validate = await validateRoom(storedCode);
+
+				if (validate.code === 200) {
+					setJoined(storedCode);
+					setValid(true);
+					return;
+				}
+
+				localStorage.removeItem("code");
+			}
+
 			const tmp_rooms = await listRooms();
+
 			if ("code" in tmp_rooms) {
 				if (tmp_rooms.code === 401) {
 					return login_error("Authentication error:", "Please log in again.");
-				} else {
-					return other_error("Error " + tmp_rooms.code + ":", tmp_rooms.response);
 				}
+				return other_error(
+					"Error " + tmp_rooms.code + ":",
+					tmp_rooms.response
+				);
 			}
+
 			setRooms(tmp_rooms);
 			setValid(true);
 		}
@@ -91,7 +109,7 @@ export function Game() {
 
 	if (joined !== "") {
 		return (
-			<GameWebSocket code={joined} setCode={setJoined}/>
+			<GameWebSocket key={joined} code={joined} setCode={setJoined}/>
 		)
 	}
 

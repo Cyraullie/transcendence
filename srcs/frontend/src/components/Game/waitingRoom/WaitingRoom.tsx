@@ -19,7 +19,7 @@ type Props = {
 	setSize: React.Dispatch<SetStateAction<number>>;
 }
 
-export default function WaitingRoom({kickPlayer, startGame, roomCode, listPlayer, mode, maxSize, setMode, setSize} : Props) {
+export default function WaitingRoom({leaveRoom, kickPlayer, startGame, roomCode, listPlayer, mode, maxSize, setMode, setSize} : Props) {
 	
 	const private_room = 0; const friend_room = 1;
 	const notif = useNotif();
@@ -42,10 +42,10 @@ export default function WaitingRoom({kickPlayer, startGame, roomCode, listPlayer
 		{//<button className="btn ml-120 mt-10" onClick={() => setInGame(true)}>Simulate launch game</button>
 		}
         <div className="grid grid-cols-3 gap-6">
-          <InfoAndActionPart roomCode={roomCode} startGame={startGame}/>
+          <InfoAndActionPart roomCode={roomCode} startGame={startGame} leaveGame={leaveRoom}/>
           <div className=" space-y-6">
             <PlayerList kickPlayer={kickPlayer} roomCode={roomCode} listPlayer={listPlayer}/>
-			<InviteYourFriends roomCode={roomCode}/>
+			<InviteYourFriends />
           </div>
           <div className="col-span-2">
             <ParameterRoom roomCode={roomCode} setMode={setMode} setSize={setSize} mode={mode} maxSize={maxSize} updateSettings={updateSettings}/>

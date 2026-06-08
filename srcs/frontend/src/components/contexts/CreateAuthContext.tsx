@@ -6,7 +6,9 @@ export const authContext = createContext<AuthContextType>({
     logging: false,
 	checking:true,
 	in_game:false,
+	userID: null,
     setGame: () => {},
     setLogging: () => {},
 	setLoggedIn: () => {},
+	setUserID: () => {},
 });

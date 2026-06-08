@@ -35,6 +35,20 @@ export async function getJoinedRoom() {
 	}
 }
 
+export async function validateRoom(code:string) {
+	try {
+		await axios.get(host.http + 'room/validate/' + code + '/', {timeout: 2000, withCredentials:true});
+		return {code:200, response:""};
+	} catch (err) {
+		const error = err as AxiosError<backendErrorT>;
+		const result: errorT = {
+			code: error.response?.status ?? 0,
+			response: getError(error.response?.data),
+		}
+		return result;
+	}
+}
+
 export async function createRoom() {
 	try {
 		const res = await axios.post(host.http + 'room/', {}, {timeout: 2000, withCredentials:true});
@@ -66,7 +80,7 @@ export async function addBot(code:string, n_bot:number, dif:string) {
 	}
 }
 
-export async function updateParams(code:string, params) {
+export async function updateParams(code:string, params:object) {
 	try {
 		await axios.patch(host.http + 'room/params/' + code + '/', params, {timeout: 2000, withCredentials:true});
 		return {success: true};

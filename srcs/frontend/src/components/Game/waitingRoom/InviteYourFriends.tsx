@@ -23,7 +23,7 @@ function getRequests(friend_list: friendT[]): {
     return { friends: friends, requests: requests };
   }
 
-export default function InviteYourFriends({roomCode}:{roomCode:string}) {
+export default function InviteYourFriends() {
   const showFriendsList = useRef<HTMLDialogElement>(null);
 	const [friends, setFriends] = useState<friendT[]>([]);
 	const [valid, setValid] = useState<boolean | null>(null);
@@ -79,7 +79,7 @@ export default function InviteYourFriends({roomCode}:{roomCode:string}) {
 	}
 
 	async function sendInvite(friendID:number) {
-		const res = await inviteFriend(roomCode, friendID);
+		const res = await inviteFriend(friendID);
 		if ("code" in res) {
 			notif?.showNotif("Invite Error", res.response, 5000);
 		}
@@ -108,10 +108,10 @@ export default function InviteYourFriends({roomCode}:{roomCode:string}) {
                   <td>
                     <label className="swap btn">
                       <input type="checkbox" />
-                      <div className="swap-off fill-current" onClick={() => sendInvite(friend.user.id)}>
+                      <div className="swap-off fill-current" onClick={() => sendInvite(friend.id)}>
                         Invite
                       </div>
-                      <div className="swap-on fill-current" onClick={() => notif?.showNotif("Invitation", friend.user.username)}>
+                      <div className="swap-on fill-current">
                         Sent
                       </div>
                     </label>

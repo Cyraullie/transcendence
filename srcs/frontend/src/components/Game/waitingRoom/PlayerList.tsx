@@ -28,8 +28,8 @@ export default function PlayerList({kickPlayer, listPlayer}:Props) {
                   <UsernameMiniProfileBtn id={player.id} name={player.username}/>
                 </td>
                 <td>
-                  {player.id !== 0 ? (
-                  <button className="btn"onClick={() => kickPlayer(player.id)}>
+                  {!player.is_host ? (
+                  <button className="btn"onClick={() => kickPlayer(player.position)}>
                     <MdClose />
                   </button>)
                   : (<p className="text-(--hover-color)">Host</p>)
