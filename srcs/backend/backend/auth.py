@@ -10,6 +10,8 @@ from django.conf import settings
 @permission_classes([AllowAny])
 @authentication_classes([OptionalJWTAuthentication])
 def VerifyCookie(request):
+	if (not request):
+		return Response({"status":"failed"})
 	if request.user.is_authenticated:
 		return Response({"status":"success"})
 	return RefreshCookie(request)

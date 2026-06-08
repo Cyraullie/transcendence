@@ -337,7 +337,10 @@ def list_my_started_room(request):
         room__status="start"
     ).first()
 
+    if (not presence) :
+        return Response({"message": "failed", "code": ""}, status=200)
     data ={
+        "message": "success",
         "code": presence.room.code,
     }
 
