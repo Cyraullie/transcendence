@@ -1,4 +1,4 @@
-import LeaderboardInGame from "./LeaderboardInGame";
+import LeaderboardInGame from "./GameInterface/LeaderboardInGame.tsx";
 import GameButtons from "./GameInterface/GameButtons";
 
 export default function Interface() {
