@@ -14,7 +14,6 @@ type Props = {
 }
 
 export default function CreateOrJoin({availableGames, setJoined}: Props) {
-//   const availableGames = createFakeGame();
   const [filteredGames, setFilteredGames] = useState<availableGameT[]>([])
   const notif = useNotif();
   const [code, setCode] = useState("");

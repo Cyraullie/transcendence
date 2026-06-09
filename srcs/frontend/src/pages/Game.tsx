@@ -9,7 +9,6 @@ import { getJoinedRoom, listRooms, validateRoom } from "../api/http/game";
 
 export function Game() {
 
-	const [isInWaitingRoom, setIsInWaitingRoom] = useState<boolean>(false);
 	const auth = useAuth();
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -115,15 +114,6 @@ export function Game() {
 
   return (
     <>
-      <label className="mt-20 -mb-17 text-center ">
-        Switch waitingRoom or choose create/join game
-        <input
-          type="checkbox"
-          defaultChecked
-          className="toggle ml-5"
-          onChange={() => setIsInWaitingRoom(!isInWaitingRoom)}
-        />
-      </label>
         <CreateOrJoin availableGames={rooms} setJoined={setJoined}/>
     </>
   );
