@@ -144,6 +144,10 @@ def remove_player_from_room(user, code, room_delete=None):
             ).update(is_online=False)
              
         if room.status not in ["start", "end"]:
+            pos = PlayerPresence.objects.filter(
+                player=user,
+                room=room
+            ).values_list("position", flat=True).first()
             if room.host == user:
                 next_player = PlayerPresence.objects.filter(
                     room=room,
@@ -161,12 +165,7 @@ def remove_player_from_room(user, code, room_delete=None):
                         player=user,
                         room=room
                     ).delete()
-                    return
     
-            pos = PlayerPresence.objects.filter(
-                player=user,
-                room=room
-            ).values_list("position", flat=True).first()
             
             if pos is None:
                 PlayerPresence.objects.filter(
