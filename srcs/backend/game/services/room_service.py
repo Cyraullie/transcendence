@@ -69,8 +69,14 @@ class RoomService:
             await remove_player_from_room(user, code)
     
             room = await get_room_with_host(code)
+            bots = await sync_to_async(
+                PlayerPresence.objects.filter(
+                    room=room,
+                    is_human=False
+                ).count
+            )()
             
-            if room.status == "open" and room.nb_player == 0:
+            if room.status == "open" and room.nb_player - bots == 0:
                 asyncio.create_task(RoomService.schedule_room_delete(room.id))
             
             await sync_to_async(
