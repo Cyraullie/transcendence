@@ -26,11 +26,12 @@ export function GoogleCallback() {
       }
 
       try {
-        await axios.post(
+        const res = await axios.post(
           host.http + 'login/google/',
           { code:code },
           { withCredentials: true }
         );
+		auth.setUserID(res.data.id);
 		auth.setLoggedIn(true);
 		const redirect = sessionStorage.getItem("login_redirect") || "/";
 		sessionStorage.removeItem("login_redirect");		

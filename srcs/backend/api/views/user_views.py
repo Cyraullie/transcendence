@@ -118,8 +118,8 @@ def register(request):
         access_token = refresh.access_token
         refresh_token = refresh
         
-        res = Response()
-        res.data = {'success': True,  "id":request.user.id}
+        res = Response(status=201)
+        res.data = {'success': True,  "id":user.id}
         res.set_cookie(
             key='access_token',
             value=access_token,
@@ -179,7 +179,7 @@ def login(request):
         refresh_token = refresh
         
         res = Response()
-        res.data = {'success': True, "id":request.user.id}
+        res.data = {'success': True, "id":user.id}
         res.set_cookie(
             key='access_token',
             value=access_token,
@@ -248,7 +248,7 @@ def change_password(request):
     
         if new_password == new_password2:
             try:
-                user = User.objects.get(id=request.user.id)
+                user = User.objects.get(id=user.id)
                 validate_password(new_password, user)
                 user.set_password(new_password)
                 user.save()

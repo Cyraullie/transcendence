@@ -8,6 +8,7 @@ import { useNotif } from "../../hooks/useNotif";
 import type { playerT } from "../../../utils/type/playerType";
 
 type Props = {
+	timeout: Date;
 	leaveRoom: () => void;
 	kickPlayer: (playerId: number) => void;
 	startGame: () => void;
@@ -19,7 +20,7 @@ type Props = {
 	setSize: React.Dispatch<SetStateAction<number>>;
 }
 
-export default function WaitingRoom({leaveRoom, kickPlayer, startGame, roomCode, listPlayer, mode, maxSize, setMode, setSize} : Props) {
+export default function WaitingRoom({timeout, leaveRoom, kickPlayer, startGame, roomCode, listPlayer, mode, maxSize, setMode, setSize} : Props) {
 	
 	const private_room = 0; const friend_room = 1;
 	const notif = useNotif();
@@ -42,7 +43,7 @@ export default function WaitingRoom({leaveRoom, kickPlayer, startGame, roomCode,
 		{//<button className="btn ml-120 mt-10" onClick={() => setInGame(true)}>Simulate launch game</button>
 		}
         <div className="grid grid-cols-3 gap-6">
-          <InfoAndActionPart roomCode={roomCode} startGame={startGame} leaveGame={leaveRoom}/>
+          <InfoAndActionPart timeout={timeout} roomCode={roomCode} startGame={startGame} leaveGame={leaveRoom}/>
           <div className=" space-y-6">
             <PlayerList kickPlayer={kickPlayer} roomCode={roomCode} listPlayer={listPlayer}/>
 			<InviteYourFriends />

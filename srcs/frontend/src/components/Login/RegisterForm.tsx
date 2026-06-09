@@ -63,7 +63,6 @@ export function RegisterForm({
       navigate(location.state, { state: location.pathname });
       return;
     }
-
     navigate("/", { state: location.pathname });
   }
 
@@ -78,7 +77,7 @@ export function RegisterForm({
 	}
 
     const result = await registerRequest(trimmedEmail, trimmedName, password, avatar, auth.setUserID);
-    if (result.code !== 200) {
+    if (result.code === 200) {
         (auth.setLoggedIn(true));
 		registerSuccess();
         return;

@@ -15,6 +15,7 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 	const [maxSize, setSize] = useState(2);
 	const [listPlayer, setPlayers] = useState<playerT[]>([]);
 	const [connected, setConnected] = useState(false);
+	const [timeout, setTimeout] = useState(new Date(0,0,0));
 
 	useEffect(() => {
 		localStorage.setItem("code", code);
@@ -23,6 +24,14 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 	function leaveRoom() {
 		localStorage.removeItem("code");
 		setCode("");
+	}
+
+	function getTime(datetime:string) {
+		const dateTimeParts = datetime.split(' ');
+		const time = dateTimeParts[1].split(':');
+		const date = dateTimeParts[0].split('-');
+		const res = new Date(Number(date[0]), Number(date[1]) - 1, Number(date[2]), Number(time[0]), Number(time[1]), Number(time[2]))
+		return res;
 	}
 
 	const { default: useWebSocket = useWebSocketModule } = useWebSocketModule as unknown as {
@@ -69,6 +78,7 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 					setSize(payload.max_player);
 					const type = payload.type;
 					setMode(type === "private" ? 0 : type === "public" ? 2 : 1);
+					setTimeout(getTime(payload.timestamp));
 				} else if (data.type === "event") {
 					if (data.event === "kicked") {
 						leaveRoom();
@@ -123,7 +133,7 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 	return (
 		<>
 		{auth.in_game ? <GameMain playCard={playCard} continueGame={continueGame} endGame={endGame} annonces={annonces}/> 
-		: <WaitingRoom leaveRoom={leaveRoom} roomCode={code} kickPlayer={kickPlayer} startGame={startGame} listPlayer={listPlayer} mode={mode} setMode={setMode} maxSize={maxSize} setSize={setSize}/>}
+		: <WaitingRoom timeout={timeout} leaveRoom={leaveRoom} roomCode={code} kickPlayer={kickPlayer} startGame={startGame} listPlayer={listPlayer} mode={mode} setMode={setMode} maxSize={maxSize} setSize={setSize}/>}
 		</>
 	);
 }
