@@ -1,4 +1,4 @@
-import generateFakeBoard from "../../../../utils/test_funcs/generateBoard";
+import generateFakeBoard from "../../../../utils/test_funcs/generateFakeBoard";
 import PlayedCard from "./PlayedCard";
 
 export default function Board() {

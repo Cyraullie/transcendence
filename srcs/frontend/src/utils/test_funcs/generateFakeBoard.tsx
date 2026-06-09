@@ -1,4 +1,6 @@
-export default function generateFakeBoard() {
+import type { cardType } from "../type/handCardsType";
+
+export default function generateFakeBoard() : cardType[] {
   return[
     {
       id: 0,
