@@ -88,7 +88,7 @@ class RoomService:
                 ).count
             )()
             
-            if room.status == "open" and room.nb_player - bots == 0:
+            if room.status == "open" and room.nb_player - bots <= 0:
                 asyncio.create_task(RoomService.schedule_room_delete(room.id))
             
             await sync_to_async(
