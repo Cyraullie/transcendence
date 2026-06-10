@@ -42,6 +42,8 @@ class Room(models.Model):
     nb_player = models.IntegerField(default=0)
     type = models.CharField(max_length=12, choices=TYPE_CHOICES, default="private")
     max_player = models.IntegerField(default=2)
+    delete_scheduled = models.BooleanField(default=False)
+    host_change_scheduled = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.code}"
