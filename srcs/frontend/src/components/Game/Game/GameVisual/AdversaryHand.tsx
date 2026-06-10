@@ -11,20 +11,22 @@ type Props = {
 
 export default function AdversaryHand({cardHand, textureBack, total} : Props) {
   const { viewport } = useThree();
-  const spaceBetween = 0.07;
-  const distanceStart = viewport.height / 2 + 0.3 - (cardHand.nbCards - 1) * spaceBetween / 2 + spaceBetween;
-  const angleStart = (360* (cardHand.position + 1) /total) * (Math.PI / 180) - (cardHand.nbCards - 1) * spaceBetween / 2;
+  const angleBetween = 360 / cardHand.nbCards * Math.PI / 180;
+  const distanceBetweenCard = 0.3;
+  const distanceCenter = viewport.height / 2 + 0.3;
+  const angleCenter = (360* (cardHand.position + 1) /total) * (Math.PI / 180);
   const allAngle : number[] = [];
   for (let i = 0; i < cardHand.nbCards; i++)
-    allAngle.push(angleStart + i * spaceBetween);
+    allAngle.push(angleCenter + i * angleBetween);
 
   return (
-    <>
+    <mesh
+    >
       {allAngle.map((angle) => {
         return (
-          <AdversaryCard distance={distanceStart + allAngle.indexOf(angle) * spaceBetween } angle={angle} textureBack={textureBack}/>
+          <AdversaryCard distance={0} angleY={angle} angleZ={angleBetween} textureBack={textureBack}/>
         );
       })}
-    </>
+    </mesh>
   );
 }

@@ -26,37 +26,37 @@ export default function generateFakeBoard() : boardT[] {
         color: "diamond"
       }
     },
-    {
-      position: 3,
-      card:{
-        id: 3,
-        value: "J",
-        color: "heart",
-      }
-    },
-    {
-      position: 4,
-      card:{
-        id: 4,
-        value: "Q",
-        color: "spade",
-      }
-    },
-    {
-      position: 5,
-      card:{
-        id: 5,
-        value: "8",
-        color: "spade",
-      }
-    },
-    {
-      position: 6,
-      card:{
-        id: 6,
-        value: "9",
-        color: "club",
-      }
-    }
+    // {
+    //   position: 3,
+    //   card:{
+    //     id: 3,
+    //     value: "J",
+    //     color: "heart",
+    //   }
+    // },
+    // {
+    //   position: 4,
+    //   card:{
+    //     id: 4,
+    //     value: "Q",
+    //     color: "spade",
+    //   }
+    // },
+    // {
+    //   position: 5,
+    //   card:{
+    //     id: 5,
+    //     value: "8",
+    //     color: "spade",
+    //   }
+    // },
+    // {
+    //   position: 6,
+    //   card:{
+    //     id: 6,
+    //     value: "9",
+    //     color: "club",
+    //   }
+    // }
   ];
 }
