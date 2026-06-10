@@ -1,19 +1,18 @@
-import { MeshPhongMaterial, TextureLoader } from "three";
+import { TextureLoader } from "three";
 import { loadTexture } from "../../../../utils/imports/textures";
-import { useLoader, useThree } from "@react-three/fiber";
-import generateFakeBoard from "../../../../utils/test_funcs/generateFakeBoard";
+import { useLoader } from "@react-three/fiber";
 import AdversaryHand from "./AdversaryHand";
+import generateFakeAdversary from "../../../../utils/test_funcs/generateFakeAdversary";
 
 export default function Adversary() {
-  const cards = generateFakeBoard();
-  const distance = viewport.height / 2 + 0.3;
-  const angle = (360* id /total) * (Math.PI / 180);
+  const cards = generateFakeAdversary();
+  const textureBack = useLoader(TextureLoader, loadTexture("back")!);
 
   return (
     <mesh rotation={[-0.4, 0, 0]} position={[0, 0.5, -2]}>
-      {cards.map((card) => {
+      {cards.map((cardHand) => {
         return(
-          <AdversaryHand card={card.value + card.color} id={id} total={total} />
+          <AdversaryHand cardHand={cardHand} textureBack={textureBack} total={cards.length + 1}/>
         );
       })}
     </mesh>

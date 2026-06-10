@@ -17,9 +17,9 @@ export default function Board() {
         {cards.map((card) => {
           return (
             <>
-              {card.id === idPlayer ? "" : (
+              {card.position === idPlayer ? "" : (
                 <>
-                  <PlayedCard card={card.value + card.color} id={(card.id - idPlayer) % totalPlayer} total={totalPlayer}/>
+                  <PlayedCard card={card.card.value + card.card.color} id={(card.position - idPlayer) % totalPlayer} total={totalPlayer}/>
                 </>
               )}
             </>
