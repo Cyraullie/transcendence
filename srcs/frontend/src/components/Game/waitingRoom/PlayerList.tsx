@@ -12,6 +12,9 @@ type Props = {
 export default function PlayerList({kickPlayer, listPlayer}:Props) {
 
 	const auth = useAuth();
+	if (!listPlayer) {
+		return ;
+	}
 	const host_user = listPlayer.filter(user => user.is_host)[0]
 	let id = 0;
 	if (host_user) {

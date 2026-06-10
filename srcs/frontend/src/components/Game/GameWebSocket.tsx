@@ -82,7 +82,11 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 				} else if (data.type === "event") {
 					if (data.event === "kicked") {
 						leaveRoom();
+					} else if (data.event === "board_data") {
+						auth.setGame(true);
 					}
+				} else if (data.type === "game_started") {
+					auth.setGame(true);
 				} else if (data.event === "error") {
 					notif?.showNotif("Game Error", data.message);
 				} else {

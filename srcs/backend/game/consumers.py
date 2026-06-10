@@ -563,6 +563,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "hand": len(player_data["cards"]),
                 "user": {"id": p.player.id, "username": p.player.username, "avatar": p.player.avatar}
             }
+            
         
         await self.channel_layer.group_send(
             self.group_name,
