@@ -155,7 +155,7 @@ class GameService:
                 "event": "game_finished",
                 "payload": {
                     "message": "Game finished. Continue or stop?",
-                    "actions": ["continue", "stop"]
+                    "actions": ["continue", "end_game"]
                 }
             }
         )
