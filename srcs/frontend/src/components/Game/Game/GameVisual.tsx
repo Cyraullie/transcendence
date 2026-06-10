@@ -6,8 +6,8 @@ export default function GameVisual() {
   return (
     <Canvas className="bg-(--green-color) w-3/4">
       <ambientLight />
-	  <Hand />
-	  <Board />
+      <Board />
+      <Hand />
     </Canvas>
   );
 }
