@@ -66,7 +66,8 @@ class GameService:
         state = copy.deepcopy(room.game_state)
 
         legal = game.handleAction("legal", state, idPlayer=str(position))
-
+        if len(legal) == 0:
+            return {"error": "No card in hand"}
         idx = await GameService.get_card_index(user, room, card_id)
 
         if idx is None:
