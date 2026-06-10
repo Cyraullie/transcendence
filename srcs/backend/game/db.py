@@ -209,7 +209,7 @@ def remove_player_from_room(user, code):
             ).delete()
         return {
             "should_change_host": should_change_host,
-            "room_id": room.id,
+            "room_code": room.code,
             "user": user
         }
     except Room.DoesNotExist:

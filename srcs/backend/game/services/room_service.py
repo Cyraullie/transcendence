@@ -7,6 +7,7 @@ from api.models import User
 from django.db.models import F
 
 from channels.layers import get_channel_layer
+from .room_task_service import RoomTaskService
 
 from ..room_tasks import ROOM_DELETE_TASKS, ROOM_CHANGE_HOST_TASKS
 import asyncio
@@ -73,11 +74,9 @@ class RoomService:
             result = await remove_player_from_room(user, code)
             
             if result and result.get("should_change_host"):
-                asyncio.create_task(
-                    RoomService.schedule_room_change_host(
-                        result["room_id"],
-                        result["user"]
-                    )
+                await RoomTaskService.schedule_change_host(
+                    result["room_code"],
+                    result["user"]
                 )
     
     
@@ -90,7 +89,7 @@ class RoomService:
             )()
             
             if room.status == "open" and room.nb_player - bots <= 0:
-                asyncio.create_task(RoomService.schedule_room_delete(room.id))
+                await RoomTaskService.schedule_delete(room.code)
             
             await sync_to_async(
                 PlayerPresence.objects.filter(
@@ -151,70 +150,6 @@ class RoomService:
             "type": room.type,
             "timestamp": (room.created_at + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
         }
-
-    @staticmethod
-    async def delete_room_later(room_id, delay=30):
-        await asyncio.sleep(delay)
-        
-        try:
-            room = await sync_to_async(Room.objects.get)(id=room_id)
-    
-            if room.status == "open":
-                await sync_to_async(room.delete)()
-    
-        except Room.DoesNotExist:
-            pass
-
-    @staticmethod
-    async def schedule_room_delete(room_id, delay=15):
-        task = asyncio.create_task(RoomService.delete_room_later(room_id, delay))
-        ROOM_DELETE_TASKS[room_id] = task
-          
-    @staticmethod
-    def cancel_room_delete(room_id):
-        task = ROOM_DELETE_TASKS.get(room_id)
-    
-        if task:
-            task.cancel()
-            del ROOM_DELETE_TASKS[room_id]
-    
-    @staticmethod
-    async def change_host_later(room_id, user, delay=30):
-        await asyncio.sleep(delay)
-        
-        try:
-            room = await sync_to_async(Room.objects.get)(id=room_id)
-            if room.status == "open":
-                next_player = await sync_to_async(
-                    lambda: PlayerPresence.objects
-                        .select_related("player")
-                        .filter(room=room, is_human=True)
-                        .exclude(player=user)
-                        .order_by("position")
-                        .first()
-                )()
-                
-                if next_player:
-                    room.host = next_player.player
-                    await sync_to_async(room.save)()
-                channel_layer = get_channel_layer()
-                room = await get_room_with_host(room.code)
-                await RoomService.broadcast_player_list(room, channel_layer)
-        except Room.DoesNotExist:
-            pass
-    
-    @staticmethod
-    async def schedule_room_change_host(room_id, user, delay=5):
-        task = asyncio.create_task(RoomService.change_host_later(room_id, user, delay))
-        ROOM_CHANGE_HOST_TASKS[room_id] = task
-    
-    @staticmethod
-    def cancel_change_room_host(room_id):
-        task = ROOM_CHANGE_HOST_TASKS.get(room_id)
-    
-        if task:
-            task.cancel()
-            del ROOM_CHANGE_HOST_TASKS[room_id]
     
     @staticmethod
     async def broadcast_player_list(room, channel_layer):
