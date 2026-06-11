@@ -83,7 +83,15 @@ def user_data(request, user_id):
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([AllowAny])
 def register(request):
+    re_pass = request.data.get("re_password")
     password = request.data.get("password")
+    
+    if (re_pass != password):
+        return Response(
+			{"error": (f"Passwords must match!")},
+			status=400
+		)
+    
     try:
         validate_password(password)
         
@@ -155,6 +163,20 @@ def logout(request):
     
 	return res
     
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def delete(request):
+    if request.user.presence_game != 0:
+        return Response(
+			{"success": False,
+			"message": "Cannot delete account while in a game"},
+			status=400
+		)
+    request.user.delete()
+    res = Response({"success": True})
+    res.delete_cookie("access_token")
+    res.delete_cookie("refresh_token")
+    return res   
 
 @api_view(["POST"])
 @authentication_classes([OptionalJWTAuthentication])
