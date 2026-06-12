@@ -3,12 +3,17 @@ import { useNavigate } from "react-router";
 import { useNotif } from "../hooks/useNotif";
 import { deleteAccount } from "../../api/http/profile";
 import { PseudoChange } from "../Profile/PseudoChange";
+import { useAuth } from "../hooks/useAuth";
+import { PswdChange } from "../Profile/PswdChange";
 
 export default function Account() {
 
  const confirmDeleteRef = useRef<HTMLDialogElement>(null);
  const navigate = useNavigate();
  const notif = useNotif();
+ const auth = useAuth();
+ const dialogPswdRef = useRef<HTMLDialogElement>(null);
+ const dialogPseudoRef = useRef<HTMLDialogElement>(null);
 
 	async function handleDelete() {
 		const res = await deleteAccount();
@@ -21,10 +26,24 @@ export default function Account() {
 	}
   return (
     <div>
-      <div className="flex flex-col w-1/3 mx-auto gap-4">
-        <h3>Personnal information</h3>
-        <button className="btn">Change password</button>
-        <button className="btn" >Change username</button>
+      <div className="flex flex-col w-1/3 mx-auto gap-4 text-center">
+        <h3>Personal information</h3>
+        {auth.has_pass ? <button className="btn" onClick={() => dialogPswdRef.current?.showModal()}>Change password</button>: null}
+		<dialog
+			id="change_pswd_modal"
+			className="modal"
+			ref={dialogPswdRef}
+		>
+			<PswdChange dialogRef={dialogPswdRef} />
+		</dialog>
+        <button className="btn" onClick={() => dialogPseudoRef.current?.showModal()} >Change username</button>
+		<dialog
+              id="change_pseudo_modal"
+              className="modal"
+              ref={dialogPseudoRef}
+            >
+			<PseudoChange dialogRef={dialogPseudoRef} has_pass={auth.has_pass} updatedProfile={null} setUpdate={null} old_user={null}/>
+            </dialog>
 	  <button
 		onClick={() => confirmDeleteRef.current?.showModal()}
 		className="btn"
@@ -43,10 +62,6 @@ export default function Account() {
 		</div>
 	  </dialog>
       </div>
-	  <div>
-	  <h3>Privacy and Security</h3>
-	  <p>Not implemented, fucked you (and the capitalism btw)</p>
-	  </div>
     </div>
   );
 }
