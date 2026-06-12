@@ -107,6 +107,7 @@ export function Game() {
 	}
 
 	if (joined !== "") {
+	
 		return (
 			<GameWebSocket key={joined} code={joined} setCode={setJoined}/>
 		)

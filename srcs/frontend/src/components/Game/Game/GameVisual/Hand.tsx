@@ -1,6 +1,7 @@
 import { Texture, type TextureEventMap } from "three";
 import PCard from "./PCard";
 import generateFakeHandCards from "../../../../utils/test_funcs/generateFakeHandCards";
+import { useGame } from "../../context/GameContext";
 
 export default function Hand({
   cardsTex,
@@ -9,15 +10,16 @@ export default function Hand({
   cardsTex: Texture<HTMLImageElement, TextureEventMap>[];
   back: Texture<HTMLImageElement, TextureEventMap>;
 }) {
-  const hand = generateFakeHandCards();
-  const startPos = (0.4 * hand.cards.length) / 2 - 0.2;
-  const oldStartPos = (0.4 * hand.cards.length + 1) / 2 - 0.2;
+  const game = useGame();
+  const cards = game.state.game.self_cards;
+  const startPos = (0.4 * cards.length) / 2 - 0.2;
+  const oldStartPos = (0.4 * cards.length + 1) / 2 - 0.2;
 
 
   return (
       <mesh>
-        {hand.cards.map((card) => {
-          const cardIndex = hand.cards.indexOf(card);
+        {cards.map((card) => {
+          const cardIndex = cards.indexOf(card);
 
           return (
             <PCard

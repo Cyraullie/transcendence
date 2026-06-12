@@ -7,6 +7,7 @@ import {
   type TextureEventMap,
 } from "three";
 import type { cardType } from "../../../../utils/type/handCardsType";
+import { useGame } from "../../context/GameContext";
 
 // function sendCard(card: cardType) {
 //   console.log(card.value + " of " + card.color + " played!");
@@ -43,10 +44,11 @@ export default function PCard({
     new MeshPhongMaterial({ map: front, color: overed ? "pink" : "" }),
     new MeshPhongMaterial({ map: back }),
   ];
+  const game = useGame();
 
   function handleDoubleClick() {
     setPlayed(true);
-    sendCard(card);
+    game.fakePlay(3);
   }
 
   function handleClick() {
