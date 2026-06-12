@@ -43,8 +43,14 @@ class GameService:
                                                        send_data_callback=send_data_callback, 
                                                        check_end=GameService.check_game_end, 
                                                        check_take_fold_callback=GameService.check_take_fold
-                                                       )
-
+                                                )
+        p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+            room=room,
+            position=int(game_state["playing"])
+        )
+        if p.is_human and p.is_online:
+            await RoomTaskService.schedule_play_for_player(room.code, p.player_id, 30 if game_state["round"] == 0 else 15)
+            
         return game_state
     
     @staticmethod
@@ -217,5 +223,11 @@ class GameService:
             check_end=GameService.check_game_end,
             check_take_fold_callback=GameService.check_take_fold
         )
-
+        p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+            room=room,
+            position=int(game_state["playing"])
+        )
+        if p.is_human and p.is_online:
+            await RoomTaskService.schedule_play_for_player(room.code, p.player_id, 30 if game_state["round"] == 0 else 15)
+            
         return game_state

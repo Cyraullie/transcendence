@@ -140,6 +140,15 @@ def player_afk(room_code, user_id):
     
     channel_layer = get_channel_layer()
     
+    if p.is_afk_count >= 3:
+        async_to_sync(channel_layer.group_send)(
+            f"player_{p.player_id}",
+            {
+                "type": "room_closed",
+                "reason": "Player AFK 3 time"
+            }
+        )
+    
     async_to_sync(channel_layer.group_send)(
         f"player_{p.player_id}",
         {
