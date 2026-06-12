@@ -25,14 +25,14 @@ export default function generateFakeHandCards(): handCardsType {
 				id: 17,
 			},
 			{
-				color: "club",
-				value: "8",
-				id: 2,
+				color: "spade",
+				value: "A",
+				id: 17,
 			},
 			{
 				color: "spade",
-				value: "6",
-				id: 9,
+				value: "A",
+				id: 17,
 			},
 			{
 				color: "spade",

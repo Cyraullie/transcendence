@@ -17,7 +17,7 @@ type Props = {
   card: cardType;
   startPos: number;
   front: Texture<HTMLImageElement, TextureEventMap> | undefined;
-  back: Texture;
+  back: Texture<HTMLImageElement, TextureEventMap> | undefined;
 };
 
 export default function PCard({
