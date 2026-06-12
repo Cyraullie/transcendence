@@ -270,7 +270,7 @@ def change_password(request):
     
         if new_password == new_password2:
             try:
-                user = User.objects.get(id=request.user.id)
+                user = User.objects.get(id=user.id)
                 validate_password(new_password, user)
                 user.set_password(new_password)
                 user.save()
