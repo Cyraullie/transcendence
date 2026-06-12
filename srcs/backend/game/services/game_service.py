@@ -27,7 +27,7 @@ class GameService:
             await count_player(room.code)
         )
 
-        game_state["round_time"] = (timezone.now() + timedelta(seconds=30)).strftime("%H:%M:%S")
+        game_state["round_time"] = (timezone.now() + timedelta(seconds=30)).strftime("%d/%m/%Y %H:%M:%S")
 
         await start_room(room.uuid, game_state)
 
@@ -83,7 +83,7 @@ class GameService:
 
         state = game.handleAction("play", state, idPlayer=str(position), idCard=idx)
         
-        state["round_time"] = (timezone.now() + timedelta(seconds=30)).strftime("%H:%M:%S")
+        state["round_time"] = (timezone.now() + timedelta(seconds=30)).strftime("%d/%m/%Y %H:%M:%S")
             
         await save_room_state(room.uuid, state)
 
@@ -202,7 +202,7 @@ class GameService:
         await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
         if send_init_callback:
                 await send_init_callback()
-                
+        
         game_state = await BotService.play_until_human(
             room,
             game_state,

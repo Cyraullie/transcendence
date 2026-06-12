@@ -564,6 +564,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "hand": len(player_data["cards"]),
                 "user": {"id": p.player.id, "username": p.player.username, "avatar": p.player.avatar}
             }
+            
         
         p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
 			room_id=room.id,
@@ -608,6 +609,17 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     "score": log.score,
                 })
                 
+        tmp_board = game_state['board']
+        asked = tmp_board.get('asked')
+        if asked:
+            board = []
+            for id, cards in tmp_board.items():
+                if id == "asked":
+                    continue
+                board.append({"room_id":id, "card":cards})
+        else:
+            board = []
+            
         await self.channel_layer.group_send(
             self.group_name,
             {
@@ -615,7 +627,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "event": "board_data",
                 "payload": {
                     "self_id": p.position,
-                    "board": game_state["board"],
+                    "board": board,
+                    "asked": asked,
                     "points": player_puntos,
                     "detailed_points": detailed_points,
                     "playing": game_state["playing"],
