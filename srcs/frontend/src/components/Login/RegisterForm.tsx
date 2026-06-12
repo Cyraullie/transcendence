@@ -2,16 +2,15 @@ import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 import { registerRequest } from "../../api/http/register";
 import { useLocation, useNavigate } from "react-router-dom";
-import avatar from "../../assets/avatars/avatar1.png";
+import avatar from "../../../public/avatars/avatar1.png";
 import type { errorT } from "../../utils/type/errorType";
 import LoginWithService from "./LoginWithService";
+import { useAuth } from "../hooks/useAuth";
 
 export function RegisterForm({
   setCreated,
-  setLoggedIn,
 }: {
   setCreated: Dispatch<SetStateAction<boolean>>;
-  setLoggedIn: Dispatch<SetStateAction<boolean>>;
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -20,6 +19,7 @@ export function RegisterForm({
   const [failure, setFailure] = useState(false);
   const [reason, setReason] = useState<errorT>({code:200, response:""});
 
+  const auth = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -63,7 +63,6 @@ export function RegisterForm({
       navigate(location.state, { state: location.pathname });
       return;
     }
-
     navigate("/", { state: location.pathname });
   }
 
@@ -77,9 +76,9 @@ export function RegisterForm({
    		return;
 	}
 
-    const result = await registerRequest(trimmedEmail, trimmedName, password, avatar);
-    if (!('code' in result)) {
-        setLoggedIn(true);
+    const result = await registerRequest(trimmedEmail, trimmedName, password, repassword, avatar, auth.setUserID, auth.setPass);
+    if (result.code !== 200) {
+        (auth.setLoggedIn(true));
 		registerSuccess();
         return;
     }

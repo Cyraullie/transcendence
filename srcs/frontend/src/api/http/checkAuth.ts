@@ -1,25 +1,19 @@
 import axios from 'axios'
 import host from './host'
+import type { SetStateAction } from 'react';
 
-export async function refreshAuth() : Promise<boolean> {
+export async function checkAuth(setUserID:React.Dispatch<SetStateAction<number | null>>, setPass:React.Dispatch<SetStateAction<boolean>>) : Promise<boolean> {
+
 	try {
-		await axios.post(host.http + 'api/token/refresh/', {}, {timeout: 2000, withCredentials: true });
-		return true;
+		const res = await axios.post(host.http + 'api/token/verify/', {}, {timeout: 2000, withCredentials: true });
+		if (res.data.status === "success") {
+			setUserID(res.data.id)
+			setPass(res.data.has_pass)
+			return true;
+		}
+		return false
 	} catch {
 		return false;
-	}
-}
-
-export async function checkAuth() : Promise<boolean> {
-	try {
-		await axios.get(host.http + 'api/token/verify/', {timeout: 2000, withCredentials: true });
-		return true;
-	} catch {
-		const res = await refreshAuth();
-		if (!res) {
-			return false;
-		}
-		return true;
 	}
 }
 

@@ -8,9 +8,9 @@ import {
 } from "three";
 import type { cardType } from "../../../../utils/type/handCardsType";
 
-function sendCard(card: cardType) {
-  console.log(card.value + " of " + card.color + " played!");
-}
+// function sendCard(card: cardType) {
+//   console.log(card.value + " of " + card.color + " played!");
+// }
 
 type Props = {
   cardIndex: number;

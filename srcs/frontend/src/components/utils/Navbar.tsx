@@ -6,41 +6,40 @@ import { CiSettings } from "react-icons/ci";
 import { GoLaw } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../api/http/login";
+import { useAuth } from "../hooks/useAuth";
+import { Notif_Inbox } from "./notifInbox";
 
-type Props = {
-  logged_in: boolean;
-  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-  setLogging: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-export function Navbar({logged_in, setLoggedIn, setLogging}:Props) {
+export function Navbar() {
   const navigate = useNavigate();
   const current_location = useLocation();
   const isActive = (path: string) => path === current_location.pathname;
-  
+  const auth = useAuth();
+
   async function handleLogout() {
-		if (!logged_in) {
+		if (!auth.logged_in) {
 			navigate("/login", {state: current_location.pathname})
 			return ;
 		}
 		
-		setLogging(true);
+		auth.setLogging(true);
 		const res = await logout();
 
 		if (res.code !== 200 && res.code !== 401) {
-			setLogging(false);
+			auth.setLogging(false);
 			return ;
 		}
-		setLoggedIn(false);
+		auth.setLoggedIn(false);
+		localStorage.removeItem("code");
+		auth.setUserID(null);
 		navigate("/login", {state: current_location.pathname});
 		setTimeout(() => {
-			setLogging(false);
+			auth.setLogging(false);
 		}, 500);
 	}
   
 
   return (
-    <div className="navbar bg-(--nav-color) fixed top-0 z-100 ">
+	<div className="navbar min-h-16 h-16 bg-(--nav-color) fixed top-0 z-100">
       <div className="flex-1">
         <a className="text-xl item-menu p-2" href="/">
           PopCards
@@ -103,13 +102,16 @@ export function Navbar({logged_in, setLoggedIn, setLogging}:Props) {
               onClick={handleLogout}
               className={(isActive("/login") ? "active " : "") + "item-menu"}
             >
-              {logged_in ? (
+              {auth.logged_in ? (
                 <MdLogout fontSize={20} />
               ) : (
                 <MdLogin fontSize={20} />
               )}
             </button>
-          </li>
+			</li>
+			{ auth.logged_in ?<li>
+			   <Notif_Inbox ></Notif_Inbox> 
+          	</li> : null }
         </ul>
       </div>
     </div>

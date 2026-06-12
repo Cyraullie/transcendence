@@ -3,25 +3,25 @@ import useWebSocketModule from "react-use-websocket";
 import host from '../http/host';
 import { useNotif } from "../../components/hooks/useNotif";
 import type { SetStateAction } from "react";
+import { useAuth } from "../../components/hooks/useAuth";
 
 type Props = {
-	loggedIn: boolean;
 	setProfile: React.Dispatch<SetStateAction<boolean>>;
 	updatedProfile: boolean;
 	updateLeaderboard: boolean;
 	setLeaderboard: React.Dispatch<SetStateAction<boolean>>;
 }
 
-export function Notifications({loggedIn, setProfile, updatedProfile, updateLeaderboard, setLeaderboard}:Props) {
+export function Notifications({ setProfile, updatedProfile, updateLeaderboard, setLeaderboard}:Props) {
 
 	const { default: useWebSocket = useWebSocketModule } = useWebSocketModule as unknown as {
 		default: typeof useWebSocketModule;
 	};
-
+	const auth = useAuth();
 	const notif = useNotif();
 	
-	useWebSocket(loggedIn ? (host.ws + "notification/") : null, {
-		shouldReconnect: () => loggedIn,
+	useWebSocket(auth.logged_in ? (host.ws + "notification/") : null, {
+		shouldReconnect: () => auth.logged_in ? true : false,
 		reconnectAttempts: 30,
 		reconnectInterval: 1000,
 		
@@ -50,9 +50,12 @@ export function Notifications({loggedIn, setProfile, updatedProfile, updateLeade
 					setProfile(!updatedProfile);
 				} else if (data.type === "friend_accepted") {
 					notif?.showNotif("Friend Request Accepted", payload.from_user + " has accepted your friend request!", 5000);
+					setProfile(!updatedProfile); 
+				} else if (data.type === "friend_invite") {
+					notif?.showNotif("Game Invite", payload.from_user + " has invited you to a game: " + payload.code, 10000);
 					setProfile(!updatedProfile);
 				} else {
-					console.debug("type not implemented. Format: ", data)
+					console.debug("Notification: type not implemented. Format: ", data)
 				}
 			} else if (data.event === "update") {
 				if (data.type === "friend_delete") {
@@ -63,6 +66,8 @@ export function Notifications({loggedIn, setProfile, updatedProfile, updateLeade
 					setProfile(!updatedProfile);
 				} else if (data.type === "game_finished") {
 					setLeaderboard(!updateLeaderboard);
+				} else {
+					console.debug("Update: type not implemented. Format: ", data)
 				}
 			} else {
 				console.debug("event not implemented. Format: ", data)

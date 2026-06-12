@@ -16,7 +16,7 @@ def OAUTH_Success(user, message):
 	access_token = refresh.access_token
 
 	res = Response()
-	res.data = {'success': True, 'message': message}
+	res.data = {'success': True, 'message': message, "id": user.id, "has_pass":user.has_password}
 	res.set_cookie(
 		key='access_token',
 		value=access_token,
@@ -42,8 +42,11 @@ def OAUTH_Success(user, message):
 def check_username(User, new_username, api):
 	if (api == 'google'):
 		new_username = new_username.split('@')[0]
-	i = 1
-	while (User.objects.filter(username=new_username)):
+	i = ""
+	tmp_user = new_username
+	while (User.objects.filter(username=(tmp_user + str(i)))):
+		if not i:
+			i = 1
 		new_username = new_username + str(i)
 		i += 1
 	new_username = new_username.strip()

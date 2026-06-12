@@ -1,29 +1,39 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
+from api.auth.authentication import OptionalJWTAuthentication
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework.decorators import authentication_classes
 from django.conf import settings
-
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def VerifyCookie(request):
-	return Response({"valid":True})
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
+@authentication_classes([OptionalJWTAuthentication])
+def VerifyCookie(request):
+
+	if request.user.is_authenticated:
+		return Response({"status":"success", "id":request.user.id, "has_pass":request.user.has_password})
+	return RefreshCookie(request)
+
+@permission_classes([AllowAny])
+@authentication_classes([OptionalJWTAuthentication])
 def RefreshCookie(request):
+
+
 	refresh = request.COOKIES.get("refresh_token")
 
 	if refresh is None:
-		return Response({"error": "Refresh token missing"}, status=401)
+		return Response({"status":"failed"})
 	
 	serializer = TokenRefreshSerializer(data={"refresh": refresh})
-	serializer.is_valid(raise_exception=True)
-
+	try: 
+		serializer.is_valid(raise_exception=True)
+	except Exception:
+		return Response({"status": "failed"})
 	access = serializer.validated_data['access']
 
 	res = Response()
-	res.data = {'succes': True}
+	res.data = {'status': "success",  "id":request.user.id}
 	res.set_cookie(
 		key='access_token',
 		value=access,
