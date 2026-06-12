@@ -5,6 +5,8 @@ from .db import  get_room_with_host
 from .models import Room
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.utils import timezone
+from datetime import datetime
 
 from .models import PlayerPresence
 from api.models import User
@@ -107,6 +109,46 @@ def lobby_kick_all(room_code):
     )
 
 
+
+
+
+@shared_task
+def player_afk(room_code, user_id):
+    room = Room.objects.select_related("host").filter(code=room_code).first()
+
+    if not room or not room.round_time:
+        return
+    
+    if timezone.now() < room.round_time:
+        return
+    
+    if room.status != "start":
+        return
+    
+    p = PlayerPresence.objects.filter(room=room, player_id=user_id).first()
+    game_state = room.game_state
+    
+    if not p:
+        return
+    
+    if str(p.position) != str(game_state["playing"]):
+        return
+    
+    p.is_afk = True
+    p.is_afk_count += 1
+    p.save()
+    
+    channel_layer = get_channel_layer()
+    
+    async_to_sync(channel_layer.group_send)(
+        f"player_{p.player_id}",
+        {
+            "type": "player_afk",
+            "reason": "Player AFK",
+            "code": room.code
+        }
+    )
+    
     
     
     

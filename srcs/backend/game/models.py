@@ -45,6 +45,7 @@ class Room(models.Model):
     delete_scheduled = models.BooleanField(default=False)
     host_change_scheduled = models.BooleanField(default=False)
     cleanup_scheduled = models.BooleanField(default=False)
+    round_time = models.DateTimeField(null=True, blank=True)
     
     def __str__(self):
         return f"{self.code}"
@@ -74,7 +75,9 @@ class PlayerPresence(models.Model):
     last_seen = models.DateTimeField(auto_now=True)
     channel_name = models.CharField(max_length=255, null=True, blank=True)
     difficulty = models.CharField(max_length=6, choices=DIFFICULTY_CHOICES, default="medium")
-
+    is_afk = models.BooleanField(default=False)
+    is_afk_count = models.IntegerField(default=0)
+    
     class Meta:
         unique_together = ['player', 'room']
 

@@ -92,7 +92,23 @@ class RoomConsumer(AsyncWebsocketConsumer):
         })
     
         await self.close()
+        
+    async def player_afk(self, event):
+        await self.send_json({
+            "event": "player_afk",
+            "reason": event["reason"]
+        })
+        room = await get_room_with_host(event["code"])
+        game = GameEngine(room.uuid)
+        #await BotService.play_bot(game, room.code, check_end=GameService.check_game_end)
     
+        game_state = await BotService.play_until_human(room, room.game_state, game, 
+                                                       send_data_callback=self.send_data, 
+                                                       check_end=GameService.check_game_end, 
+                                                       check_take_fold_callback=GameService.check_take_fold
+                                                       )
+        if await GameService.check_game_end(room, game) and room.status == "start":
+            await GameService.ask_host_continue(room, room.game_state)
     #TODO avoid does not exist error on room connection
     
     async def connect(self):
@@ -120,6 +136,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
         await self.accept()
         
         await self.channel_layer.group_add(self.group_name, self.channel_name)
+        
+        await self.channel_layer.group_add(f"player_{self.user.id}", self.channel_name)
     
         await RoomConnectionService.finalize_join(
             user=self.user,
@@ -514,7 +532,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                             }
                         }
                     )
-        await self.send_board(game_state, room)
+        await self.send_data()
 
 #TODO send all melds possible
     async def send_data(self):

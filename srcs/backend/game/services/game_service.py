@@ -13,6 +13,7 @@ from .board_service import BoardService
 from .stats_service import StatsService
 from .score_service import ScoreService
 from .bot_service import BotService
+from .room_task_service import RoomTaskService
 from channels.layers import get_channel_layer
 
 class GameService:
@@ -27,7 +28,8 @@ class GameService:
             await count_player(room.code)
         )
 
-        game_state["round_time"] = (timezone.now() + timedelta(seconds=30)).strftime("%H:%M:%S")
+        room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
+        await sync_to_async(room.save)()
 
         await start_room(room.uuid, game_state)
 
@@ -77,16 +79,17 @@ class GameService:
             return {"error": "Illegal move"}
         if room.game_state["playing"] != position:
             return {"error": "Not your turn bitch !!!"}
-
         state, taker, melds = await BoardService.resolve_if_needed(
             game, state, room, position, idx
         )
 
         prev_tricks = copy.deepcopy(state["tricks"])
 
+        await RoomTaskService.cancel_play_for_player(room.code, user.id)
         state = game.handleAction("play", state, idPlayer=str(position), idCard=idx)
         
-        state["round_time"] = (timezone.now() + timedelta(seconds=30)).strftime("%H:%M:%S")
+        room.round_time = (timezone.now() + timedelta(seconds=(25 if state["round"] == 0 else 10)))
+        await sync_to_async(room.save)()
             
         await save_room_state(room.uuid, state)
 
