@@ -153,7 +153,7 @@ def game_history_friend(request, user_id):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def room_data(request, uuid):
+def room_data(request, uuid): #TODO change uuid to code
     room = Room.objects.get(uuid=uuid)
     players = (
         PlayerScore.objects
@@ -163,10 +163,12 @@ def room_data(request, uuid):
     
     users = []
     for ps in players:
-        u = User.objects.get(id=ps.player_id)
+        username = "deleted user"
+        if ps.player_id != None:
+            username = User.objects.get(id=ps.player_id).username
         users.append({
 			"id": ps.player_id,
-            "username": u.username,
+            "username": username,
             "score": ps.score,
             "rank": ps.rank
 		})
