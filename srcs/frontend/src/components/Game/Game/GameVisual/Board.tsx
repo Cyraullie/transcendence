@@ -11,7 +11,7 @@ export default function Board() {
   const adversaries = generateFakeAdversary();
   const textureBack = useLoader(TextureLoader, loadTexture("back")!);
   const idPlayer = 3;
-  const totalPlayer = cards.length;
+  const totalPlayer = adversaries.length + 1;
 
 
   return (
@@ -31,7 +31,7 @@ export default function Board() {
         );})}
         {adversaries.map((adversary) => {
           return(
-            <Adversary cardHand={adversary} textureBack={textureBack} total={totalPlayer}/>
+            <Adversary cardHand={adversary} textureBack={textureBack} totalPlayer={totalPlayer}/>
           );
         })}
       </mesh>

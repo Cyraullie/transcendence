@@ -2,13 +2,15 @@ import { MeshPhongMaterial, TextureLoader } from "three";
 import type { Texture, TextureEventMap } from "three";
 
 type Props = {
-  angle: number, 
+  angle: number,
+  distanceY: number,
   littleRadius: number, 
   textureBack: Texture<HTMLImageElement, TextureEventMap>,
-  second: number
+  positionCard: number,
+  totalPlayer: number
 }
 
-export default function AdversaryCard({angle, littleRadius, textureBack, second} : Props){
+export default function AdversaryCard({angle, distanceY, littleRadius, textureBack, positionCard, totalPlayer} : Props){
   const materials = [
     new MeshPhongMaterial({color: 0xffffff}),
     new MeshPhongMaterial({color: 0xffffff}),
@@ -20,9 +22,8 @@ export default function AdversaryCard({angle, littleRadius, textureBack, second}
 
   return (
     <mesh
-      rotation={[Math.PI / 2, angle, 0]}
-      // position={[0, 0, 0]}
-      position={[Math.sin(angle) * littleRadius, -Math.cos(angle) * littleRadius, 0]}
+      rotation={[Math.PI / 2, 0, angle]}
+      position={[-Math.sin(angle) * littleRadius, distanceY + 0.02 * positionCard, Math.cos(angle) * littleRadius - (0.5 * totalPlayer)]}
       material={materials}
     >
       <boxGeometry args={[1, 1.4, 0.001]}/>

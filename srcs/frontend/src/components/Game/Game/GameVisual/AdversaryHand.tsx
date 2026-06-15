@@ -6,27 +6,34 @@ type Props = {
   angleCenter:number,
   cardHand: adversaryT, 
   textureBack: Texture<HTMLImageElement, TextureEventMap>
+  totalPlayer:number,
 }
 
-export default function AdversaryHand({angleCenter, cardHand, textureBack} : Props) {
-  const angleBetween = Math.PI / 15;
+export default function AdversaryHand({angleCenter, cardHand, textureBack, totalPlayer} : Props) {
+  const angleBetween = Math.PI / 30;
   const littleRadius = Math.sin(angleCenter / 2) * 3;
-  const angleStart = angleCenter * (cardHand.position + 1) - (cardHand.nbCards - 1) * angleBetween / 2;
+  const angleStart = - (cardHand.nbCards - 1) * angleBetween / 2;
   const allAngle : number[] = [];
   for (let i = 0; i < cardHand.nbCards; i++)
     allAngle.push(angleStart + i * angleBetween);
 
+  console.log("little radius" + littleRadius);
+  console.log("cos" + Math.cos(angleCenter * (cardHand.position + 1)));
   return (
-    <mesh
-    >
-      {allAngle.map((angle) => {
-        return (
-          <AdversaryCard littleRadius={littleRadius + (allAngle.indexOf(angle) % (cardHand.nbCards / 2) * 0.05)} second={0} textureBack={textureBack} angle={angle}/>
-        );
-      })}
-    </mesh>
+      <mesh
+      >
+        {allAngle.map((angle) => {
+          return (
+            <AdversaryCard
+              littleRadius={littleRadius}
+              distanceY={Math.cos(angleCenter * (cardHand.position + 1)) * littleRadius}
+              positionCard={allAngle.indexOf(angle)}
+              textureBack={textureBack}
+              angle={angle}
+              totalPlayer={totalPlayer}
+            />
+          );
+        })}
+      </mesh>
   );
 }
-// Math.asin(0.4 / 3)
-// Math.sin()
-// -Math.cos(angleCenter * (cardHand.position + 1))
