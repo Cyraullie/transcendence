@@ -87,7 +87,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
                                                        check_end=GameService.check_game_end, 
                                                        check_take_fold_callback=GameService.check_take_fold
                                                        )
-        if await GameService.check_game_end(room, game) and room.status == "start":
+        finished, game_state = await GameService.check_game_end(room, game)
+
+        if finished and room.status == "start":
             await GameService.ask_host_continue(room, room.game_state)
     #TODO avoid does not exist error on room connection
     
@@ -125,26 +127,29 @@ class RoomConsumer(AsyncWebsocketConsumer):
             channel_name=self.channel_name
         )
         room = await get_room_with_host(self.code)
-        if self.user.id == room.host_id:
-            await BroadcastService.broadcast_settings(
-                self.code,
-                self.channel_layer,
-                "host_join",
-                f"player_{room.host_id}",
-            )
-        else:
-            await BroadcastService.broadcast_settings(
-                self.code,
-                self.channel_layer,
-                "player_join",
-                f"room_{room.code}",
-            )
+        if room.status == "open":
+            if self.user.id == room.host_id:
+                await BroadcastService.broadcast_settings(
+                    self.code,
+                    self.channel_layer,
+                    "host_join",
+                    f"player_{room.host_id}",
+                )
+            else:
+                await BroadcastService.broadcast_settings(
+                    self.code,
+                    self.channel_layer,
+                    "player_join",
+                    f"room_{room.code}",
+                )
         
         room = await get_room_with_host(self.code)
         game = GameEngine(room.uuid)
-        if await GameService.check_game_end(room, game) and room.status == "start":
+        finished, game_state = await GameService.check_game_end(room, game)
+
+        if finished and room.status == "start":
             await GameService.ask_host_continue(room, room.game_state)
-        
+            
         if room.status == "start":
             await BroadcastService.broadcast_game(self.code, self.channel_layer, "player_reconnect")
     
@@ -168,12 +173,13 @@ class RoomConsumer(AsyncWebsocketConsumer):
             return
         room = result["room"]
     #TODO if lobby open status
-        await BroadcastService.broadcast_settings(
-            room.code,
-            self.channel_layer,
-            "player_left",
-            f"room_{room.code}",
-        )
+        if room.status == "open":
+            await BroadcastService.broadcast_settings(
+                room.code,
+                self.channel_layer,
+                "player_left",
+                f"room_{room.code}",
+            )
     
         try:
             await BotService.replace_disconnected_player(

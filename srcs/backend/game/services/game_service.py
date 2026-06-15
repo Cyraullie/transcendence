@@ -22,6 +22,7 @@ class GameService:
     @staticmethod
     async def start_game(room):
         game = GameEngine(room.uuid)
+        room = await get_room_with_host(room.code)
         channel_layer = get_channel_layer()
 
         game_state = game.handleAction(
