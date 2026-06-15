@@ -193,33 +193,6 @@ class RoomConnectionService:
             ).update
         )(channel_name=channel_name)
 
-    @staticmethod
-    async def broadcast_player_list(room, channel_layer):
-        players = await RoomService.get_players(room)
-
-        await channel_layer.group_send(
-            f"room_{room.code}",
-            {
-                "type": "list_player_event",
-                "event": "update",
-                "payload": {
-                    "players": players
-                }
-            }
-        )
-    
-    @staticmethod
-    async def broadcast_room_params(room, channel_layer):
-        snapshot = await RoomService.get_room_snapshot(room)
-        
-        await channel_layer.group_send(
-            f"room_{room.code}",
-            {
-                "type": "params_event",
-                "event": "update",
-                "payload": snapshot
-            }
-        )
         
         
         

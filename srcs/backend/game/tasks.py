@@ -1,7 +1,7 @@
 # game/tasks.py
 
 from celery import shared_task
-from .db import  get_room_with_host
+from .db import  get_room_with_host, get_params
 from .models import Room
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -75,9 +75,9 @@ def change_host(room_code, user_id):
         async_to_sync(channel_layer.group_send)(
             f"room_{room.code}",
             {
-                "type": "list_player_event",
-                "event": "update",
-                "payload": {"players": players}
+                "type": "settings_event",
+                "event": "host_changed",
+                "payload": {"players": players, "params": get_params(room.code)}
             }
         )
 
@@ -111,7 +111,7 @@ def lobby_kick_all(room_code):
 
 
 
-
+#TODO check bug when no player in websocket room task for player (took too long to shut down and was killed)
 @shared_task
 def player_afk(room_code, user_id):
     room = Room.objects.select_related("host").filter(code=room_code).first()

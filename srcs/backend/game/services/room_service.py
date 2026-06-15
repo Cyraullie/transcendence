@@ -9,7 +9,6 @@ from django.db.models import F
 from channels.layers import get_channel_layer
 from .room_task_service import RoomTaskService
 
-from ..room_tasks import ROOM_DELETE_TASKS, ROOM_CHANGE_HOST_TASKS
 import asyncio
 
 class RoomService:
@@ -118,53 +117,9 @@ class RoomService:
             }
 
 
-    @staticmethod
-    async def get_players(room):
-        if room == None:
-            return {"error": "No room send"}
-
-        presences = await sync_to_async(list)(
-            PlayerPresence.objects.select_related("player").filter(
-                room=room
-            )
-        )
-        
-        players = []
-        
-        for p in presences:
-            players.append({
-				"id": p.player.id,
-                "username": p.player.username,
-                "is_host": p.player == room.host,
-                "position": p.position
-			})
 
 
-        return players
 
-    @staticmethod
-    async def get_room_snapshot(room):
-        
-        return {
-            "code": room.code,
-            "status": room.status,
-            "max_player": room.max_player,
-            "type": room.type,
-            "timestamp": (room.created_at + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
-        }
-    
-    @staticmethod
-    async def broadcast_player_list(room, channel_layer):
-        players = await RoomService.get_players(room)
+            
 
-        await channel_layer.group_send(
-            f"room_{room.code}",
-            {
-                "type": "list_player_event",
-                "event": "update",
-                "payload": {
-                    "players": players
-                }
-            }
-        )
     

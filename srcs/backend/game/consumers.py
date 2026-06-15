@@ -15,6 +15,7 @@ from .services.meld_service import MeldService
 from .services.bot_service import BotService
 from .services.room_connection_service import RoomConnectionService
 from .services.game_snapshot_service import GameSnapshotService
+from .services.broadcast_service import BroadcastService
 
 import asyncio
 from channels.exceptions import ChannelFull
@@ -53,16 +54,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
             "payload": event["payload"]
         }))
 
-    async def list_player_event(self, event):
+    async def settings_event(self, event):
         await self.send(text_data=json.dumps({
-            "type": "list_player",
-            "event": event["event"],
-            "payload": event["payload"]
-        }))
-    
-    async def params_event(self, event):
-        await self.send(text_data=json.dumps({
-            "type": "params",
+            "type": "settings",
             "event": event["event"],
             "payload": event["payload"]
         }))
@@ -100,7 +94,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
         })
         room = await get_room_with_host(event["code"])
         game = GameEngine(room.uuid)
-        #await BotService.play_bot(game, room.code, check_end=GameService.check_game_end)
     
         game_state = await BotService.play_until_human(room, room.game_state, game, 
                                                        send_data_callback=self.send_data, 
@@ -145,24 +138,20 @@ class RoomConsumer(AsyncWebsocketConsumer):
             channel_name=self.channel_name
         )
         room = await get_room_with_host(self.code)
-        await RoomConnectionService.broadcast_player_list(
-            room,
-            self.channel_layer
-        )
-        
-        await RoomConnectionService.broadcast_room_params(
-            room,
-            self.channel_layer
-        )
-        
-        await self.channel_layer.group_send(
-            self.group_name,
-            {
-                "type": "room_event",
-                "event": "user_joined",
-                "payload": {"user": self.get_username()},
-            }
-        )
+        if self.user.id == room.host_id:
+            await BroadcastService.broadcast_settings(
+                room,
+                self.channel_layer,
+                "host_join",
+                f"player_{room.host_id}",
+            )
+        else:
+            await BroadcastService.broadcast_settings(
+                room,
+                self.channel_layer,
+                "player_join",
+                f"room_{room.code}",
+            )
         
         room = await get_room_with_host(self.code)
         game = GameEngine(room.uuid)
@@ -194,33 +183,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
         await RoomConnectionService.broadcast_player_list(
             room,
-            self.channel_layer
+            self.channel_layer,
+            "player_left",
+            f"room_{room.code}",
         )
-    
-        if self.group_name:
-    
-            await self.channel_layer.group_send(
-                self.group_name,
-                {
-                    "type": "room_event",
-                    "event": "user_left",
-                    "payload": {
-                        "user": self.get_username(),
-                    }
-                }
-            )
-    
-            if result["host_changed"]:
-                await self.channel_layer.group_send(
-                    self.group_name,
-                    {
-                        "type": "room_event",
-                        "event": "host_changed",
-                        "payload": {
-                            "new_host": room.host.username
-                        }
-                    }
-                )
     
         try:
             await BotService.replace_disconnected_player(
@@ -389,7 +355,12 @@ class RoomConsumer(AsyncWebsocketConsumer):
         )
     
         room = await get_room_with_host(self.code)
-        await RoomConnectionService.broadcast_player_list(room, self.channel_layer)
+        await BroadcastService.broadcast_settings(
+            room,
+            self.channel_layer,
+            "player_kicked",
+            f"room_{room.code}",
+        )
         
         if result["kicked_channel"]:
             await self.channel_layer.send(
