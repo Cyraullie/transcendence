@@ -27,6 +27,7 @@ class BotService:
         
         if p.is_human and p.is_afk:
             game_state = await BotService.play_bot(game, room.code, check_end=check_end)
+            await BroadcastService.broadcast_game(room.code, channel_layer, "bot_takeover")
             if (check_take_fold_callback):
                 take_fold, game_state = await check_take_fold_callback(game_state, room)
                 if (take_fold):

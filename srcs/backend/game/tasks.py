@@ -103,13 +103,13 @@ def lobby_kick_all(room_code):
     async_to_sync(channel_layer.group_send)(
         f"room_{room.code}",
         {
-            "type": "room_closed",
-            "reason": "Lobby timeout"
+            "type": "settings_event",
+            "event": "room_closed",
+            "payload": {
+                "message": "Lobby timeout"
+            }
         }
     )
-
-
-
 
 #TODO check bug when no player in websocket room task for player (took too long to shut down and was killed)
 @shared_task
@@ -144,8 +144,11 @@ def player_afk(room_code, user_id):
         async_to_sync(channel_layer.group_send)(
             f"player_{p.player_id}",
             {
-                "type": "room_closed",
-                "reason": "Player AFK 3 time"
+                "type": "game_event",
+                "event": "force_disconnect",
+                "payload": {
+                    "message": "Player AFK 3 time"
+                }
             }
         )
     

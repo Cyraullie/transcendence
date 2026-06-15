@@ -45,15 +45,12 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
     async def send_json(self, data):
         await self.send(text_data=json.dumps(data))
-    
-    async def private_event(self, event):
-        await self.send(text_data=json.dumps({
-            "type": "list_player",
-            "event": event["event"],
-            "payload": event["payload"]
-        }))
 
     async def game_event(self, event):
+        if event["event"] == "force_disconnect":
+            await self.close(code=4001)  # close WebSocket
+            return
+        
         await self.send(text_data=json.dumps({
             "type": "game",
             "event": event["event"],
@@ -66,18 +63,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
             "type": "settings",
             "event": event["event"],
             "payload": event["payload"]
-        }))
-
-    async def room_event(self, event):
-        print("ROOM_EVENT", timezone.now())
-        if event["event"] == "force_disconnect":
-            await self.close(code=4001)  # close WebSocket
-            return
-       
-        await self.send(text_data=json.dumps({
-            "type": "event",
-            "event": event["event"],
-            "payload": event.get("payload", {}),
         }))
 
     async def error(self, message: str):
@@ -95,10 +80,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
         await self.close()
         
     async def player_afk(self, event):
-        await self.send_json({
-            "event": "player_afk",
-            "reason": event["reason"]
-        })
         room = await get_room_with_host(event["code"])
         game = GameEngine(room.uuid)
     
@@ -263,17 +244,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     }
                 }
             )
-        
-        await self.channel_layer.group_send(
-            self.group_name,
-            {
-                "type": "room_event",
-                "event": "game_started",
-                "payload": {
-                    "user": self.get_username(),
-				}
-            }
-        )
 
         game_state = await GameService.start_game(room)
 
@@ -351,11 +321,13 @@ class RoomConsumer(AsyncWebsocketConsumer):
             return await self.error(result["error"])
     
         await self.channel_layer.group_send(
-            self.group_name,
+            f"player_{room.host_id}",
             {
-                "type": "room_event",
-                "event": "kick_player",
-                "payload": result["payload"]
+                "type": "settings_event",
+                "event": "player_kicked",
+                "payload": {
+                        "message": "Kick success"
+                    }
             }
         )
     
@@ -371,11 +343,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.send(
                 result["kicked_channel"],
                 {
-                    "type": "room_event",
-                    "event": "kicked",
+                    "type": "settings_event",
+                    "event": "player_kicked",
                     "payload": {
-                        "message": "You have been kicked from the room",
-                        "by": self.user.username
+                        "message": "You have been kicked from the room"
                     }
                 }
             )
@@ -383,7 +354,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.send(
                 result["kicked_channel"],
                 {
-                    "type": "force_disconnect",
+                    "type": "game_event",
+                    "event": "force_disconnect",
                 }
             )
 
@@ -401,17 +373,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
         is_end, gs = await GameService.check_game_end(room, game)
         if not is_end:
             return await self.error("Game not finished")
-            
-        await self.channel_layer.group_send(
-            self.group_name,
-            {
-                "type": "room_event",
-                "event": "game_started",
-                "payload": {
-                    "user": self.get_username(),
-                }
-            }
-        )
     
         game_state = await GameService.continue_game(
             room
@@ -437,18 +398,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
         await end_room(room.uuid, room.game_state)
     
         await BroadcastService.broadcast_game(self.code, self.channel_layer, "game_ended")
+
         await self.channel_layer.group_send(
             self.group_name,
             {
-                "type": "room_event",
-                "event": "game_ended",
-                "payload": {}
-            }
-        )
-        await self.channel_layer.group_send(
-            self.group_name,
-            {
-                "type": "room_event",
+                "type": "game_event",
                 "event": "force_disconnect",
                 "payload": {
                     "message": "Room closed by host"
