@@ -10,16 +10,16 @@ export default function Hand({
   cardsTex: Texture<HTMLImageElement, TextureEventMap>[];
   back: Texture<HTMLImageElement, TextureEventMap>;
 }) {
-  const game = useGame();
-  const cards = game.state.game.self_cards;
-  const startPos = (0.4 * cards.length) / 2 - 0.2;
-  const oldStartPos = (0.4 * cards.length + 1) / 2 - 0.2;
+  // const game = useGame();
+  const hand = generateFakeHandCards();
+  const startPos = (0.4 * hand.cards.length) / 2 - 0.2;
+  const oldStartPos = (0.4 * hand.cards.length + 1) / 2 - 0.2;
 
 
   return (
       <mesh>
-        {cards.map((card) => {
-          const cardIndex = cards.indexOf(card);
+        {hand.cards.map((card) => {
+          const cardIndex = hand.cards.indexOf(card);
 
           return (
             <PCard
