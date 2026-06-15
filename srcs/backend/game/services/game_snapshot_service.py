@@ -75,14 +75,70 @@ class GameSnapshotService:
                     "score": log.score,
                 })
 
-        return {
-            "board": game_state["board"],
+            p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(
+		    	room_id=room.id,
+                player=user
+            )
+            
+            logs = await sync_to_async(list)(
+                GameLog.objects.filter(room=room)
+            )
+            detailed_points = {}
+    
+            nb_round = int(36 / room.nb_player)
+            for log in logs:
+                player = await sync_to_async(
+                    PlayerPresence.objects.select_related("player").get
+                )(
+                    room_id=log.room_id,
+                    player_id=log.player_id
+                )
+            
+                if log.game not in detailed_points:
+                    detailed_points[log.game] = {}
+                
+                if log.round == nb_round:
+                    if "total" not in detailed_points[log.game]:
+                        detailed_points[log.game]["total"] = []
+                
+                    detailed_points[log.game]["is_finished"] = True
+                
+                    detailed_points[log.game]["total"].append({
+                        "id": player.player_id,
+                        "username": player.player.username,
+                        "score": log.score,
+                    })
+                else:
+                    if log.round not in detailed_points[log.game]:
+                        detailed_points[log.game][log.round] = []
+                
+                    detailed_points[log.game][log.round].append({
+                        "id": player.player_id,
+                        "username": player.player.username,
+                        "score": log.score,
+                    })
+                    
+            tmp_board = game_state['board']
+            asked = tmp_board.get('asked')
+            if asked:
+                board = []
+                for id, cards in tmp_board.items():
+                    if id == "asked":
+                        continue
+                    board.append({"room_id":id, "card":cards})
+            else:
+                board = []
+    
+        return {            
+            "self_id": p.position,
+            "board": board,
+            "asked": asked,
             "points": player_puntos,
             "detailed_points": detailed_points,
             "playing": game_state["playing"],
             "player_list": player_list,
             "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
-            "round_time": room.round_time.strftime("%H:%M:%S"),
+            "round_time": game_state["round_time"],
             "round": game_state["round"],
-            "last_fold": game_state.get("last_fold"),
+            "last_fold": game_state.get("last_fold")
         }

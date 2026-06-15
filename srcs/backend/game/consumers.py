@@ -137,6 +137,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             code=self.code,
             channel_name=self.channel_name
         )
+        room = await get_room_with_host(self.code)
         if self.user.id == room.host_id:
             await BroadcastService.broadcast_settings(
                 self.code,
