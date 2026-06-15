@@ -155,7 +155,7 @@ def get_game_scorelog(request, code):
             {
                 "game": score.game,
                 "round": score.round,
-                "meld": score.meld,
+                "meld": score.score,
             }
             for score in scores
         ]
