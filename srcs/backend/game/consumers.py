@@ -180,6 +180,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 "player_left",
                 f"room_{room.code}",
             )
+        if room.status == "start":
+            await BroadcastService.broadcast_game(self.code, self.channel_layer, "player_disconnect")
     
         try:
             room = await get_room_with_host(room.code)
