@@ -153,8 +153,8 @@ def game_history_friend(request, user_id):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def room_data(request, uuid): #TODO change uuid to code
-    room = Room.objects.get(uuid=uuid)
+def room_data(request, code):
+    room = Room.objects.get(code=code)
     players = (
         PlayerScore.objects
         .filter(room=room)
