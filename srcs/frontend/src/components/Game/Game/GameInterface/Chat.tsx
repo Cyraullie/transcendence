@@ -21,9 +21,12 @@ export default function Chat({setNewMessage, isAlreadyOpen}: Props) {
   useEffect(() => {
     if (messageEndRef.current)
       messageEndRef.current.scrollTop = messageEndRef.current.scrollHeight;
-    if (!isAlreadyOpen)
-      setNewMessage(true);
-  }, [messages])
+	async function setterMessage() { 
+	  if (!isAlreadyOpen)
+      	setNewMessage(true);
+	}
+	setterMessage();
+  }, [messages, setNewMessage, isAlreadyOpen])
 
   if (!messages)
     return (null);

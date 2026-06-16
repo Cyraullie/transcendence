@@ -45,7 +45,7 @@ export default function GameButtons() {
 		}
 	}
 	setMessage();
-  }, [isChatOpen, game.state.messages])
+  }, [isChatOpen, game.state.messages, game.state.user, messageCount])
 
   return (
     <div className="h-1/2 flex p-2 flex-col justify-end">
