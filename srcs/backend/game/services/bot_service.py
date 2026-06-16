@@ -24,8 +24,8 @@ class BotService:
             room=room,
             position=int(game_state["playing"])
         )
-        
-        if p.is_human and p.is_afk:
+        #TODO merge this and under while
+        if p.is_human and (p.is_afk or not p.is_online):
             await BroadcastService.broadcast_game(room.code, channel_layer, "bot_takeover")
             game_state = await BotService.play_bot(game, room.code, check_end=check_end)
             await BroadcastService.broadcast_game(room.code, channel_layer, "card_valid")
