@@ -1,13 +1,15 @@
 import { useFrame } from "@react-three/fiber";
 import { useRef, useState, type Dispatch, type SetStateAction } from "react";
 import {
-    log,
+  log,
   MeshPhongMaterial,
   Texture,
   type Mesh,
   type TextureEventMap,
 } from "three";
-import type { cardType, handCardsType } from "../../../../utils/type/handCardsType";
+import type {
+  cardType,
+} from "../../../../utils/type/handCardsType";
 import { useGame } from "../../context/GameContext";
 
 // function sendCard(card: cardType) {
@@ -20,10 +22,10 @@ type Props = {
   startPos: number;
   front: Texture<HTMLImageElement, TextureEventMap> | undefined;
   back: Texture<HTMLImageElement, TextureEventMap> | undefined;
-  oldStartPos: number,
+  oldStartPos: number;
   setHand: Dispatch<SetStateAction<cardType[]>>;
   hand: cardType[];
-  lastCardPlayed: number,
+  lastCardPlayed: number;
   setLastCardPlayed: Dispatch<SetStateAction<number>>;
 };
 
@@ -84,34 +86,58 @@ export default function PCard({
   }
   useFrame(() => {
     if (hidden) return;
-    if (cardRef.current.rotation.y > 0.01) cardRef.current.rotation.y -= 0.029;
+    // Playing card
+    if (cardRef.current.rotation.y > 0.01)
+      cardRef.current.rotation.y -= 0.029 * cardRef.current.rotation.y;
     if (played) {
-      if (cardRef.current.position.x < 0) cardRef.current.position.x += 0.1;
-      if (cardRef.current.position.x > 0) cardRef.current.position.x -= 0.1;
+      const deltaY = cardRef.current.position.y - (1 * distance + 0.5);
+      const deltaX = cardRef.current.position.x;
+      const deltaZ = cardRef.current.position.z - -1.15;
+      const deltaRotX = cardRef.current.rotation.x - -0.4;
+      if (cardRef.current.position.x < 0)
+        cardRef.current.position.x += 0.1 * deltaX * -1;
+      if (cardRef.current.position.x > 0)
+        cardRef.current.position.x -= 0.1 * deltaX;
       if (cardRef.current.position.y < -Math.cos(0) * distance + 0.5)
-        cardRef.current.position.y += 0.1;
+        cardRef.current.position.y += 0.01 * (deltaY * 10);
       if (cardRef.current.position.z > -1.15)
-        cardRef.current.position.z -= 0.15;
-      if (cardRef.current.rotation.x > -0.4) cardRef.current.rotation.x -= 0.1;
+        cardRef.current.position.z -= 0.15 * (deltaZ * 0.5);
+      if (cardRef.current.rotation.x > -0.4)
+        cardRef.current.rotation.x -= 0.1 * deltaRotX;
+
+      // when is finished
       if (
         cardRef.current.position.z < -1.1 &&
-        cardRef.current.position.x < 0.01 &&
-        cardRef.current.position.x > -0.01
+        cardRef.current.position.x < 0.1 &&
+        cardRef.current.position.x > -0.1
       ) {
         setHidden(true);
-		setHand(hand.filter((currCard) => { return currCard.id !== card.id}))
-		setLastCardPlayed(cardIndex);
+        setHand(
+          hand.filter((currCard) => {
+            return currCard.id !== card.id;
+          }),
+        );
+        setLastCardPlayed(cardIndex);
+		return ;
       }
     }
-	if (cardRef.current.position.x > startPos - cardIndex * 0.4)
-		cardRef.current.position.x -= 0.01
-	if (cardRef.current.position.x < startPos - cardIndex * 0.4)
-		cardRef.current.position.x += 0.01
+
+    // Hand's card replacment
+    if (!played) {
+      const deltaX = cardRef.current.position.x - (startPos - cardIndex * 0.4);
+      if (cardRef.current.position.x > startPos - cardIndex * 0.4)
+        cardRef.current.position.x -= 0.01 * deltaX * 10;
+      if (cardRef.current.position.x < startPos - cardIndex * 0.4)
+        cardRef.current.position.x += 0.01 * deltaX * -1 * 10;
+    }
   });
-  log(lastCardPlayed)
   return (
     <mesh
-      position={cardIndex >= lastCardPlayed ? [oldStartPos - (cardIndex + 1) * 0.4, -2.5, 1.5 - 0.001 * cardIndex] : [oldStartPos - cardIndex * 0.4, -2.5, 1.5 - 0.001 * cardIndex]}
+      position={
+        cardIndex >= lastCardPlayed
+          ? [oldStartPos - (cardIndex + 1) * 0.4, -2.5, 1.5 - 0.001 * cardIndex]
+          : [oldStartPos - cardIndex * 0.4, -2.5, 1.5 - 0.001 * cardIndex]
+      }
       material={materials}
       scale={active ? 1.4 : 1}
       rotation={[0, 3.14, 0]}

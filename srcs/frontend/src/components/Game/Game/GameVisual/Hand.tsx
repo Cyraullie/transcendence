@@ -2,7 +2,7 @@ import { Texture, type TextureEventMap } from "three";
 import PCard from "./PCard";
 import generateFakeHandCards from "../../../../utils/test_funcs/generateFakeHandCards";
 import { useState } from "react";
-import type { cardType, handCardsType } from "../../../../utils/type/handCardsType";
+import type { cardType,  } from "../../../../utils/type/handCardsType";
 // import { useGame } from "../../context/GameContext";
 
 export default function Hand({
