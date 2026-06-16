@@ -2,14 +2,11 @@ import generateFakeBoard from "../../../../utils/test_funcs/generateFakeBoard";
 import Adversary from "./Adversary";
 import PlayedCard from "./PlayedCard";
 import generateFakeAdversary from "../../../../utils/test_funcs/generateFakeAdversary";
-import { useLoader } from "@react-three/fiber";
-import { loadTexture } from "../../../../utils/imports/textures";
-import { TextureLoader } from "three";
+import { Texture, type TextureEventMap } from "three";
 
-export default function Board() {
+export default function Board({back} : {back: Texture<HTMLImageElement, TextureEventMap>}) {
   const cards = generateFakeBoard();
   const adversaries = generateFakeAdversary();
-  const textureBack = useLoader(TextureLoader, loadTexture("back")!);
   const idPlayer = 3;
   const totalPlayer = adversaries.length + 1;
   const boardRadius = 3;
@@ -33,7 +30,7 @@ export default function Board() {
         {adversaries.map((adversary) => {
           return(
             <>
-              <Adversary cardHand={adversary} textureBack={textureBack} totalPlayer={totalPlayer} boardRadius={boardRadius}/>
+              <Adversary cardHand={adversary} back={back} totalPlayer={totalPlayer} boardRadius={boardRadius}/>
             </>
           );
         })}

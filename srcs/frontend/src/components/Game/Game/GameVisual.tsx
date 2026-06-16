@@ -1,16 +1,25 @@
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useLoader } from "@react-three/fiber";
 import Hand from "./GameVisual/Hand";
 import Board from "./GameVisual/Board";
-import { OrbitControls } from '@react-three/drei'
+import generateDeck from "../../../utils/createDeck";
+import { loadTexture } from "../../../utils/imports/textures";
+import { TextureLoader } from "three";
+
 
 export default function GameVisual() {
+  const deck = generateDeck();
+  const loadedTextures: string[] = [];
+  const back = useLoader(TextureLoader, loadTexture("back")!);
+  deck.forEach((card) => {
+    loadedTextures.push(loadTexture(card.value + card.color)!);
+  });
+  const cardsTex = useLoader(TextureLoader, loadedTextures);
+
   return (
     <Canvas className="bg-(--green-color) w-3/4">
       <ambientLight />
-      <Board />
-      <Hand />
-      <OrbitControls />
-
+      <Board back={back}/>
+      <Hand cardsTex={cardsTex} back={back}/>
     </Canvas>
   );
 }

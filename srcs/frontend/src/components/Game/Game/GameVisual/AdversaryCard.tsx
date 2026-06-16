@@ -4,19 +4,19 @@ import type { Texture, TextureEventMap } from "three";
 type Props = {
   angle: number,
   littleRadius: number, 
-  textureBack: Texture<HTMLImageElement, TextureEventMap>,
+  back: Texture<HTMLImageElement, TextureEventMap>,
   positionCard: number,
   totalPlayer: number
 }
 
-export default function AdversaryCard({angle, littleRadius, textureBack, positionCard, totalPlayer} : Props){
+export default function AdversaryCard({angle, littleRadius, back, positionCard, totalPlayer} : Props){
   const materials = [
     new MeshPhongMaterial({color: 0xffffff}),
     new MeshPhongMaterial({color: 0xffffff}),
     new MeshPhongMaterial({color: 0xffffff}),
     new MeshPhongMaterial({color: 0xffffff}),
     new MeshPhongMaterial({color: 0xf345ab}),
-    new MeshPhongMaterial({map: textureBack})
+    new MeshPhongMaterial({map: back})
   ];
 
   const factor = 0.15 * (7 - totalPlayer);

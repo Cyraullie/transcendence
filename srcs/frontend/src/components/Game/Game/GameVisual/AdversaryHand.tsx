@@ -5,12 +5,12 @@ import type { Texture, TextureEventMap } from "three";
 type Props = {
   angleCenter:number,
   cardHand: adversaryT, 
-  textureBack: Texture<HTMLImageElement, TextureEventMap>
+  back: Texture<HTMLImageElement, TextureEventMap>
   totalPlayer:number,
   boardRadius: number
 }
 
-export default function AdversaryHand({angleCenter, cardHand, textureBack, totalPlayer, boardRadius} : Props) {
+export default function AdversaryHand({angleCenter, cardHand, back, totalPlayer, boardRadius} : Props) {
   const angleBetween = Math.PI / 30;
   const littleRadius = Math.sin(angleCenter / 2) * boardRadius;
   const angleStart = - (cardHand.nbCards - 1) * angleBetween / 2;
@@ -29,7 +29,7 @@ export default function AdversaryHand({angleCenter, cardHand, textureBack, total
               <AdversaryCard
                 angle={angle}
                 littleRadius={littleRadius}
-                textureBack={textureBack}
+                back={back}
                 positionCard={allAngle.indexOf(angle)}
                 totalPlayer={totalPlayer}
               />
