@@ -16,6 +16,7 @@ export function Game() {
 	const [valid, setValid] = useState<boolean | null>(null);
 	const [rooms, setRooms] = useState<availableGameT[]>([]);
 	const [joined, setJoined] = useState("");
+	const [refresh, setRefresh] = useState(false);
 
   	useEffect(() => {
   
@@ -91,7 +92,7 @@ export function Game() {
 		}
 		get_info();
 
-	}, [auth.logging, navigate, location.state, notif])
+	}, [auth.logging, navigate, location.state, notif, refresh])
 
 	if (valid === null) {
 		return (
@@ -112,9 +113,13 @@ export function Game() {
 		)
 	}
 
+	function refreshLobby() {
+		setRefresh(!refresh)
+	}
+
   return (
     <>
-        <CreateOrJoin availableGames={rooms} setJoined={setJoined}/>
+        <CreateOrJoin availableGames={rooms} refreshLobby={refreshLobby} setJoined={setJoined}/>
     </>
   );
 }
