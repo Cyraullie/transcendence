@@ -1,12 +1,13 @@
 import { useFrame } from "@react-three/fiber";
-import { useRef, useState } from "react";
+import { useRef, useState, type Dispatch, type SetStateAction } from "react";
 import {
+    log,
   MeshPhongMaterial,
   Texture,
   type Mesh,
   type TextureEventMap,
 } from "three";
-import type { cardType } from "../../../../utils/type/handCardsType";
+import type { cardType, handCardsType } from "../../../../utils/type/handCardsType";
 import { useGame } from "../../context/GameContext";
 
 // function sendCard(card: cardType) {
@@ -20,6 +21,10 @@ type Props = {
   front: Texture<HTMLImageElement, TextureEventMap> | undefined;
   back: Texture<HTMLImageElement, TextureEventMap> | undefined;
   oldStartPos: number,
+  setHand: Dispatch<SetStateAction<cardType[]>>;
+  hand: cardType[];
+  lastCardPlayed: number,
+  setLastCardPlayed: Dispatch<SetStateAction<number>>;
 };
 
 export default function PCard({
@@ -29,6 +34,10 @@ export default function PCard({
   front,
   back,
   oldStartPos,
+  setHand,
+  hand,
+  lastCardPlayed,
+  setLastCardPlayed,
 }: Props) {
   const [active, setActive] = useState<boolean>(false);
   const [overed, setOvered] = useState<boolean>(false);
@@ -90,6 +99,8 @@ export default function PCard({
         cardRef.current.position.x > -0.01
       ) {
         setHidden(true);
+		setHand(hand.filter((currCard) => { return currCard.id !== card.id}))
+		setLastCardPlayed(cardIndex);
       }
     }
 	if (cardRef.current.position.x > startPos - cardIndex * 0.4)
@@ -97,9 +108,10 @@ export default function PCard({
 	if (cardRef.current.position.x < startPos - cardIndex * 0.4)
 		cardRef.current.position.x += 0.01
   });
+  log(lastCardPlayed)
   return (
     <mesh
-      position={[oldStartPos - cardIndex * 0.4, -2.5, 1.5 - 0.001 * cardIndex]}
+      position={cardIndex >= lastCardPlayed ? [oldStartPos - (cardIndex + 1) * 0.4, -2.5, 1.5 - 0.001 * cardIndex] : [oldStartPos - cardIndex * 0.4, -2.5, 1.5 - 0.001 * cardIndex]}
       material={materials}
       scale={active ? 1.4 : 1}
       rotation={[0, 3.14, 0]}
