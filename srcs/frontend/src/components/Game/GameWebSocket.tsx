@@ -68,10 +68,10 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 				const payload = data.payload;
 
 				if (data.type === "global") {
-					if (data.event == "set_user")
+					if (data.event == "set_user") {
 						dispatch({type: "SET_USER", payload: data.username})
-				}
-				else if (data.type === "settings") {
+					}
+				} else if (data.type === "settings") {
 					if (data.event === "host_join") {
 						//
 					} else if (data.event === "player_join") {
@@ -110,6 +110,8 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 					auth.setGame(true);
 				} else if (data.event === "error") {
 					notif?.showNotif("Game Error", data.message);
+				} else if (data.event === "update" && data.type === "list_player") {
+					dispatch({type:"SET_PLAYERS", payload: payload.players})
 				} else {
 					console.debug("Unknown event: ", data)
 				}
