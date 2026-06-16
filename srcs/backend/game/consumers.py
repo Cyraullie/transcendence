@@ -133,6 +133,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }
         )
         
+        await self.send_json({"type": "global", "event": "set_user", "username":self.get_username()})
+        
         room = await sync_to_async(Room.objects.get)(code=self.code)
         
         if room.status == "start":

@@ -45,6 +45,15 @@ export function gameReducer( state: GameState, action: GameAction): GameState {
 		case "SET_SIZE":
 			return {...state , settings:
 				{...state.settings, maxSize: action.payload}};
+		
+		case "SET_HISTORY":
+			return {...state, messages:action.payload};
+
+		case "ADD_MESSAGE":
+			return {...state, messages: [...state.messages, action.payload]};
+
+		case "SET_USER":
+			return {...state, user: action.payload};
 
 		default:
 			return state;

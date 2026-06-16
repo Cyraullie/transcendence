@@ -67,7 +67,11 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 				}
 				const payload = data.payload;
 
-				if (data.type === "settings") {
+				if (data.type === "global") {
+					if (data.event == "set_user")
+						dispatch({type: "SET_USER", payload: data.username})
+				}
+				else if (data.type === "settings") {
 					if (data.event === "host_join") {
 						//
 					} else if (data.event === "player_join") {
@@ -102,21 +106,13 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 				} else if (data.event === "board_data") {
 					dispatch({ type: "SET_BOARD", payload: payload});
 					auth.setGame(true);
+				} else if (data.type === "game_started") {
+					auth.setGame(true);
+				} else if (data.event === "error") {
+					notif?.showNotif("Game Error", data.message);
+				} else {
+					console.debug("Unknown event: ", data)
 				}
-				// } else if (data.type === "event") {
-				// 	if (data.event === "kicked") {
-				// 		leaveRoom();
-				// 	} else if (data.event === "board_data") {
-				// 		dispatch({ type: "SET_BOARD", payload: payload});
-				// 		auth.setGame(true);
-				// 	}
-				// } else if (data.type === "game_started") {
-				// 	auth.setGame(true);
-				// } else if (data.event === "error") {
-				// 	notif?.showNotif("Game Error", data.message);
-				// } else {
-				// 	console.debug("Unknown event: ", data)
-				// }
 			},
 	
 		});
@@ -153,11 +149,6 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 			sendJson("kick", {playerId : playerId});
 		}
 
-	if (state.connected === false)
-	  return (
-		<div className="page-content flex items-center justify-center min-h-screen">
-			<span className="loading loading-spinner loading-xl"></span>
-		</div>)
 
 	function setSize(size: number) {
 		dispatch({ type: "SET_SIZE", payload: size})
@@ -166,9 +157,62 @@ export default function GameWebSocket({code, setCode} : {code:string; setCode:Re
 	function setMode(mode: number) {
 		dispatch({ type: "SET_MODE", payload: mode})
 	}
+		
+	const { sendJsonMessage: sendChatJsonMessage } = useWebSocket(auth.logged_in  && auth.in_game ? (host.ws + "chat/" + code + '/') : null, {
+		shouldReconnect: () => {
+			return auth.logged_in ? true : false
+		},
+		reconnectAttempts: 30,
+		reconnectInterval: 1000,
+		
+		heartbeat: {
+			message: JSON.stringify({ type: "heartbeat" }),
+			returnMessage: JSON.stringify({ type: "acknowledge" }),
+			interval: 30000,
+			timeout: 60000,
+		},
+
+		onOpen: () => {
+		},
+
+		onClose: () => {
+		},
+
+		onMessage: (event) => {
+			const data = JSON.parse(event.data);
+			if (data.type == "acknowledge") {
+				return
+			}
+			const payload = data.payload;
+
+			if (data.type === "chat_message") {
+				dispatch({type: "ADD_MESSAGE", payload: payload})
+				console.debug("chat_message: ", payload)
+			} else if (data.type === "history") {
+				dispatch({type: "SET_HISTORY", payload: payload})
+				console.debug("history", payload)
+			} else if (data.event === "error") {
+				console.debug("Error: ", data)
+			} else {
+				console.debug("Unknown event: ", data)
+			}
+		},
+
+	});
+
+	function sendMessage(action:string, message:string) {
+		sendChatJsonMessage({type: action, message: message});
+	}
+
+	if (state.connected === false)
+	  return (
+		<div className="page-content flex items-center justify-center min-h-screen">
+			<span className="loading loading-spinner loading-xl"></span>
+		</div>)
+
 	
 	return (
-		<GameContext.Provider value={{state, leaveRoom, startGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize}}>
+		<GameContext.Provider value={{state, leaveRoom, startGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, sendMessage}}>
 		{auth.in_game ? <GameMain /> : <WaitingRoom roomCode={code}/>}
 		</GameContext.Provider>
 	);

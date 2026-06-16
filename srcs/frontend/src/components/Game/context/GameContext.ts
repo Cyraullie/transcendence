@@ -12,6 +12,7 @@ type GameContextT = {
 	kickPlayer: (playerId: number) => void;
 	setMode: (mode: number) => void;
 	setSize: (size: number) => void;
+	sendMessage: (action:string, message:string) => void;
 }
 
 export const GameContext = createContext<GameContextT | null>(null);

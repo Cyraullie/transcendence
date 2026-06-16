@@ -27,6 +27,8 @@ export type GameState = {
 	connected: boolean;
 	settings: SettingsT;
 	game: GameT;
+	messages: {type:string, user:{id:number, username:string, avatar:string}, message:string,time:string}[];
+	user: string
 
 }
 
@@ -39,6 +41,10 @@ export type GameAction =
 	| { type: "SET_PARAMS"; payload: paramsT }
 	| { type: "SET_MODE"; payload: number }
 	| { type: "SET_SIZE"; payload: number }
+	| { type: "SET_HISTORY"; payload: {type:string, user:{id:number, username:string, avatar:string}, message:string,time:string}[]}
+	| { type: "ADD_MESSAGE"; payload: {type:string, user:{id:number, username:string, avatar:string}, message:string,time:string}}
+	| { type: "SET_USER"; payload: string}
+
 
 
 export const initialState: GameState = {
@@ -53,4 +59,6 @@ export const initialState: GameState = {
 		boardData: default_board,
 		self_cards:[],
 	},
+	messages: [],
+	user: ""
 }
