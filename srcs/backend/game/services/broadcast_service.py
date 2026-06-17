@@ -145,8 +145,7 @@ class BroadcastService:
                     board.append({"room_id":id, "card":cards})
             else:
                 board = []
-    #TODO add take_by
-    #TODO palyer_id == right player ?
+
         return {
             "self_id": player_position,
             "board": board,
