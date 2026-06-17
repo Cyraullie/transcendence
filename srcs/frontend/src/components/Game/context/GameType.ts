@@ -39,6 +39,7 @@ export type GameAction =
 	| { type: "SET_PARAMS"; payload: paramsT }
 	| { type: "SET_MODE"; payload: number }
 	| { type: "SET_SIZE"; payload: number }
+	| { type: "FAKE_PLAY"; payload: number }
 
 
 export const initialState: GameState = {

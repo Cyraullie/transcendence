@@ -45,7 +45,8 @@ export function gameReducer( state: GameState, action: GameAction): GameState {
 		case "SET_SIZE":
 			return {...state , settings:
 				{...state.settings, maxSize: action.payload}};
-
+		case "FAKE_PLAY":
+			return{...state, game: {...state.game, self_cards: state.game.self_cards.splice(action.payload, 1)}}
 		default:
 			return state;
 	}
