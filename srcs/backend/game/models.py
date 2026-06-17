@@ -108,6 +108,7 @@ class Stat(models.Model):
 
 class GameLog(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='game')
+    #TODO change to relation on player_presence
     player = models.ForeignKey(User, on_delete=models.CASCADE, related_name='player')
     game = models.IntegerField(default=0)
     round = models.IntegerField(default=0)

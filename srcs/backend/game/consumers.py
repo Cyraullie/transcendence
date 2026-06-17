@@ -37,7 +37,6 @@ ACTION_HANDLERS = {
     "continue": "handle_continue_game",
     "end_game": "handle_end_game",
     "melds": "handle_melds",
-    "verify_melds": "handle_verify_melds",
     "kick": "handle_kick",
 }
 #TODO vote in game to ban a player (majorité qui remporte le vote ? tout le monde sauf la cible peut voté)
@@ -296,7 +295,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         if (is_end):
             await GameService.ask_host_continue(room, gs)
         
-    async def handle_melds(self, payload):
+    async def handle_send_melds(self, payload):
         room = await get_room_with_host(self.code)
     
         result = await MeldService.play_meld(
@@ -308,9 +307,9 @@ class RoomConsumer(AsyncWebsocketConsumer):
         if result.get("error"):
             return await self.error(result["error"])
     
-        await BroadcastService.broadcast_game(self.code, self.channel_layer, "annonces_valid")
+        #await BroadcastService.broadcast_game(self.code, self.channel_layer, "annonces_valid")
 
-    async def handle_verify_melds(self, payload):
+    async def handle_melds(self, payload):
         room = await get_room_with_host(self.code)
     
         result = await MeldService.verify_melds(
