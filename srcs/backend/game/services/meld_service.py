@@ -205,9 +205,11 @@ class MeldService:
                 "message": "Toutes les cartes doivent appartenir à des suites valides"
             }
         bucket = [
-                [card["raw"] for card in seq]
-                for seq in sequences
-            ]
+            {
+                "cards": [card["raw"] for card in seq]
+            }
+            for seq in sequences
+        ]
         await MeldService.save_melds(room.id, user.id, bucket)
         return {
             "type": "game_event",
@@ -226,7 +228,12 @@ class MeldService:
         room = await sync_to_async(Room.objects.get)(id=room_id)
         game_state = room.game_state
         
-        game_state["players"][str(p.position)]["melds"].append(sequences)
+        player_melds = game_state["players"][str(p.position)]["melds"]
+        
+        for sequence in sequences:
+            if sequence not in player_melds:
+                game_state["players"][str(p.position)]["melds"].append(sequence)
+                
         await save_room_state(room.uuid, game_state)
     
     @staticmethod
