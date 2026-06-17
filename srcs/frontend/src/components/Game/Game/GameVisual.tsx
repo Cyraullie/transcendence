@@ -12,7 +12,7 @@ export default function GameVisual() {
   const loadedTextures: string[] = [];
   const back = useLoader(TextureLoader, loadTexture("back")!);
   deck.forEach((card) => {
-	  console.log(card.value + card.color);
+	  // console.log(card.value + card.color);
 	  
     loadedTextures.push(loadTexture(card.value + card.color)!);
   });
