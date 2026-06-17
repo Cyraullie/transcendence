@@ -1,7 +1,7 @@
 import { useState, type SetStateAction } from "react";
 import CreateOrJoin from "../components/Game/createOrJoin/CreateOrJoin";
 import GameWebSocket from "../components/Game/GameWebSocket";
-import GameMain from "../components/Game/Game/GameMain";
+// import GameMain from "../components/Game/Game/GameMain";
 // import { useAuth } from "../components/hooks/useAuth";
 // import { useLocation, useNavigate } from "react-router";
 // import { useNotif } from "../components/hooks/useNotif";

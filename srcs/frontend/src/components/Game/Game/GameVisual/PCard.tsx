@@ -96,9 +96,9 @@ export default function PCard({
       const deltaZ = cardRef.current.position.z - 1.5 - 0.001 * cardIndex + 0.1;
 
       if (cardRef.current.position.y < -1.2)
-        cardRef.current.position.y += 0.05 * deltaY * -1;
+        cardRef.current.position.y += 0.05 * deltaY * -1 * 5;
       if (cardRef.current.position.z < 1.5 - 0.001 * cardIndex + 0.1)
-        cardRef.current.position.z += 0.01 * deltaZ;
+        cardRef.current.position.z += 0.01 * deltaZ * 5;
     }
 
     // Playing card
@@ -119,7 +119,7 @@ export default function PCard({
       if (cardRef.current.rotation.x > -0.4)
         cardRef.current.rotation.x -= 0.1 * deltaRotX;
 
-      // when is finished
+      // when is finished remove card from hand
       if (
         cardRef.current.position.z < -1.1 &&
         cardRef.current.position.x < 0.1 &&
