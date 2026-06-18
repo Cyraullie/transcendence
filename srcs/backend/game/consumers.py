@@ -300,20 +300,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
         
         if (is_end):
             await GameService.ask_host_continue(room, gs)
-        
-    async def handle_send_melds(self, payload):
-        room = await get_room_with_host(self.code)
-    
-        result = await MeldService.play_meld(
-            room=room,
-            user=self.user,
-            cards=payload["cards"]
-        )
-    
-        if result.get("error"):
-            return await self.error(result["error"])
-    
-        #await BroadcastService.broadcast_game(self.code, self.channel_layer, "annonces_valid")
 
     async def handle_melds(self, payload):
         room = await get_room_with_host(self.code)

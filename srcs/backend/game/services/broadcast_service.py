@@ -67,6 +67,7 @@ class BroadcastService:
     
     @staticmethod
     async def _board_data(room, player_position, is_r0_finish=False):
+        room = await get_room_with_host(room.code)
         game_state = room.game_state
 
         player_puntos = {}
@@ -86,7 +87,6 @@ class BroadcastService:
             player_id_str = str(player_id)
             
             if is_r0_finish:
-                #TODO add points in each meld ?
                 for meld in player_data.get("melds", []):
                     player_annonces.append({
                         "room_id": player_id,

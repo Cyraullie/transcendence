@@ -15,6 +15,7 @@ from .score_service import ScoreService
 from .bot_service import BotService
 from .broadcast_service import BroadcastService
 from .room_task_service import RoomTaskService
+from .meld_service import MeldService
 from channels.layers import get_channel_layer
 
 class GameService:
@@ -81,7 +82,7 @@ class GameService:
         legal = game.handleAction("legal", state, idPlayer=str(position))
         if len(legal) == 0:
             return {"error": "No card in hand"}
-        idx = await GameService.get_card_index(user, room, card_id)
+        idx = await MeldService.get_card_index(user, room, card_id)
 
         if idx is None:
             return {"error": "Card not found"}
@@ -134,13 +135,18 @@ class GameService:
 
     @staticmethod
     async def check_take_fold(game_state, room):
+        room = await get_room_with_host(room.code)
         card_on_board = len(game_state["board"]) - 1
         nb_players = len(game_state["players"])
 
         if (card_on_board == nb_players):
             game = GameEngine(room.uuid)
-            channel_layer = get_channel_layer()
-            await BroadcastService.broadcast_game(room.code, channel_layer, "reveal_announces")
+            if room.game_state["round"] == 0:
+                channel_layer = get_channel_layer()
+                await MeldService.play_melds(room)
+                room = await get_room_with_host(room.code)
+                game_state = room.game_state
+                await BroadcastService.broadcast_game(room.code, channel_layer, "reveal_announces")
             
             game_state, melds = game.handleAction("take_fold", game_state)
             await save_room_state(room.uuid, game_state)
@@ -150,17 +156,6 @@ class GameService:
             return True, game_state
         
         return False, game_state
-
-    @staticmethod
-    async def get_card_index(user, room, card_id):
-        room = await get_room_with_host(room.code)
-        position = await get_player_pos(user, room.code)
-        i = 0
-        for card in room.game_state["players"][str(position)]["cards"]:
-            if card["id"] == card_id:
-                return i
-            i += 1
-        return -1
     
     @staticmethod
     async def ask_host_continue(room, game_state):
