@@ -44,6 +44,12 @@ class BroadcastService:
             "status": room.status,
             "max_player": room.max_player,
             "type": room.type,
+            "goal": room.goal,
+            **(
+                {"nb_games": room.nb_games}
+                if room.goal == "games"
+                else {"nb_points": room.nb_points}
+            ),
             "timestamp": (room.created_at + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
         }
             

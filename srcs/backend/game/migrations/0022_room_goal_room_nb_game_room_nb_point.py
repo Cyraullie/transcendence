@@ -17,12 +17,12 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='room',
-            name='nb_game',
+            name='nb_games',
             field=models.IntegerField(default=3),
         ),
         migrations.AddField(
             model_name='room',
-            name='nb_point',
+            name='nb_points',
             field=models.IntegerField(default=333),
         ),
     ]
