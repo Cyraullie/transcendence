@@ -69,7 +69,7 @@ class BroadcastService:
     async def _board_data(room, player_position):
         game_state = room.game_state
 
-        player_puntos = {}
+        player_puntos = []
         player_list = {}
         detailed_points = {}
 
@@ -84,7 +84,7 @@ class BroadcastService:
 
             player_id_str = str(player_id)
 
-            player_puntos[player_id_str] = player_data["puntos"]
+            player_puntos.append({"id":p.player.id, "username":p.player.username, "score":player_data["puntos"]})
             player_list[player_id_str] = {
                 "hand": len(player_data["cards"]),
                 "user": {

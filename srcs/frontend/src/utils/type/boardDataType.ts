@@ -15,7 +15,7 @@ export type boardDataT = {
 	self_id: number,
 	board: {room_id: number, card: cardType}[],
 	asked: cardType,
-	points: { [ k: number ]: number }[],
+	points: { id:number, username:string, score:number }[],
 	detailed_points: Record<string, Record<string, playerScoreT[] | boolean>>;
 	playing: number,
 	player_list: { [k: string] : playerGameT},

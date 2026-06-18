@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { generateFakeUsersInGame } from "../../../../utils/test_funcs/generateFakeUsersInGame";
+// import { generateFakeUsersInGame } from "../../../../utils/test_funcs/generateFakeUsersInGame";
 import type { userInGameT } from "../../../../utils/type/userInGameType";
 import UsernameMiniProfileBtn from "../../../miniProfile/UsernameMiniProfileBtn";
 import { generateFakeDetailedGame } from "../../../../utils/test_funcs/generateFakeDetailedGame";
@@ -8,11 +8,15 @@ import type {
   detailedRoundT,
 } from "../../../../utils/type/detailedGame";
 import Time from "./Time";
+import { useGame } from "../../context/GameContext";
+import { useAuth } from "../../../hooks/useAuth";
 
 export default function LeaderboardInGame() {
-  const listPlayer = generateFakeUsersInGame();
+  const { state } = useGame();
+  const auth = useAuth();
+  const listPlayer = state.game.boardData.points;
   const detailedGame = generateFakeDetailedGame();
-  const current = { id: 4, username: "alexouille", score: 69 };
+  const currentID = auth.userID;
   const scoreDetailsRef = useRef<HTMLDialogElement>(null);
   function compareFn(a: userInGameT, b: userInGameT) {
     if (a.score > b.score) return 1;
@@ -37,7 +41,7 @@ export default function LeaderboardInGame() {
               <tr
                 className={
                   "h-10 border-y border-(--bg-color)" +
-                  (current.id === player.id ? " bg-(--nav-color) font-bold " : "")
+                  (currentID == player.id ? " bg-(--nav-color) font-bold " : "")
                 }
               >
                 <td className="text-center">
