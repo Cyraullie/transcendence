@@ -28,5 +28,3 @@ export default function Adversary({cardHand, back, totalPlayer, boardRadius} : P
       </mesh>
   );
 }
-//  * 
-//  * 

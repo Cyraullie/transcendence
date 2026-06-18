@@ -59,9 +59,9 @@ export default function Announcement() {
             })}
           </tbody>
         </table>
-        <div className="flex items-center justify-center col-span-3 pt-6">
+        {/* <div className="flex items-center justify-center col-span-3 pt-6">
           <button className="btn" onClick={updateSettings}>Confirm</button>
-        </div>
+        </div> */}
       </div>
       <form method="dialog" className="modal-backdrop">
       </form>
