@@ -31,6 +31,11 @@ class Room(models.Model):
         ("private", "Private"),
     ]
     
+    GOAL_CHOICES = [
+        ("games", "Games"),
+        ("points", "Points")
+    ]
+    
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     code = models.CharField(max_length=8, unique=True)
     host = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='hosted_rooms')
@@ -42,6 +47,9 @@ class Room(models.Model):
     nb_player = models.IntegerField(default=0)
     type = models.CharField(max_length=12, choices=TYPE_CHOICES, default="private")
     max_player = models.IntegerField(default=2)
+    goal = models.CharField(max_length=6,choices=GOAL_CHOICES, default="games")
+    nb_game = models.IntegerField(default=3)
+    nb_point = models.IntegerField(default=333)
     delete_scheduled = models.BooleanField(default=False)
     host_change_scheduled = models.BooleanField(default=False)
     cleanup_scheduled = models.BooleanField(default=False)
