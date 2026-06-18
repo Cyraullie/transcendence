@@ -55,6 +55,12 @@ export function gameReducer( state: GameState, action: GameAction): GameState {
 		case "SET_USER":
 			return {...state, user: action.payload};
 
+		case "SET_EVENT":
+			return {...state, event: action.payload, eventID: state.eventID + 1};
+		
+		case "SET_MESSAGE":
+			return {...state, message: action.payload};
+
 		default:
 			return state;
 	}

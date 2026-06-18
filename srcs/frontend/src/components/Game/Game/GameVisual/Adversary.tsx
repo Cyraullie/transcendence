@@ -15,8 +15,8 @@ export default function Adversary({cardHand, back, totalPlayer, boardRadius} : P
 
   return (
       <mesh
-        rotation={[0, 0, angleCenter * (cardHand.position + 1)]}
-        position={[distance * Math.sin(angleCenter * (cardHand.position + 1)), distance *  -Math.cos(angleCenter * (cardHand.position + 1)), 0]}
+        rotation={[0, 0, angleCenter * (cardHand.position)]}
+        position={[distance * Math.sin(angleCenter * (cardHand.position)), distance *  -Math.cos(angleCenter * (cardHand.position)), 0]}
       >
           <AdversaryHand
             angleCenter={angleCenter}

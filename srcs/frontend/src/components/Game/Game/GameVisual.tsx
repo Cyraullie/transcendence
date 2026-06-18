@@ -6,7 +6,6 @@ import { loadTexture } from "../../../utils/imports/textures";
 import { TextureLoader } from "three";
 import bgimg from "../../../assets/bg_game.png"
 
-
 export default function GameVisual() {
   const deck = generateDeck();
   const loadedTextures: string[] = [];

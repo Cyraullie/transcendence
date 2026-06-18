@@ -16,9 +16,9 @@ export type boardDataT = {
 	board: {room_id: number, card: cardType}[],
 	asked: cardType,
 	points: { [ k: number ]: number }[],
-	detailed_points: { [k: number] : {[k : number] : playerScoreT[]}[]}[]
+	detailed_points: Record<string, Record<string, playerScoreT[] | boolean>>;
 	playing: number,
-	player_list: playerGameT[],
+	player_list: { [k: string] : playerGameT},
 	started_at: string,
 	round_time: string,
 	round: number,
@@ -26,13 +26,13 @@ export type boardDataT = {
 }
 
 export const default_board : boardDataT = {
-	self_id: 0,
+	self_id: -1,
 	board: [],
 	asked: {color: "", value:"", id:0},
 	points: [],
-	detailed_points: [],
-	playing: 0,
-	player_list: [],
+	detailed_points: {},
+	playing: -1,
+	player_list: {},
 	started_at: "",
 	round_time: "",
 	round: 0,

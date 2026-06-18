@@ -28,6 +28,9 @@ export type GameState = {
 	settings: SettingsT;
 	game: GameT;
 	messages: {type:string, user:{id:number, username:string, avatar:string}, message:string,time:string}[];
+	event: string;
+	eventID: number;
+	message: string;
 	user: string
 
 }
@@ -44,6 +47,8 @@ export type GameAction =
 	| { type: "SET_HISTORY"; payload: {type:string, user:{id:number, username:string, avatar:string}, message:string,time:string}[]}
 	| { type: "ADD_MESSAGE"; payload: {type:string, user:{id:number, username:string, avatar:string}, message:string,time:string}}
 	| { type: "SET_USER"; payload: string}
+	| { type: "SET_EVENT"; payload: string}
+	| { type: "SET_MESSAGE"; payload:string}
 
 
 
@@ -60,5 +65,8 @@ export const initialState: GameState = {
 		self_cards:[],
 	},
 	messages: [],
+	event:"",
+	eventID:0,
+	message:"",
 	user: ""
 }

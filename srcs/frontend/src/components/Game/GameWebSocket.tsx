@@ -6,9 +6,12 @@ import { useAuth } from "../hooks/useAuth";
 import { useNotif } from "../hooks/useNotif";
 import { useEffect, useReducer, type SetStateAction } from "react";
 import { gameReducer } from "./context/gameReducer";
-import { initialState } from "./context/GameType";
+import { initialState, type paramsT } from "./context/GameType";
 import { useNavigate } from "react-router";
 import { GameContext } from "./context/GameContext";
+import type { playerT } from "../../utils/type/playerType";
+import type { cardType } from "../../utils/type/handCardsType";
+import type { boardDataT } from "../../utils/type/boardDataType";
 
 export default function GameWebSocket({
   code,
@@ -79,52 +82,62 @@ export default function GameWebSocket({
 					dispatch({type: "SET_USER", payload: data.username})
 				}
 			} else if (data.type === "settings") {
-				if (data.event === "host_join") {
-					//
-				} else if (data.event === "player_join") {
-					//
-				} else if (data.event === "settings_changed") {
-					//
-				} else if (data.event === "bot_added") {
-					//
-				} else if (data.event === "player_kicked") {
-					//
+				dispatch({type:"SET_EVENT", payload: data.event});
+				setSettings(payload.players, payload.params);
+				if (data.event === "player_kicked") { // Error case????
+					if (payload.message) {
+						if (payload.message === "You have been kicked from the room") {
+							leaveRoom();
+							notif?.showNotif("Kicked!", "You have been kicked from the room.", 5000);
+						}
+					} else {
+						notif?.showNotif("Player left", "A player has been kicked from the room", 5000);
+					}
 				}
+				
 			} else if (data.type === "game") {
-				if (data.event === "game_started") {
-					//
-				} else if (data.event === "annonces_valid") { // where you tell me if valid or not
-					//
+				dispatch({type:"SET_EVENT", payload: data.event});
+				auth.setGame(true);
+				if (data.event === "annonces_valid") {
+					if (data.valid === false) {
+						dispatch({type:"SET_EVENT", payload: "false"});
+						dispatch({type:"SET_MESSAGE", payload: data.message});
+					}
 				} else if (data.event === "card_valid") {
-					//
-				} else if (data.event === "finish_round") {
-					//
-				} else if (data.event === "game_finish") {
-					//
-				} else if (data.event === "game_continued") {
-					//
+					if (payload.status === "invalid") {
+						dispatch({type:"SET_MESSAGE", payload: "invalid"});
+					} else {
+						setGame(payload.self_card, payload.board_data)
+					}
 				} else if (data.event === "game_ended") {
-					//
-				} else if (data.event === "player_replace") {
-					//
-				} else if (data.event === "player_reconnect") {
-					//
+					auth.setGame(false);
+					leaveRoom();
+				} else {
+					if (data.event === "player_disconnect" || data.event === "player_reconnect") {
+						dispatch({type:"SET_MESSAGE", payload: data.player_name});
+					}
+					setGame(payload.self_card, payload.board_data)
 				}
-			} else if (data.event === "board_data") {
-				dispatch({ type: "SET_BOARD", payload: payload});
-				auth.setGame(true);
-			} else if (data.type === "game_started") {
-				auth.setGame(true);
 			} else if (data.event === "error") {
 				notif?.showNotif("Game Error", data.message);
-			} else if (data.event === "update" && data.type === "list_player") {
-				dispatch({type:"SET_PLAYERS", payload: payload.players})
 			} else {
 				console.debug("Unknown event: ", data)
 			}
+
+			notif?.showNotif(data.event, state.message === "" ? "No message" : state.message, 5000);
 		},
 	
 	});
+
+		function setSettings(players:playerT[], params:paramsT) {
+			dispatch({type:"SET_PARAMS", payload:params})
+			dispatch({type:"SET_PLAYERS", payload:players})
+		}
+
+		function setGame(cards:cardType[], board:boardDataT) {
+			dispatch({type:"SET_CARDS", payload:cards})
+			dispatch({type:"SET_BOARD", payload:board})
+		}
 
 		function sendJson(action:string, message?:object) {
 			sendJsonMessage({type: "action", action: action, payload: message })
