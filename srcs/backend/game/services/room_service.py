@@ -1,15 +1,11 @@
 from asgiref.sync import sync_to_async
 from ..db import  remove_player_from_room, get_room_with_host
-from datetime import timedelta
 
-from ..models import PlayerPresence, Room, PlayerScore
+from ..models import PlayerPresence
 from api.models import User
 from django.db.models import F
 
-from channels.layers import get_channel_layer
 from .room_task_service import RoomTaskService
-
-import asyncio
 
 class RoomService:
 
@@ -132,14 +128,10 @@ class RoomService:
             if (bot not in remove_bots):
                 valid_bots.append(bot)
         
-        ps = await sync_to_async(PlayerScore.objects.get)(room=room, player=user)
-        
-        ps.player = valid_bots[0]
         p.player = valid_bots[0]
         p.channel_name = None
         p.is_human = False
         
-        await sync_to_async(ps.save)()
         await sync_to_async(p.save)()
         
         return True

@@ -57,15 +57,6 @@ class Room(models.Model):
     
     def __str__(self):
         return f"{self.code}"
-
-class PlayerScore(models.Model):
-    player = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    rank = models.IntegerField(null=True)
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='scores')
-    score = models.IntegerField(default=0)
-
-    class Meta:
-        unique_together = ['player', 'room']
         
 class PlayerPresence(models.Model):
     DIFFICULTY_CHOICES = [
@@ -86,6 +77,15 @@ class PlayerPresence(models.Model):
     is_afk = models.BooleanField(default=False)
     is_afk_count = models.IntegerField(default=0)
     
+    class Meta:
+        unique_together = ['player', 'room']
+
+class PlayerScore(models.Model):
+    player = models.ForeignKey(PlayerPresence, on_delete=models.CASCADE, related_name="player_presence")
+    rank = models.IntegerField(null=True)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='scores')
+    score = models.IntegerField(default=0)
+
     class Meta:
         unique_together = ['player', 'room']
 

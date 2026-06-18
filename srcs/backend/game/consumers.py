@@ -1,14 +1,9 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
-from .models import PlayerPresence, Room, PlayerScore, Stat, GameLog
-from api.models import Friendship, User
+from .db import  end_room, get_room_with_host, get_player_pos
+from .models import PlayerPresence
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
-from game_engine.bot.bot import bot
-from django.db.models import Q
-import copy
-from django.utils import timezone
 from .services.game_service import GameService
 from .services.room_service import RoomService
 from .services.meld_service import MeldService
@@ -17,7 +12,6 @@ from .services.room_connection_service import RoomConnectionService
 from .services.broadcast_service import BroadcastService
 
 import asyncio
-from channels.exceptions import ChannelFull
 
 CARD_VALUES = {
     "6": 6,

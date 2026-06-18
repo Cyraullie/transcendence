@@ -279,7 +279,7 @@ class BroadcastService:
                 room_id=room.id,
                 position=int(player_id)
             )
-            
+            #TODO dont send legal if it's not player turn
             board_data = await BroadcastService._board_data(room, player_id, (message == "reveal_announces" and game_state["round"] == 0))
             init_cards = await BroadcastService._get_cards(room, player_data, player_id)
             

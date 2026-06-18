@@ -1,11 +1,8 @@
 
-from ..db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
-from ..models import PlayerPresence, Room, PlayerScore, Stat
-from api.models import Friendship, User
+from ..db import save_room_state, get_room_with_host, start_room, count_player
+from ..models import PlayerPresence,  PlayerScore
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine
-from game_engine.bot.bot import bot
-from django.db.models import Q
 from django.utils import timezone
 from datetime import timedelta
 import copy
@@ -69,10 +66,8 @@ class GameService:
                 position=int(player_id)
             )
     
-            user = presence.player
-    
             await sync_to_async(PlayerScore.objects.get_or_create)(
-                player=user,
+                player=presence,
                 room=room
             )   
 
@@ -128,7 +123,7 @@ class GameService:
             taker=taker,
             melds=melds
         )
-
+        #TODO delete this double id player finished ?
         finished, game_state = await GameService.check_game_end(room, game)
 
         if finished:
@@ -146,6 +141,7 @@ class GameService:
         if (card_on_board == nb_players):
             game = GameEngine(room.uuid)
             if room.game_state["round"] == 0:
+                #TODO verify if this is at least 1 melds
                 channel_layer = get_channel_layer()
                 await MeldService.play_melds(room)
                 room = await get_room_with_host(room.code)
@@ -158,7 +154,7 @@ class GameService:
             
             await ScoreService.save_meld(room.code, game_state["playing"], game_state["game"], game_state["round"] - 1, melds)
             await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
-            
+            #TODO maybe put await here to wait before send round_finished message or put another type of message when round start
             return True, game_state
         
         return False, game_state
