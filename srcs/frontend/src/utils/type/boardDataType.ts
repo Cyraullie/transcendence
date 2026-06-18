@@ -11,7 +11,7 @@ type playerGameT = {
 	user: { id: number, username: string, avatar: string},
 }
 
-export type boardDataT = {
+export type boardDataNT = {
 	self_id: number,
 	board: {room_id: number, card: cardType}[],
 	asked: cardType,
@@ -25,7 +25,7 @@ export type boardDataT = {
 	last_fold: cardType[],
 }
 
-export const default_board : boardDataT = {
+export const default_board : boardDataNT = {
 	self_id: -1,
 	board: [],
 	asked: {color: "", value:"", id:0},
@@ -35,6 +35,34 @@ export const default_board : boardDataT = {
 	player_list: {},
 	started_at: "",
 	round_time: "",
+	round: 0,
+	last_fold: [],
+}
+
+export type boardDataT = {
+	self_id: number,
+	board: {room_id: number, card: cardType}[],
+	asked: cardType,
+	points: { id:number, username:string, score:number }[],
+	detailed_points: Record<string, Record<string, playerScoreT[] | boolean>>;
+	playing: number,
+	player_list: { [k: string] : playerGameT},
+	started_at: Date,
+	round_time: Date,
+	round: number,
+	last_fold: cardType[],
+}
+
+export const default_Nboard : boardDataT = {
+	self_id: -1,
+	board: [],
+	asked: {color: "", value:"", id:0},
+	points: [],
+	detailed_points: {},
+	playing: -1,
+	player_list: {},
+	started_at: new Date(0,0,0),
+	round_time: new Date(0,0,0),
 	round: 0,
 	last_fold: [],
 }

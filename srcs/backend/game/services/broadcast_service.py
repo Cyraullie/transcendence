@@ -155,7 +155,7 @@ class BroadcastService:
             "playing": game_state["playing"],
             "player_list": player_list,
             "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
-            "round_time": room.round_time.strftime("%H:%M:%S"),
+            "round_time": room.round_time.strftime("%Y-%m-%d %H:%M:%S"),
             "round": game_state["round"],
             "last_fold": game_state.get("last_fold")
         }       

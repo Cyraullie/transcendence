@@ -1,4 +1,4 @@
-import { default_board, type boardDataT } from "../../../utils/type/boardDataType";
+import { type boardDataT, type boardDataNT, default_Nboard } from "../../../utils/type/boardDataType";
 import type { cardType } from "../../../utils/type/handCardsType";
 import type { playerT } from "../../../utils/type/playerType";
 
@@ -40,7 +40,7 @@ export type GameAction =
 	| { type: "DISCONNECTED" }
 	| { type: "SET_PLAYERS"; payload: playerT[] }
 	| { type: "SET_CARDS"; payload: cardType[] }
-	| { type: "SET_BOARD"; payload: boardDataT }
+	| { type: "SET_BOARD"; payload: boardDataNT }
 	| { type: "SET_PARAMS"; payload: paramsT }
 	| { type: "SET_MODE"; payload: number }
 	| { type: "SET_SIZE"; payload: number }
@@ -61,7 +61,7 @@ export const initialState: GameState = {
 		timeout: new Date(0,0,0)
 	},
 	game: {
-		boardData: default_board,
+		boardData: default_Nboard,
 		self_cards:[],
 	},
 	messages: [],

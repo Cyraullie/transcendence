@@ -1,6 +1,9 @@
 import type { GameAction, GameState, roomT } from "./GameType";
 
 function getTime(datetime:string) {
+	if (datetime === "" || !datetime) {
+		return new Date(0,0,0);
+	}
 	const dateTimeParts = datetime.split(' ');
 	const time = dateTimeParts[1].split(':');
 	const date = dateTimeParts[0].split('-');
@@ -34,7 +37,8 @@ export function gameReducer( state: GameState, action: GameAction): GameState {
 				{...state.game, self_cards: action.payload}};
 		case "SET_BOARD":
 			return {...state , game:
-				{...state.game, boardData: action.payload}};
+				{...state.game, boardData:
+					{...action.payload, started_at:getTime(action.payload.started_at), round_time:getTime(action.payload.round_time)}}};
 		case "SET_PARAMS":
 			return {...state , settings:
 				{...state.settings, maxSize: action.payload.max_player, 
