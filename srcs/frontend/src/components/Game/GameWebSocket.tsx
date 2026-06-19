@@ -135,6 +135,11 @@ export default function GameWebSocket({
 		function setSettings(players:playerT[], params:paramsT) {
 			dispatch({type:"SET_PARAMS", payload:params})
 			dispatch({type:"SET_PLAYERS", payload:players})
+			if (params.goal === "games") {
+				dispatch({type:"SET_NBGAME", payload:params.nb_games});
+			} else {
+				dispatch({type:"SET_NBPOINT", payload:params.nb_points});
+			}
 		}
 
 		function setGame(cards:{hand:cardType[], legal:cardType[], melds:cardType[][]}, board:boardDataNT) {
@@ -189,7 +194,19 @@ export default function GameWebSocket({
 	function setMode(mode: number) {
 		dispatch({ type: "SET_MODE", payload: mode})
 	}
-		
+
+	function setGoal(goal: string) {
+		dispatch({type: "SET_GOAL", payload:goal});
+	}
+
+	function setNBGames(games: number) {
+		dispatch({type: "SET_NBGAME", payload:games});
+	}
+
+	function setNBPoints(points: number) {
+		dispatch({type: "SET_NBPOINT", payload:points});
+	}
+	
 	const { sendJsonMessage: sendChatJsonMessage } = useWebSocket(auth.logged_in  && auth.in_game ? (host.ws + "chat/" + code + '/') : null, {
 		shouldReconnect: () => {
 			return auth.logged_in ? true : false
@@ -244,7 +261,7 @@ export default function GameWebSocket({
 
 	
 	return (
-		<GameContext.Provider value={{state, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, sendMessage}}>
+		<GameContext.Provider value={{state, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage}}>
 		{auth.in_game ? <GameMain /> : <WaitingRoom roomCode={code}/>}
 		</GameContext.Provider>
 	);

@@ -13,7 +13,7 @@ export default function WaitingRoom({roomCode}:{roomCode:string}) {
 
 	async function updateSettings() {
 		const mode = state.settings.mode === 0 ? "private" : state.settings.mode === 2 ? "public" : "friends_only"
-		const res = await updateParams(roomCode, {type:mode, max_player: state.settings.maxSize})
+		const res = await updateParams(roomCode, {type:mode, max_player: state.settings.maxSize, goal: state.settings.goal, nb_games:state.settings.nb_games, nb_points:state.settings.nb_points})
 		if ("code" in res) {
 			notif?.showNotif("Settings Error", res.response, 5000);
 		} else {

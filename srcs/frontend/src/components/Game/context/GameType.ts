@@ -7,6 +7,9 @@ type SettingsT = {
 	maxSize: number;
 	listPlayer: playerT[];
 	timeout: Date;
+	goal:string;
+	nb_games:number;
+	nb_points:number;
 }
 
 type GameT = {
@@ -20,6 +23,9 @@ export type paramsT = {
 	max_player: number;
 	type: roomT;
 	timestamp: string;
+	goal:string;
+	nb_games:number;
+	nb_points:number;
 }
 
 export type GameState = {
@@ -49,6 +55,9 @@ export type GameAction =
 	| { type: "SET_USER"; payload: string}
 	| { type: "SET_EVENT"; payload: string}
 	| { type: "SET_MESSAGE"; payload:string}
+	| { type: "SET_GOAL"; payload:string}
+	| { type: "SET_NBGAME"; payload:number}
+	| { type: "SET_NBPOINT"; payload:number}
 
 
 
@@ -58,7 +67,10 @@ export const initialState: GameState = {
 		mode: 0,
 		maxSize: 2,
 		listPlayer: [],
-		timeout: new Date(0,0,0)
+		timeout: new Date(0,0,0),
+		goal: "games",
+		nb_games: 3,
+		nb_points:333,
 	},
 	game: {
 		boardData: default_Nboard,

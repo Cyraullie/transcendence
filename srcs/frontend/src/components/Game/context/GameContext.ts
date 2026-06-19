@@ -13,6 +13,9 @@ type GameContextT = {
 	kickPlayer: (playerId: number) => void;
 	setMode: (mode: number) => void;
 	setSize: (size: number) => void;
+	setGoal: (goal: string) => void;
+	setNBGames: (games: number) => void;
+	setNBPoints: (points: number) => void;
 	sendMessage: (action:string, message:string) => void;
 }
 

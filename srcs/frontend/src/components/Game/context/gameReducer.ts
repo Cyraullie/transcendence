@@ -42,7 +42,16 @@ export function gameReducer( state: GameState, action: GameAction): GameState {
 		case "SET_PARAMS":
 			return {...state , settings:
 				{...state.settings, maxSize: action.payload.max_player, 
-					mode: roomToMode(action.payload.type), timeout: getTime(action.payload.timestamp)}};
+					mode: roomToMode(action.payload.type), timeout: getTime(action.payload.timestamp), goal: action.payload.goal}};
+		case "SET_GOAL":
+			return {...state , settings:
+				{...state.settings, goal: action.payload}};
+		case "SET_NBGAME":
+			return {...state , settings:
+				{...state.settings, nb_games: action.payload}};
+		case "SET_NBPOINT":
+			return {...state , settings:
+				{...state.settings, nb_points: action.payload}};
 		case "SET_MODE":
 			return {...state , settings:
 				{...state.settings, mode: action.payload}};
