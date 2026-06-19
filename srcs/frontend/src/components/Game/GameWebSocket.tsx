@@ -174,12 +174,8 @@ export default function GameWebSocket({
 			notif?.showNotif("Left Game", "You have left the game and can no longer rejoin the lobby.")
 		}
 
-		function annonces(cards: number[]) {
-			const parsed_cards:{cardId:number}[] = [];
-			cards.forEach((card) => {
-				parsed_cards.push({cardId: card})
-			})
-			sendJson("melds", parsed_cards);
+		function annonces(cards: {cardId:number}[]) {
+			sendJson("melds", {cards:cards});
 		}
 		
 		function kickPlayer(playerId:number) { //RoomId of player/ position

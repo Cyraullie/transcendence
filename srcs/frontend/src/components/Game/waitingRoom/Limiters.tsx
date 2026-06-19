@@ -23,7 +23,6 @@ export default function Limiters() {
         <p>Games</p>
         <input
           type="checkbox"
-          defaultChecked
           checked={state.settings.goal !== "games"}
           className="toggle toggle-xl border-(--hover-color) bg-(--hover-color) text-(--font-color) checked:border-(--hover-color) checked:bg-(--hover-color) checked:text-(--font-color)"
           onClick={handle_click}

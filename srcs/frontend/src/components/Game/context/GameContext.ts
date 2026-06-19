@@ -1,5 +1,6 @@
 import { createContext, useContext } from "react";
 import type { GameState } from "./GameType"
+import type { cardType } from "../../../utils/type/handCardsType";
 
 type GameContextT = {
 	state: GameState;
@@ -9,7 +10,7 @@ type GameContextT = {
 	playCard: (cardId: number) => void;
 	continueGame: () => void;
 	endGame: () => void;
-	annonces: (cards: number[]) => void;
+	annonces: (cards: {cardId:number}[]) => void;
 	kickPlayer: (playerId: number) => void;
 	setMode: (mode: number) => void;
 	setSize: (size: number) => void;

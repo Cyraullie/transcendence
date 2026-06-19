@@ -28,7 +28,6 @@ export default function Board({front, back} : {front: Texture<HTMLImageElement, 
         {Object.entries(adversaries).map((adversary) => {
 
 			const position =  (((Number(adversary[0]) - idPlayer) % totalPlayer) + totalPlayer) % totalPlayer;
-			console.debug("cards: ", cards);
 
 			const new_cards = cards.filter((card) => card.room_id == Number(adversary[0]))[0]
 			let card = {color:"", value:"", id:-1};
