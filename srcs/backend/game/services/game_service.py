@@ -42,7 +42,8 @@ class GameService:
         await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
         
         await BroadcastService.broadcast_game(room.code, channel_layer, "game_started")
-          
+        await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
+        
         game_state = await BotService.play_until_human(room, game_state, game,
                                                         check_end=GameService.check_game_end, 
                                                         check_take_fold_callback=GameService.check_take_fold,
@@ -154,7 +155,7 @@ class GameService:
             
             await ScoreService.save_meld(room.code, game_state["playing"], game_state["game"], game_state["round"] - 1, melds)
             await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
-            #TODO maybe put await here to wait before send round_finished message or put another type of message when round start
+    
             return True, game_state
         
         return False, game_state

@@ -284,6 +284,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         if (take_fold):
             await BroadcastService.broadcast_game(self.code, self.channel_layer, "finish_round")
             await asyncio.sleep(12)
+            await BroadcastService.broadcast_game(self.code, self.channel_layer, "start_round")
 
         game = GameEngine(room.uuid)
         game_state = await BotService.play_until_human(room, game_state, game,

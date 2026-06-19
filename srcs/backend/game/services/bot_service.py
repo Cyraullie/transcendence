@@ -36,6 +36,7 @@ class BotService:
                 if (take_fold):
                     await BroadcastService.broadcast_game(room.code, channel_layer, "finish_round")
                     await asyncio.sleep(12)
+                    await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
             await save_room_state(room.uuid, game_state)
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)
@@ -64,6 +65,7 @@ class BotService:
                 if (take_fold):
                     await BroadcastService.broadcast_game(room.code, channel_layer, "finish_round")
                     await asyncio.sleep(12)
+                    await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
 
             room = await get_room_with_host(room.code)
             is_end, gs = await check_end(room, game)
