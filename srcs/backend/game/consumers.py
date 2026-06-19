@@ -80,7 +80,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game_state = await BotService.play_until_human(room, room.game_state, game,
                                                         check_end=GameService.check_game_end, 
                                                         check_take_fold_callback=GameService.check_take_fold,
-                                                        verify_meld_callback=MeldService.verify_meld
+                                                        verify_meld_callback=MeldService.verify_meld,
                                                         ask_continue=GameService.ask_host_continue
                                                         )
         finished, game_state = await GameService.check_game_end(room, game)
@@ -186,7 +186,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             game_state = await BotService.play_until_human(room, room.game_state, game,
                                                             check_end=GameService.check_game_end, 
                                                             check_take_fold_callback=GameService.check_take_fold,
-                                                            verify_meld_callback=MeldService.verify_meld
+                                                            verify_meld_callback=MeldService.verify_meld,
                                                             ask_continue=GameService.ask_host_continue
                                                             )
         except Exception:
@@ -291,7 +291,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game_state = await BotService.play_until_human(room, game_state, game,
                                                        check_end=GameService.check_game_end, 
                                                        check_take_fold_callback=GameService.check_take_fold,
-                                                        verify_meld_callback=MeldService.verify_melds
+                                                        verify_meld_callback=MeldService.verify_melds,
                                                         ask_continue=GameService.ask_host_continue
                                                        )
 
