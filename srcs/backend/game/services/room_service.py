@@ -1,15 +1,11 @@
 from asgiref.sync import sync_to_async
 from ..db import  remove_player_from_room, get_room_with_host
-from datetime import timedelta
 
-from ..models import PlayerPresence, Room
+from ..models import PlayerPresence
 from api.models import User
 from django.db.models import F
 
-from channels.layers import get_channel_layer
-
-from ..room_tasks import ROOM_DELETE_TASKS, ROOM_CHANGE_HOST_TASKS
-import asyncio
+from .room_task_service import RoomTaskService
 
 class RoomService:
 
@@ -73,11 +69,9 @@ class RoomService:
             result = await remove_player_from_room(user, code)
             
             if result and result.get("should_change_host"):
-                asyncio.create_task(
-                    RoomService.schedule_room_change_host(
-                        result["room_id"],
-                        result["user"]
-                    )
+                await RoomTaskService.schedule_change_host(
+                    result["room_code"],
+                    result["user"]
                 )
     
     
@@ -89,9 +83,11 @@ class RoomService:
                 ).count
             )()
             
-            if room.status == "open" and room.nb_player - bots <= 0:
-                asyncio.create_task(RoomService.schedule_room_delete(room.id))
-            
+            if room.status == "open" and room.nb_player - bots <= 0 and not room.cleanup_scheduled:
+                await RoomTaskService.schedule_delete(room.code)
+            if room.cleanup_scheduled and room.nb_player - bots <= 0:
+                await sync_to_async(room.delete)()
+                return
             await sync_to_async(
                 PlayerPresence.objects.filter(
                     player=user,
@@ -116,118 +112,33 @@ class RoomService:
                 "old_host": old_host,
             }
 
-
     @staticmethod
-    async def get_players(room):
-        if room == None:
-            return {"error": "No room send"}
-
-        presences = await sync_to_async(list)(
-            PlayerPresence.objects.select_related("player").filter(
-                room=room
-            )
-        )
+    async def handle_player_exit(user, code):
+        room = await get_room_with_host(code)
+        p = await sync_to_async(PlayerPresence.objects.get)(player=user, room=room)
+        bots = await sync_to_async(list)(User.objects.filter(is_bot=True))
+        bots_room = await sync_to_async(list)((PlayerPresence.objects.filter(is_human=False, room=room)).select_related("player"))
+        valid_bots = []
+        remove_bots = []
+        for bot in bots:
+            for bot_room in bots_room:
+                if bot.id == bot_room.player_id:
+                    remove_bots.append(bot)
+        for bot in bots:
+            if (bot not in remove_bots):
+                valid_bots.append(bot)
         
-        players = []
+        p.player = valid_bots[0]
+        p.channel_name = None
+        p.is_human = False
         
-        for p in presences:
-            players.append({
-				"id": p.player.id,
-                "username": p.player.username,
-                "is_host": p.player == room.host,
-                "position": p.position
-			})
-
-
-        return players
-
-    @staticmethod
-    async def get_room_snapshot(room):
+        await sync_to_async(p.save)()
         
-        return {
-            "code": room.code,
-            "status": room.status,
-            "max_player": room.max_player,
-            "type": room.type,
-            "timestamp": (room.created_at + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
-        }
+        return True
 
-    @staticmethod
-    async def delete_room_later(room_id, delay=30):
-        await asyncio.sleep(delay)
-        
-        try:
-            room = await sync_to_async(Room.objects.get)(id=room_id)
-    
-            if room.status == "open":
-                await sync_to_async(room.delete)()
-    
-        except Room.DoesNotExist:
-            pass
 
-    @staticmethod
-    async def schedule_room_delete(room_id, delay=15):
-        task = asyncio.create_task(RoomService.delete_room_later(room_id, delay))
-        ROOM_DELETE_TASKS[room_id] = task
-          
-    @staticmethod
-    def cancel_room_delete(room_id):
-        task = ROOM_DELETE_TASKS.get(room_id)
-    
-        if task:
-            task.cancel()
-            del ROOM_DELETE_TASKS[room_id]
-    
-    @staticmethod
-    async def change_host_later(room_id, user, delay=30):
-        await asyncio.sleep(delay)
-        
-        try:
-            room = await sync_to_async(Room.objects.get)(id=room_id)
-            if room.status == "open":
-                next_player = await sync_to_async(
-                    lambda: PlayerPresence.objects
-                        .select_related("player")
-                        .filter(room=room, is_human=True)
-                        .exclude(player=user)
-                        .order_by("position")
-                        .first()
-                )()
-                
-                if next_player:
-                    room.host = next_player.player
-                    await sync_to_async(room.save)()
-                channel_layer = get_channel_layer()
-                room = await get_room_with_host(room.code)
-                await RoomService.broadcast_player_list(room, channel_layer)
-        except Room.DoesNotExist:
-            pass
-    
-    @staticmethod
-    async def schedule_room_change_host(room_id, user, delay=5):
-        task = asyncio.create_task(RoomService.change_host_later(room_id, user, delay))
-        ROOM_CHANGE_HOST_TASKS[room_id] = task
-    
-    @staticmethod
-    def cancel_change_room_host(room_id):
-        task = ROOM_CHANGE_HOST_TASKS.get(room_id)
-    
-        if task:
-            task.cancel()
-            del ROOM_CHANGE_HOST_TASKS[room_id]
-    
-    @staticmethod
-    async def broadcast_player_list(room, channel_layer):
-        players = await RoomService.get_players(room)
 
-        await channel_layer.group_send(
-            f"room_{room.code}",
-            {
-                "type": "list_player_event",
-                "event": "update",
-                "payload": {
-                    "players": players
-                }
-            }
-        )
+
+            
+
     

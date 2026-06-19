@@ -6,7 +6,20 @@ from .models import PlayerPresence, Room, PlayerScore, Stat
 from api.models import User
 from django.db.models import Max
 from django.utils import timezone
+from datetime import timedelta
 import asyncio
+
+@sync_to_async
+def get_params(code):
+    room = get_room_with_host(code)
+    params = {
+            "code": room.code,
+            "status": room.status,
+            "max_player": room.max_player,
+            "type": room.type,
+            "timestamp": (room.created_at + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
+	}
+    return params
 
 @sync_to_async
 def count_player(code):
@@ -209,7 +222,7 @@ def remove_player_from_room(user, code):
             ).delete()
         return {
             "should_change_host": should_change_host,
-            "room_id": room.id,
+            "room_code": room.code,
             "user": user
         }
     except Room.DoesNotExist:
@@ -248,18 +261,18 @@ def end_room(uuid, data):
 
         p, _ = PlayerScore.objects.get_or_create(
             room=room,
-            player_id=pp.player_id
+            player=pp
         )
 
         p.score = player_data["puntos"]
         p.save()
         
-        stat = Stat.objects.get(user_id=p.player_id)
+        stat = Stat.objects.get(user_id=pp.player_id)
         stat.total_points += p.score
         stat.save()
 
         scores.append({
-            "player_id": pp.player_id,
+            "player": pp,
             "score": p.score
         })
 
@@ -270,9 +283,9 @@ def end_room(uuid, data):
     for rank, entry in enumerate(scores, start=1):
         PlayerScore.objects.filter(
             room=room,
-            player_id=entry["player_id"]
+            player=entry["player"]
         ).update(rank=rank)
-        user = User.objects.get(id=entry["player_id"])
+        user = User.objects.get(id=entry["player"].player_id)
         stat = Stat.objects.get(user_id=user.id)
         
         user.elo += elo
