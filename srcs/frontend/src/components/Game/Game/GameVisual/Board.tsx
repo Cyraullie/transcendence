@@ -6,7 +6,7 @@ import Adversary from "./Adversary";
 import { Texture, type TextureEventMap } from "three";
 import { useGame } from "../../context/GameContext";
 
-export default function Board({front, back} : {front: Texture<HTMLImageElement, TextureEventMap>, back: Texture<HTMLImageElement, TextureEventMap>}) {
+export default function Board({front, back} : {front: Texture<HTMLImageElement, TextureEventMap>[], back: Texture<HTMLImageElement, TextureEventMap>}) {
   
 //   const cards = generateFakeBoard();
   const { state } = useGame();
@@ -27,17 +27,21 @@ export default function Board({front, back} : {front: Texture<HTMLImageElement, 
 
         {Object.entries(adversaries).map((adversary) => {
 
-			if (Number(adversary[0]) === idPlayer || idPlayer === -1) {
-				return null;
-			}
-
 			const position =  (((Number(adversary[0]) - idPlayer) % totalPlayer) + totalPlayer) % totalPlayer;
+			console.debug("cards: ", cards);
 
+			const new_cards = cards.filter((card) => card.room_id == Number(adversary[0]))[0]
+			let card = {color:"", value:"", id:-1};
+			if (new_cards) {
+				card = new_cards.card;
+			}
+			
           return(
             <>
               <Adversary
+			  	isSelf={Number(adversary[0]) === idPlayer}
                 cardHand={{position:position, nbCards:adversary[1].hand}}
-                playedCard={{playerPos:position, card:cards.filter((card) => card.room_id == Number(adversary[0]))[0].card}}
+                playedCard={{playerPos:position, card}}
 				front={front}
                 back={back}
                 totalPlayer={totalPlayer}

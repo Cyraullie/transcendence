@@ -28,6 +28,7 @@ export default function Time() {
 		return (
 			<div className="flex justify-around items-center w-full">
 			<Chrono />
+			<ExitBtn />
 			</div>
         );
 	}

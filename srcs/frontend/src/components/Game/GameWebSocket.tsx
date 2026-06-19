@@ -83,7 +83,7 @@ export default function GameWebSocket({
 				}
 			} else if (data.type === "settings") {
 				dispatch({type:"SET_EVENT", payload: data.event});
-				setSettings(payload.players, payload.params);
+				
 				if (data.event === "player_kicked") { // Error case????
 					if (payload.message) {
 						if (payload.message === "You have been kicked from the room") {
@@ -92,7 +92,10 @@ export default function GameWebSocket({
 						}
 					} else {
 						notif?.showNotif("Player left", "A player has been kicked from the room", 5000);
+						setSettings(payload.players, payload.params);
 					}
+				} else {
+					setSettings(payload.players, payload.params);
 				}
 				
 			} else if (data.type === "game") {
