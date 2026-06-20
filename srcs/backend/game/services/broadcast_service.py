@@ -178,7 +178,10 @@ class BroadcastService:
             "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
             "round_time": room.round_time.strftime("%H:%M:%S"),
             "round": game_state["round"],
-            "last_fold": game_state.get("last_fold")
+            "last_fold": {
+                    "room_id": game_state.get("last_fold_player"),
+                    "cards": game_state.get("last_fold"),
+                }
         }       
     
     @staticmethod

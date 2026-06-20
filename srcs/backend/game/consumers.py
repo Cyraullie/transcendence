@@ -296,6 +296,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await GameService.check_goal_reached(room.code)
 
     async def handle_melds(self, payload):
+        #TODO if missing cards in payload error send
         room = await get_room_with_host(self.code)
     
         result = await MeldService.verify_melds(
