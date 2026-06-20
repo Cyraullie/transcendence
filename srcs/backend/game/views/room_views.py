@@ -454,7 +454,6 @@ def update_params(request, code):
 @authentication_classes([OptionalJWTAuthentication])
 @permission_classes([IsAuthenticated])
 def invite_friend(request, friend_id):
-    
     if not Friendship.objects.filter(
             Q(from_user=request.user) | Q(to_user=request.user),
             status="accepted",
