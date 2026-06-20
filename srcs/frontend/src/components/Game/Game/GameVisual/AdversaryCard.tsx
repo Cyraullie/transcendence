@@ -28,7 +28,7 @@ export default function AdversaryCard({setShow, angle, littleRadius, front, back
 
   const cardRef = useRef<Mesh>(null!);
 
-  const factor = 0.15 * (7 - totalPlayer);
+  const factor = 0.26 * (7 - totalPlayer);
   const pf = [0, posPlayedCard, 0];
   
   
