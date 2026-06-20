@@ -92,11 +92,14 @@ class BroadcastService:
             player_puntos.append({"id":p.player.id, "username":p.player.username, "score":player_data["puntos"]})
             
             if is_r0_finish:
+                melds = []
                 for meld in player_data.get("melds", []):
-                    player_annonces.append({
-                        "room_id": int(player_id),
-                        "cards": meld["cards"]
-                    })
+                    melds.append(meld["cards"])
+                
+                player_annonces.append({
+                    "room_id": int(player_id),
+                    "cards": melds
+                })
                 
             p_name = p.player.username
             if not p.is_human:
