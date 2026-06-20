@@ -50,7 +50,7 @@ class BotService:
 
         while (not is_end and (not p.is_human or not p.is_online)):
             
-            await asyncio.sleep(random.randint(3, 7))
+            await asyncio.sleep(random.randint(1, 3))
 
             if (game_state["round"] == 0):
                 melds = BroadcastService._count_melds(game_state["players"][str(game_state["playing"])]["cards"])
