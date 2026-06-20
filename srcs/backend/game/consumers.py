@@ -72,6 +72,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
         await self.close()
         
     async def player_afk(self, event):
+        await self.send_json({
+            "event": "player_afk",
+            "reason": event["reason"]
+        })
         room = await get_room_with_host(event["code"])
         game = GameEngine(room.uuid)
     
