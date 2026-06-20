@@ -138,12 +138,12 @@ class GameService:
         room = await get_room_with_host(room.code)
         card_on_board = len(game_state["board"]) - 1
         nb_players = len(game_state["players"])
+        channel_layer = get_channel_layer()
 
         if (card_on_board == nb_players):
             game = GameEngine(room.uuid)
             if room.game_state["round"] == 0:
                 #TODO verify if this is at least 1 melds
-                channel_layer = get_channel_layer()
                 await MeldService.play_melds(room)
                 room = await get_room_with_host(room.code)
                 game_state = room.game_state
@@ -155,7 +155,10 @@ class GameService:
             
             await ScoreService.save_meld(room.code, game_state["playing"], game_state["game"], game_state["round"] - 1, melds)
             await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
-    
+            
+            await BroadcastService.broadcast_game(room.code, channel_layer, "finish_round")
+            await asyncio.sleep(12)
+            
             return True, game_state
         
         return False, game_state
