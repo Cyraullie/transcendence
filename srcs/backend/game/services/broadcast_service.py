@@ -163,6 +163,7 @@ class BroadcastService:
                 
         return {
             "self_id": player_position,
+            "trick": None if game_state["tricks"] == "none" else game_state["tricks"],
             **(
                 {"annonces": player_annonces}
                 if is_r0_finish
