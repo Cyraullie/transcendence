@@ -71,16 +71,17 @@ export default function AdversaryHand({setShow, angleCenter, cardHand, fronts, b
           return (
             <>
               <AdversaryCard
-			    setShow={setShow}
+                setShow={setShow}
                 angle={angle}
                 littleRadius={littleRadius}
-				front={fronts[cardID]}
+                front={fronts[cardID]}
                 back={back}
                 positionCard={allAngle.indexOf(angle)}
                 totalPlayer={totalPlayer}
                 posPlayedCard={posPlayedCard}
-				animate={index === playedCard}
-				resetState={resetState}
+                animate={index === playedCard}
+                resetState={resetState}
+                boardRadius={boardRadius}
               />
             </>
           );
