@@ -29,8 +29,8 @@ ACTION_HANDLERS = {
     "start_game": "handle_start_game",
     "play_card": "handle_play_card",
     "continue": "handle_create_room",
-    "melds": "handle_melds",
-    "kick": "handle_kick",
+    "melds": "handle_melds", 
+    "kick": "handle_kick", #payload
     "exit_game": "handle_exit_game",
 }
 #TODO vote in game to ban a player (majorité qui remporte le vote ? tout le monde sauf la cible peut voté)
@@ -214,6 +214,13 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 return await self.error("Unknown message type")
         
             action = data.get("action")
+            if (type(action) != str):
+                await self.send(text_data=json.dumps({
+                        "type": "error",
+                        "message": "Action not a string"
+                    }))
+                return 
+
             payload = data.get("payload", {})
             
             handler_name = ACTION_HANDLERS.get(action)
@@ -265,15 +272,30 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game_state = await GameService.start_game(room)
 
     async def handle_play_card(self, payload):
+        if (len(payload) == 0):
+            await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "payload's empty"
+                }))
+            return 
+
         room = await get_room_with_host(self.code)
         position = await get_player_pos(self.user, room.code)
 
-        result = await GameService.play_card(
-            room=room,
-            user=self.user,
-            position=position,
-            card_id=payload["cardId"]
-        )
+        try:
+            result = await GameService.play_card(
+                room=room,
+                user=self.user,
+                position=position,
+                card_id=payload["cardId"]
+            )
+
+        except KeyError:
+            await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "cardId not found in payload"
+                }))
+            return 
 
         if result.get("error"):
             await self.error(result["error"])
@@ -306,15 +328,29 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await GameService.check_goal_reached(room.code)
 
     async def handle_melds(self, payload):
-        #TODO if missing cards in payload error send
+        if (len(payload) == 0):
+            await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "payload's empty"
+                }))
+            return
+        
         room = await get_room_with_host(self.code)
     
-        result = await MeldService.verify_melds(
-            room=room,
-            user=self.user,
-            cards=payload["cards"]
-        )
-    
+        try:
+            result = await MeldService.verify_melds(
+                room=room,
+                user=self.user,
+                cards=payload["cards"]
+            )
+
+        except KeyError:
+            await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "cards not found in payload"
+                }))
+            return 
+        
         await self.send(json.dumps(result))
         
         
