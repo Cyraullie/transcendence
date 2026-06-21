@@ -1,10 +1,12 @@
 import AdversaryCard from "./AdversaryCard";
 import type { adversaryT } from "../../../../utils/type/adversaryType";
-import type { Texture, TextureEventMap } from "three";
+import { MeshStandardMaterial, type Texture, type TextureEventMap } from "three";
 import React, { useEffect, useState, type SetStateAction } from "react";
 import { useGame } from "../../context/GameContext";
+import { Text } from "@react-three/drei";
 
 type Props = {
+  room_id:number,
   setShow: React.Dispatch<SetStateAction<boolean>>,
   angleCenter:number,
   cardHand: adversaryT, 
@@ -15,7 +17,7 @@ type Props = {
   posPlayedCard: number
 }
 
-export default function AdversaryHand({setShow, angleCenter, cardHand, fronts, back, totalPlayer, boardRadius, posPlayedCard} : Props) {
+export default function AdversaryHand({room_id, setShow, angleCenter, cardHand, fronts, back, totalPlayer, boardRadius, posPlayedCard} : Props) {
   
   const [simCards, setCards] = useState(cardHand.nbCards);
   const [playedCard, setPlayed] = useState<number | null>(null);
@@ -57,35 +59,39 @@ export default function AdversaryHand({setShow, angleCenter, cardHand, fronts, b
   return (
       <mesh
       >
+        <Text fontSize={0.5} position={[0, 2, 0.5]} rotation={[0, 0, Math.PI]}>
+          {state.game.boardData.player_list[room_id].user.username}
+          <meshStandardMaterial />
+        </Text>
         {allAngle.map((angle, index) => {
-
-			const board = state.game.boardData.board.at(-1)
-			let cardID = 0;
-			if (board) {
-				cardID = board.card.id;
-			}
-			
-			if (index === playedCard) {
-				setShow(false);
-			}
+          
+          const board = state.game.boardData.board.at(-1)
+          let cardID = 0;
+          if (board) {
+            cardID = board.card.id;
+          }
+          
+          if (index === playedCard) {
+            setShow(false);
+          }
           return (
             <>
-              <AdversaryCard
-                setShow={setShow}
-                angle={angle}
-                littleRadius={littleRadius}
-                front={fronts[cardID]}
-                back={back}
-                positionCard={allAngle.indexOf(angle)}
-                totalPlayer={totalPlayer}
-                posPlayedCard={posPlayedCard}
-                animate={index === playedCard}
-                resetState={resetState}
-                boardRadius={boardRadius}
+            <AdversaryCard
+              setShow={setShow}
+              angle={angle}
+              littleRadius={littleRadius}
+              front={fronts[cardID]}
+              back={back}
+              positionCard={allAngle.indexOf(angle)}
+              totalPlayer={totalPlayer}
+              posPlayedCard={posPlayedCard}
+              animate={index === playedCard}
+              resetState={resetState}
+              boardRadius={boardRadius}
               />
-            </>
-          );
-        })}
+          </>
+        );
+      })}
       </mesh>
   );
 }
