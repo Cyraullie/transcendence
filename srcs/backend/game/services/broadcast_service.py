@@ -184,7 +184,7 @@ class BroadcastService:
                 if round is None:
                     round = {"round":round_num, "players":[]}
                     game["rounds"].append(round)
-                    round["players"].append(player_score)
+                round["players"].append(player_score)
             
         for game in detailed_points:
             del game ["game"]
@@ -225,6 +225,7 @@ class BroadcastService:
             "started_at": room.started_at.strftime("%Y-%m-%d %H:%M:%S"),
             "round_time": (room.round_time + timedelta(seconds=5)).strftime("%Y-%m-%d %H:%M:%S"),
             "round": game_state["round"],
+            "game": game_state["game"],
             "last_fold": {
 					"username": last_fold_username,
                     "room_id": last_fold_id,
