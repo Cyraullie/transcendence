@@ -12,6 +12,33 @@ type Props = {
 export function History({gameHistory, updatedProfile, setUpdate}: Props) {
   const [isMore, setIsMore] = useState(false);
   const [nbSlice, setNbSlice] = useState(10)
+  const fakeHistory = 
+	  [
+		  {
+			  game_id: 0,
+			  start: "dnflds",
+			  points: 4,
+			  rank: 3,
+			  won: true,
+			  duration: 122,
+			  nb_player: 2,
+				players: [
+					{
+						id: 0,
+						username: "philipe",
+						is_host: true,
+						position: 1,
+					},
+					{
+						id: 1,
+						username: "philip2",
+						is_host: false,
+						position: 1,
+					},
+				]
+		  }
+	  ]
+  
 
   function handleMoreLessBtn() {
 	  if (isMore) {
@@ -34,7 +61,7 @@ export function History({gameHistory, updatedProfile, setUpdate}: Props) {
         <th className="th-history">Nb players</th>
         <th className=" w-100 text-left overflow-hidden">Opponents</th>
       </tr>
-      {gameHistory.slice(0, nbSlice).map((game: historyT) => (
+      {fakeHistory.slice(0, nbSlice).map((game: historyT) => (
         <tr
           className={
             (game.won ? "bg-(--green-color)" : "bg-(--accent-color)") +

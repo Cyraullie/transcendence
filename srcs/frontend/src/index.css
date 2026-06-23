@@ -2,17 +2,22 @@
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
 @import url('https://fonts.googleapis.com/css2?family=Yarndings+12&display=swap');
 @import "tailwindcss";
-@plugin "daisyui";
-
-:root {
-  --nav-color: #a370bf;
-  --bg-color: #37386f;
-  --font-color: #ccdbdc;
-  --hover-color: #6f7dda;
-  --accent-color: #e06b73;
-  --red-color: #c40606;
-  --green-color: #31dd7e;
+@import "./popcode_light.css";
+@import "./popcode_dark.css";
+@plugin "daisyui" {
+	themes: popcode_light --default, popcode_dark --prefersdark
 }
+
+
+/* :root { */
+/*   --nav-color: #a370bf; */
+/*   --bg-color: #37386f; */
+/*   --font-color: #ccdbdc; */
+/*   --hover-color: #6f7dda; */
+/*   --accent-color: #e06b73; */
+/*   --red-color: #c40606; */
+/*   --green-color: #31dd7e; */
+/* } */
 
 @layer base {
   .font-Cause {
@@ -26,7 +31,7 @@
 		font-family: "Yarndings 12"
 	}
   body {
-    background: var(--bg-color);
+    background: var(--color-base-200);
     /* height: 100vh; */
     font-family: "JetBrains Mono";
   }
@@ -44,24 +49,20 @@
   }
 }
 
-@utility input {
-  @apply bg-(--hover-color);
-}
-
-@utility btn {
-  @apply bg-(--hover-color);
-}
-
-@utility btn-primary {
-	@apply shadow-(--nav-color) border-(--nav-color)
-}
+/* @utility input { */
+/*   @apply bg-(--hover-color); */
+/* } */
+/**/
+/* @utility btn { */
+/*   @apply bg-(--hover-color); */
+/* } */
+/**/
+/* @utility btn-primary { */
+/* 	@apply shadow-(--nav-color) border-(--nav-color) */
+/* } */
 
 .del {
-  @apply bg-(--accent-color);
-}
-
-.validate {
-  @apply bg-(--green-color);
+  @apply bg-warning;
 }
 
 .avatar-hovered {
@@ -90,9 +91,9 @@
   }
 }
 
-.modal-box {
-  scrollbar-color: var(--accent-color) var(--hover-color);
-}
+/* .modal-box { */
+/*   scrollbar-color: var(--accent-color) var(--hover-color); */
+/* } */
 
 .item-menu:hover {
   background: var(--hover-color);
@@ -104,7 +105,7 @@
 }
 
 .bordered {
-  @apply border-2 border-(--accent-color) mt-10 rounded-xl p-10;
+  @apply border-2 border-accent mt-10 rounded-xl p-10;
 }
 
 .dropdown-scroll{
