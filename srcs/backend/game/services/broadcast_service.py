@@ -179,7 +179,8 @@ class BroadcastService:
                 if round is None:
                     round = {"round":round_num, "players":[]}
                     game["rounds"].append(round)
-                    round["players"].append(player_score)
+                
+                round["players"].append(player_score)
             
         for game in detailed_points:
             del game ["game"]

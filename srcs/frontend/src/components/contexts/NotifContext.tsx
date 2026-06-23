@@ -44,7 +44,7 @@ export default function NotifProvider({
       duration: newduration,
     };
 
-	if (auth.in_game && false) {
+	if (auth.in_game) {
 		setInbox(inbox => {
 
 			let alreadyQueued = null;

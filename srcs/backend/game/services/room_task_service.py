@@ -35,13 +35,6 @@ class RoomTaskService:
         player_afk.apply_async(args=[room_code, user_id], countdown=delay)
 
 
-
-
-
-
-
-
-
     @staticmethod
     async def cancel_play_for_player(room_code, user_id):
         room = await sync_to_async(Room.objects.get)(code=room_code)

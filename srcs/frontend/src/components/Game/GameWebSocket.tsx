@@ -30,6 +30,7 @@ export default function GameWebSocket({
   }, [code]);
 
   function leaveRoom() {
+	auth.setGame(false);
     localStorage.removeItem("code");
     setCode("");
   }
@@ -66,8 +67,14 @@ export default function GameWebSocket({
         dispatch({ type: "CONNECTED" });
       },
 
-      onClose: () => {
+      onClose: (event) => {
         dispatch({ type: "DISCONNECTED" });
+		auth.setGame(false)
+		if (event.code === 4001) {
+			leaveRoom();
+			navigate("/");
+			notif?.showNotif("Forced Disconnection", "You have been disconnected from your game, to rejoin click on the game tab", 5000);
+		}
       },
 
       onMessage: (event) => {
@@ -94,6 +101,9 @@ export default function GameWebSocket({
 						notif?.showNotif("Player left", "A player has been kicked from the room", 5000);
 						setSettings(payload.players, payload.params);
 					}
+				} else if (data.event === "room_closed") {
+					leaveRoom();
+					notif?.showNotif("Room Closed", "The lobby has timed out, create or join a new one", 5000);
 				} else {
 					setSettings(payload.players, payload.params);
 				}
@@ -112,9 +122,11 @@ export default function GameWebSocket({
 					} else {
 						setGame(payload.self_card, payload.board_data)
 					}
-				} else if (data.event === "game_ended") {
+				} else if (data.event === "game_ended" || data.event === "force_disconnect") {
 					auth.setGame(false);
 					leaveRoom();
+				} else if (data.event === "game_finish") {
+					auth.setGame(false);
 				} else {
 					if (data.event === "player_disconnect" || data.event === "player_reconnect") {
 						dispatch({type:"SET_MESSAGE", payload: data.player_name});
@@ -122,12 +134,12 @@ export default function GameWebSocket({
 					setGame(payload.self_card, payload.board_data)
 				}
 			} else if (data.event === "error") {
+				console.debug("Error:", data.message);
 				notif?.showNotif("Game Error", data.message);
 			} else {
 				console.debug("Unknown event: ", data)
 			}
 
-			notif?.showNotif(data.event, state.message === "" ? "No message" : state.message, 5000);
 		},
 	
 	});

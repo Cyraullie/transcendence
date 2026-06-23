@@ -45,7 +45,7 @@ export function NotifPopUp() {
 	return;
   }
 
-  if (auth.in_game && true) {
+  if (auth.in_game) {
 	return ;
   }
   
