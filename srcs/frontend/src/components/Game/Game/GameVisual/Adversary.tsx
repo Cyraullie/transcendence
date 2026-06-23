@@ -37,20 +37,22 @@ export default function Adversary({room_id, isSelf, cardHand, playedCard, front,
 		        show={show}
             front={front[playedCard.card.id]}
 		        back={back}
-           posPlayedCard={posPlayedCard}
+            posPlayedCard={posPlayedCard}
+            idPlayer={room_id}
           /> : null}
-       { isSelf ? null :
-        <AdversaryHand
-          room_id={room_id}
-		      setShow={setShow}
-          angleCenter={angleCenter}
-          cardHand={cardHand}
-		      fronts={front}
-          back={back}
-          totalPlayer={totalPlayer}
-          boardRadius={boardRadius}
-          posPlayedCard={posPlayedCard}
-        />}
+        { isSelf ? null :
+          <AdversaryHand
+            room_id={room_id}
+            setShow={setShow}
+            angleCenter={angleCenter}
+            cardHand={cardHand}
+            fronts={front}
+            back={back}
+            totalPlayer={totalPlayer}
+            boardRadius={boardRadius}
+            posPlayedCard={posPlayedCard}
+          />
+        }
         <axesHelper />
       </mesh>
       </>

@@ -1,9 +1,9 @@
 import AdversaryCard from "./AdversaryCard";
 import type { adversaryT } from "../../../../utils/type/adversaryType";
-import { MeshStandardMaterial, type Texture, type TextureEventMap } from "three";
+import { type Texture, type TextureEventMap } from "three";
 import React, { useEffect, useState, type SetStateAction } from "react";
 import { useGame } from "../../context/GameContext";
-import { Text } from "@react-three/drei";
+import { Text, Image } from "@react-three/drei";
 
 type Props = {
   room_id:number,
@@ -53,16 +53,24 @@ export default function AdversaryHand({room_id, setShow, angleCenter, cardHand, 
 	setCards(cardHand.nbCards);
 	setPlayed(null);
   }
+  let factor;
 
-
+  if (totalPlayer === 2)
+    factor = -littleRadius / 4;
+  else
+    factor = littleRadius / 6;
 
   return (
-      <mesh
-      >
-        <Text fontSize={0.5} position={[0, 2, 0.5]} rotation={[0, 0, Math.PI]}>
+      <>
+      <mesh position={[0, (-littleRadius) + factor, 0]} rotation={[0, 0, Math.PI]}>
+        <Image scale={0.4} url={state.game.boardData.player_list[room_id].user.avatar} position={[-1, 0, 0]}/>
+        <Text fontSize={0.2}>
           {state.game.boardData.player_list[room_id].user.username}
           <meshStandardMaterial />
         </Text>
+      </mesh>
+      <mesh
+      >
         {allAngle.map((angle, index) => {
           
           const board = state.game.boardData.board.at(-1)
@@ -93,5 +101,6 @@ export default function AdversaryHand({room_id, setShow, angleCenter, cardHand, 
         );
       })}
       </mesh>
+    </>
   );
 }
