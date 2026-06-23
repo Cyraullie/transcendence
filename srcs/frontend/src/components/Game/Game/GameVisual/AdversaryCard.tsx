@@ -52,15 +52,17 @@ export default function AdversaryCard({setShow, angle, littleRadius, front, back
 });
 
   return (
+    <>
     <mesh
       rotation={[Math.PI / 2, 0, angle]}
-      position={[-Math.sin(angle) * littleRadius,- (littleRadius / 2 + factor) + 0.01 * positionCard, Math.cos(angle) * (littleRadius  / 2)]}
+      position={[-Math.sin(angle) * littleRadius,- (littleRadius + factor) + 0.01 * positionCard, Math.cos(angle) * (littleRadius  / 3)]}
       scale={0.4}
       material={materials}
       ref={cardRef}
-    >
+      >
       <boxGeometry args={[1, 1.4, 0.001]}/>
     </mesh>
+    </>
   );
 }
 //  + 0.02 * positionCard
