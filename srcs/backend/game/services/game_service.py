@@ -172,14 +172,18 @@ class GameService:
                     await BroadcastService.broadcast_game(room.code, channel_layer, "reveal_announces")
                     await asyncio.sleep(7)
             
+            
             await BroadcastService.broadcast_game(room.code, channel_layer, "finish_round")
             game_state, melds = game.handleAction("take_fold", game_state)
             await save_room_state(room.uuid, game_state)
             
             await ScoreService.save_meld(room.code, game_state["playing"], game_state["game"], game_state["round"] - 1, melds)
             await ScoreService.create_logs(room.code, game_state["game"], game_state["round"])
-            
+        
             await asyncio.sleep(12)
+            
+            game_state = game.handleAction("clear_board", game_state)
+            await save_room_state(room.uuid, game_state)
             
             return True, game_state
         
