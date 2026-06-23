@@ -20,7 +20,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           COUNT=$(gh pr list \
-            --repo Cyraullie/transcendence \
+            --repo ${{ github.repository }} \
             --base dev \
             --head backend \
             --state open \
@@ -35,6 +35,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh pr create \
+            --repo ${{ github.repository }} \
             --base dev \
             --head backend \
             --title "Merge backend into dev" \
