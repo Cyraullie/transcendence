@@ -133,9 +133,13 @@ export default function GameWebSocket({
 					}
 					setGame(payload.self_card, payload.board_data)
 				}
-			} else if (data.event === "error") {
-				console.debug("Error:", data.message);
-				notif?.showNotif("Game Error", data.message);
+			} else if (data.event === "error" || data.type === "error") {
+				if (data.message === "Need 2 players") {
+					notif?.showNotif("Game Error", "At least 2 players needed to start game", 5000);
+				} else {
+					console.debug("Error:", data.message);
+					notif?.showNotif("Game Error", data.message, 5000);
+				}
 			} else {
 				console.debug("Unknown event: ", data)
 			}

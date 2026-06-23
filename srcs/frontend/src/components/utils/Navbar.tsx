@@ -7,7 +7,6 @@ import { GoLaw } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../api/http/login";
 import { useAuth } from "../hooks/useAuth";
-import { Notif_Inbox } from "./notifInbox";
 
 export function Navbar() {
   const navigate = useNavigate();
@@ -109,9 +108,6 @@ export function Navbar() {
               )}
             </button>
 			</li>
-			{ auth.logged_in ?<li>
-			   <Notif_Inbox ></Notif_Inbox> 
-          	</li> : null }
         </ul>
       </div>
     </div>
