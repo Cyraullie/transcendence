@@ -29,8 +29,8 @@ ACTION_HANDLERS = {
     "start_game": "handle_start_game",
     "play_card": "handle_play_card",
     "continue": "handle_create_room",
-    "melds": "handle_melds", 
-    "kick": "handle_kick", 
+    "melds": "handle_melds",
+    "kick": "handle_kick",
     "exit_game": "handle_exit_game",
     "patch_param": "handle_patch_param",
 }
@@ -239,6 +239,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
             }))
 
     async def handle_start_game(self, payload=None):
+        if (await RoomService.check_room_status("open", self.code) == False):
+            await self.error("Forbidden")
+            return
+
         room = await get_room_with_host(self.code)
     
         if self.user != room.host:
@@ -273,6 +277,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game_state = await GameService.start_game(room)
 
     async def handle_play_card(self, payload):
+        if (await RoomService.check_room_status("start", self.code) == False):
+            await self.error("Forbidden")
+            return
+        
         if (len(payload) == 0):
             await self.send(text_data=json.dumps({
                     "type": "error",
@@ -329,6 +337,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await GameService.check_goal_reached(room.code)
 
     async def handle_melds(self, payload):
+        if (await RoomService.check_room_status("start", self.code) == False):
+            await self.error("Forbidden")
+            return
+
         if (len(payload) == 0):
             await self.send(text_data=json.dumps({
                     "type": "error",
@@ -355,7 +367,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
         await self.send(json.dumps(result))
         
         
-    async def handle_exit_game(self, payload=None):    
+    async def handle_exit_game(self, payload=None):  
+        if (await RoomService.check_room_status("start", self.code) == False):
+            await self.error("Forbidden")
+            return
+
         result = await RoomService.handle_player_exit(
             code=self.code,
             user=self.user
@@ -374,6 +390,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
         #await self.send(json.dumps(result))
         
     async def handle_create_room(self, payload=None):
+        if (await RoomService.check_room_status("end", self.code) == False):
+            await self.error("Forbidden")
+            return
+
         result = await RoomService.handle_create_room(
             code=self.code,
             user=self.user
@@ -392,6 +412,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
         #await self.send(json.dumps(result))
 
     async def handle_kick(self, payload: dict):
+        if (await RoomService.check_room_status("open", self.code) == False):
+            await self.error("Forbidden")
+            return
+
         if "playerId" not in payload:
             await self.send_json({
                 "error": "missing_playerId"
@@ -448,6 +472,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
             )
 
     async def handle_patch_param(self, payload: dict):
+        if (await RoomService.check_room_status("open", self.code) == False):
+            await self.error("Forbidden")
+            return
+
         room = await get_room_with_host(self.code)
 
         if room.host != self.user:
