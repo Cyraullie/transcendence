@@ -218,7 +218,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 
             if data.get("type") != "action":
                 return await self.error("Unknown message type")
-        
+            
             action = data.get("action")
             if (type(action) != str):
                 await self.send(text_data=json.dumps({
@@ -228,6 +228,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 return 
 
             payload = data.get("payload", {})
+            room = await get_room_with_host(self.code)
+            if action == "play_card" and room.wait_schedule:
+                await BroadcastService.broadcast_game(self.code, self.channel_layer, "card_invalid")
+                return
             
             handler_name = ACTION_HANDLERS.get(action)
         
@@ -324,12 +328,14 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game_state = room.game_state
 
         take_fold, game_state = await GameService.check_take_fold(game_state, room)
-
-        if (take_fold):
-            
-            await BroadcastService.broadcast_game(self.code, self.channel_layer, "start_round")
-
+        
         game = GameEngine(room.uuid)
+        if (take_fold):
+            room = await get_room_with_host(room.code)
+            is_end, gs = await GameService.check_game_end(room, game)
+            if (not is_end):
+                await BroadcastService.broadcast_game(self.code, self.channel_layer, "start_round")
+
         game_state = await BotService.play_until_human(room, game_state, game,
                                                        check_end=GameService.check_game_end, 
                                                        check_take_fold_callback=GameService.check_take_fold,
