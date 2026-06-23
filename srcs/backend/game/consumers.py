@@ -7,6 +7,7 @@ from game_engine.game import GameEngine
 from .services.game_service import GameService
 from .services.room_service import RoomService
 from .services.meld_service import MeldService
+from .services.task_service import TaskService
 from .services.bot_service import BotService
 from .services.room_connection_service import RoomConnectionService
 from .services.broadcast_service import BroadcastService
@@ -341,8 +342,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 room.round_time = (timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10)))
                 await sync_to_async(room.save)()
                 await BroadcastService.broadcast_game(self.code, self.channel_layer, "start_round")
-        room = await get_room_with_host(room.code)
-        game_state = room.game_state
+                await TaskService.player_afk(room.code)
+
         game_state = await BotService.play_until_human(room, game_state, game,
                                                        check_end=GameService.check_game_end, 
                                                        check_take_fold_callback=GameService.check_take_fold,
