@@ -31,14 +31,8 @@ class RoomTaskService:
 
 
     @staticmethod
-    async def schedule_play_for_player(room_code, user_id, delay=15):
-        player_afk.apply_async(args=[room_code, user_id], countdown=delay)
-
-
-
-
-
-
+    async def schedule_play_for_player(room_code, user_id, round, game, delay=15):
+        player_afk.apply_async(args=[room_code, user_id, round, game], countdown=delay)
 
 
 
