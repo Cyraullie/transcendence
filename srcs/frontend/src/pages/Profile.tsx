@@ -191,7 +191,7 @@ export function Profile({updatedProfile, setUpdate}:{updatedProfile:boolean, set
           <StatisticsPart stats={stats}/>
         </div>
       </div>
-      <div className="bordered collapse collapse-arrow">
+      { /* <div className="bordered collapse collapse-arrow">
         <input type="checkbox" name="profile-radio" />
         <div className="collapse-title">
           <h2 className="text-center">Achievements:</h2>
@@ -201,7 +201,7 @@ export function Profile({updatedProfile, setUpdate}:{updatedProfile:boolean, set
             Pas encore fait, faut pas pousser mémé dans les orties nan mais ho
           </p>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
