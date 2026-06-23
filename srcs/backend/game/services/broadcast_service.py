@@ -88,7 +88,7 @@ class BroadcastService:
             )
 
             
-            player_puntos.append({"room_id":player_id, "user_id":p.player.id, "username":p.player.username, "score":player_data["puntos"]})
+            player_puntos.append({"room_id":int(player_id), "user_id":p.player.id, "username":p.player.username, "score":player_data["puntos"]})
             
             if is_r0_finish:
                 melds = []
