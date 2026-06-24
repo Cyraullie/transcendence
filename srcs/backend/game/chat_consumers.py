@@ -84,7 +84,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	async def disconnect(self, close_code):
 		room = await sync_to_async(Room.objects.get)(code=self.code)
 
-		if (room.nb_player == 0):
+		if (room.status == "end"):
 			file = self.getFile()
 			if (file.exists()):
 				os.remove(file)
