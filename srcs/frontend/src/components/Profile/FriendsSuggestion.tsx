@@ -20,7 +20,7 @@ export default function FriendsSuggestion({
   notif, 
 }: Props) {
   return (
-    <div className=" border-l ml-6 pl-6 border-(--bg-color) mx-auto">
+    <div className=" border-l ml-6 pl-6 border-primary mx-auto">
       <h4 className="text font-bold text-center mb-4">Friends suggestion</h4>
       <table className="mx-auto w-full">
 	  <tbody>
@@ -43,8 +43,7 @@ export default function FriendsSuggestion({
                     )
                   }
                 >
-                  {" "}
-                  <FaPlus />{" "}
+                  <FaPlus />
                 </button>
               </td>
             </tr>
