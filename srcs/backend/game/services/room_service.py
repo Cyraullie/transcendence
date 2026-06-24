@@ -160,7 +160,7 @@ class RoomService:
     async def handle_patch_room(room, payload):
         serializer = RoomSerializer(room, data=payload, partial=True)
         channel_layer = get_channel_layer()
-        if (payload["max_player"] < room.nb_player):
+        if ("max_player" in payload and payload["max_player"] < room.nb_player):
             await BroadcastService.broadcast_settings(room, channel_layer, "settings_error", f"room_{room.code}")
             return
         if serializer.is_valid():

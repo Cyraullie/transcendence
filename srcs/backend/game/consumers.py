@@ -523,9 +523,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 return 
 
         if "type" in payload:
-            if payload["type"] != "public" and \
-            payload["type"] != "private" and \
-            payload["type"] != "friends_only":
+            if payload["type"] not in ["public", "private", "friends_only"]:
                 await self.error("Invalid type of game")
                 return 
 
