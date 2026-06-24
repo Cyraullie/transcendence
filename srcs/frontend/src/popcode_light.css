@@ -21,9 +21,9 @@
   --color-info-content: #CCDBDC;
   --color-success: oklch(56.4% 0.105 174.100);
   --color-success-content: #CCDBDC;
-  --color-warning: oklch(63.5% 0.168 35.700);
+  --color-warning: oklch(56.1% 0.210 16.800);
   --color-warning-content: #CCDBDC;
-  --color-error: #E06B73;
+  --color-error: #750606;
   --color-error-content: #CCDBDC;
   --radius-selector: 2rem;
   --radius-field: 2rem;

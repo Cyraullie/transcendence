@@ -49,16 +49,20 @@
   }
 }
 
-/* @utility input { */
-/*   @apply bg-(--hover-color); */
-/* } */
+@utility input {
+  @apply bg-base-200;
+}
+
+.input-lighter {
+	@apply bg-base-100
+}
 /**/
 /* @utility btn { */
-/*   @apply bg-(--hover-color); */
+/*   @apply bg-primary; */
 /* } */
 /**/
 /* @utility btn-primary { */
-/* 	@apply shadow-(--nav-color) border-(--nav-color) */
+/* 	@apply shadow-primary border-primary */
 /* } */
 
 .del {
@@ -91,17 +95,41 @@
   }
 }
 
-/* .modal-box { */
-/*   scrollbar-color: var(--accent-color) var(--hover-color); */
-/* } */
+@utility collapse {
+	@apply bg-base-100
+}
+
+@utility dropdown-content {
+	@apply bg-base-300 mt-2
+}
+
+@utility label {
+	@apply text-base-content
+}
+
+@utility search {
+	@apply bg-base-200
+}
+
+@utility indicator-item {
+	@apply bg-warning
+}
+
+fieldset {
+	@apply border border-accent
+}
+
+.modal-box {
+  scrollbar-color: var(--color-accent);
+	@apply scrollbar-thumb-accent bg-base-100
+}
 
 .item-menu:hover {
-  background: var(--hover-color);
-  @apply transition-all scale-x-105 shadow-black shadow-2xs rounded-2xl;
+  @apply bg-secondary transition-all scale-x-105 shadow-black shadow-2xs rounded-2xl;
 }
 
 .active {
-  @apply border-2 rounded-2xl border-(--hover-color);
+  @apply border rounded-2xl border-(--hover-color);
 }
 
 .bordered {
@@ -109,7 +137,7 @@
 }
 
 .dropdown-scroll{
-  @apply bg-(--nav-color) rounded-xl p-5 pr-7 pl-7 overflow-scroll scrollbar-thumb-(--accent-color);
+  @apply bg-primary rounded-xl p-5 pr-7 pl-7 overflow-scroll scrollbar-thumb-accent;
 }
 
 .table tr {
@@ -121,7 +149,7 @@
 }
 
 .th-history {
-  @apply w-26 text-left;
+  @apply text-center;
 }
 
 .th-stats {

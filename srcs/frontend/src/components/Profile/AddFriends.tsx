@@ -50,7 +50,7 @@ export function AddFriends({recs, users, updatedFriends, setUpdate, ref}:Props) 
                 users.map((res) => {
                   return (
 
-                  <tr className="h-14 text-base-100">
+                  <tr className="h-14">
                     <td>{res.username}</td>
                     <td><button className="btn btn-circle" onClick={() => changeHandler(res.id, "request", updatedFriends, setUpdate, ref, notif)}> <FaPlus/> </button></td>
                   </tr>
