@@ -129,7 +129,7 @@ fieldset {
 }
 
 .dropdown-scroll{
-  @apply bg-secondary rounded-xl p-5 pr-7 pl-7 overflow-scroll scrollbar-thumb-accent;
+  @apply bg-base-100 border border-secondary rounded-xl p-5 pr-7 pl-7 overflow-scroll scrollbar-thumb-accent;
 }
 
 .table tr {

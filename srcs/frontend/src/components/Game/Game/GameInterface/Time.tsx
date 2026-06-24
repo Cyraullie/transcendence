@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Chrono from "../GameInterface/Chrono";
 import { useGame } from "../../context/GameContext";
 import ExitBtn from "./ExitBtn";
-import CurrentInfo from "./CurrentInfo";
 
 export default function Time() {
   const { state } = useGame();
