@@ -40,7 +40,7 @@ export default function SliderLimiters({updateSettings}:{updateSettings:(changes
           min="0"
           max="2"
           value={nb_points === 333 ? "0" : nb_points === 666 ? "1" : "2"}
-          className="range [--range-thumb:var(--font-color)] [--range-progress:var(--nav-color)] glass"
+          className="range [--range-progress:var(--color-secondary)] glass"
           step="1"
           onChange={(e) => handle_change(get_points(e.target.value), setNBPoints, "points")}
 		  disabled={!is_host}
@@ -65,7 +65,7 @@ export default function SliderLimiters({updateSettings}:{updateSettings:(changes
           min="0"
           max="2"
           value={nb_games === 3 ? "0" : nb_games === 6 ? "1" : "2"}
-          className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
+          className="range [--range-progress:var(--color-primary)] glass"
           step="1"
           onChange={(e) => handle_change(get_games(e.target.value), setNBGames, "games")}
 		  disabled={!is_host}

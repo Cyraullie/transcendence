@@ -20,7 +20,7 @@ export default function PrivateFriendPublicSlider({updateSettings}:{updateSettin
         min="0"
         max="2"
 		value={state.settings.mode}
-        className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
+        className="range [--range-progress:var(--color-base-200)] glass"
         step="1"
 		onChange={(e) => handle_change(Number(e.target.value))}
 		disabled={!is_host}
