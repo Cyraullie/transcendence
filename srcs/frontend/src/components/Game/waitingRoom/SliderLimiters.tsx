@@ -1,6 +1,7 @@
+import type { SettingsT } from "../../../utils/type/boardDataType";
 import { useGame } from "../context/GameContext";
 
-export default function SliderLimiters() {
+export default function SliderLimiters({updateSettings}:{updateSettings:(changes: Partial<SettingsT>) => void}) {
 
 	const { state, setNBGames, setNBPoints} = useGame();
 	let is_host = false;
@@ -22,6 +23,15 @@ export default function SliderLimiters() {
 		return 10;
 	}
 
+	function handle_change(e:number,send_val : (e:number) => void, type:string ) {
+		send_val(e);
+		if (type === "points") {
+			updateSettings({nb_points: e});
+		} else {
+			updateSettings({nb_games: e})
+		}
+	}
+
   if (state.settings.goal === "points") {
     return (
       <>
@@ -32,7 +42,7 @@ export default function SliderLimiters() {
           value={nb_points === 333 ? "0" : nb_points === 666 ? "1" : "2"}
           className="range [--range-thumb:var(--font-color)] [--range-progress:var(--nav-color)] glass"
           step="1"
-          onChange={(e) => setNBPoints(get_points(e.target.value))}
+          onChange={(e) => handle_change(get_points(e.target.value), setNBPoints, "points")}
 		  disabled={!is_host}
         />
         <div className="flex justify-between px-2.5 mt-2 text-xs">
@@ -57,7 +67,7 @@ export default function SliderLimiters() {
           value={nb_games === 3 ? "0" : nb_games === 6 ? "1" : "2"}
           className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
           step="1"
-          onChange={(e) => setNBGames(get_games(e.target.value))}
+          onChange={(e) => handle_change(get_games(e.target.value), setNBGames, "games")}
 		  disabled={!is_host}
         />
         <div className="flex justify-between px-2.5 mt-2 text-xs">

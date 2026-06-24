@@ -198,6 +198,10 @@ export default function GameWebSocket({
 			sendJson("kick", {playerId : playerId});
 		}
 
+		function sendParams(params:object) {
+			sendJson("patch_param", params);
+		}
+
 
 	function setSize(size: number) {
 		dispatch({ type: "SET_SIZE", payload: size})
@@ -277,7 +281,7 @@ export default function GameWebSocket({
 
 	
 	return (
-		<GameContext.Provider value={{state, show_annonces, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage}}>
+		<GameContext.Provider value={{state, sendParams, show_annonces, leaveRoom, startGame, exitGame, playCard, continueGame, endGame, annonces, kickPlayer, setMode, setSize, setGoal, setNBGames, setNBPoints, sendMessage}}>
 		{auth.in_game ? <GameMain /> : <WaitingRoom roomCode={code}/>}
 		</GameContext.Provider>
 	);

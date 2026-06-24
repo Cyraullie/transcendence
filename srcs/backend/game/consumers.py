@@ -501,41 +501,35 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await self.error("Only host can do this")
             return 
 
-        if "max_player" in payload["data"]:
-            if payload["data"]["max_player"] > 7 or payload["data"]["max_player"] < 1:
-                await self.error("Invalid number of player max")
+        if "max_player" in payload:
+            if payload["max_player"] > 7 or payload["max_player"] < 1:
+                await self.error("Invalid player max")
                 return
 
-        if "nb_games" in payload["data"]:
-            if payload["data"]["nb_games"] < 0:
-                await self.error("Invalid number of points's number")
+        if "nb_games" in payload:
+            if payload["nb_games"] < 0:
+                await self.error("Invalid max games")
                 return 
                 
-        if "nb_points" in payload["data"]:
-            if payload["data"]["nb_points"] < 0:
-                await self.error("Invalid number of games's number")
+        if "nb_points" in payload:
+            if payload["nb_points"] < 0:
+                await self.error("Invalid max points")
                 return 
 
-        if "goal" in payload["data"]:
-            if payload["data"]["goal"] != "games" and \
-            payload["data"]["goal"] != "points":
+        if "goal" in payload:
+            if payload["goal"] != "games" and \
+            payload["goal"] != "points":
                 await self.error("Invalid type of goal")
                 return 
 
-        if "type" in payload["data"]:
-            if payload["data"]["type"] != "public" and \
-            payload["data"]["type"] != "private" and \
-            payload["data"]["type"] != "friends_only":
+        if "type" in payload:
+            if payload["type"] != "public" and \
+            payload["type"] != "private" and \
+            payload["type"] != "friends_only":
                 await self.error("Invalid type of game")
                 return 
 
-        if "status" in payload["data"]:
-            if payload["data"]["status"] != "created" and \
-            payload["data"]["status"] != "open" and \
-            payload["data"]["status"] != "start" and \
-            payload["data"]["status"] != "close":
-                await self.error("Invalid status of game")
-                return 
+
 
         await RoomService.handle_patch_room(room, payload)
 

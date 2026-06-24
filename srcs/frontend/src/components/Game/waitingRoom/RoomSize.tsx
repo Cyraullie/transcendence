@@ -1,11 +1,23 @@
+import type { SettingsT } from "../../../utils/type/boardDataType";
+import { useNotif } from "../../hooks/useNotif";
 import { useGame } from "../context/GameContext";
 
-export default function RoomSize() {
+export default function RoomSize({updateSettings}:{updateSettings:(changes: Partial<SettingsT>) => void}) {
 
 	const { state, setSize } = useGame();
+	const notif = useNotif();
 	let is_host = false;
 	if (state.settings.listPlayer.filter(user => user.is_host)[0]) {
 		is_host = state.user === state.settings.listPlayer.filter(user => user.is_host)[0].username;
+	}
+
+	function handle_change(e:number) {
+		if (e < state.settings.listPlayer.length) {
+			notif?.showNotif("Settings Error", "Max players cannot be smaller than amount of players currently in room", 5000);
+			return ;
+		}
+		setSize(e);
+		updateSettings({maxSize:e});
 	}
 	
   return (
@@ -17,7 +29,7 @@ export default function RoomSize() {
         value={state.settings.maxSize}
         className="range [--range-thumb:var(--font-color)] [--range-progress:var(--hover-color)] glass"
         step="1"
-		onChange={(e) => setSize(Number(e.target.value))} 
+		onChange={(e) => handle_change(Number(e.target.value))} 
 		disabled={!is_host}
 		/>
 

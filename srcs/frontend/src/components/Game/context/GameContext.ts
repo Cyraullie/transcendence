@@ -3,6 +3,7 @@ import type { GameState } from "./GameType"
 
 type GameContextT = {
 	state: GameState;
+	sendParams: (params:object) => void;
 	leaveRoom: () => void;
 	startGame: () => void;
 	exitGame: () => void;
