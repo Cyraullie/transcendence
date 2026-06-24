@@ -94,7 +94,7 @@ export default function InviteYourFriends() {
   return (
     <div className="flex justify-center">
       <button
-        className="btn "
+        className="btn bg-base-100"
         onClick={handleJoin}
       >
         Invite your friends
