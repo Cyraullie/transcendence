@@ -27,7 +27,7 @@ def strongestCard(asked, fold, tricks):
 	return strongest
 
 def takeFold(fold, asked, tricks, card):
-	if (not asked):
+	if (len(fold) == 0):
 		return True
 
 	fold_copy = fold.copy()
