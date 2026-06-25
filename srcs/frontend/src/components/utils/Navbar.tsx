@@ -140,12 +140,7 @@ export function Navbar() {
                 <MdLogin fontSize={20} />
               )}
             </button>
-          </li>
-          {/* {auth.logged_in ? ( */}
-          {/*   <li> */}
-          {/*     <Notif_Inbox></Notif_Inbox> */}
-          {/*   </li> */}
-          {/* ) : null} */}
+			</li>
         </ul>
       </div>
     </div>

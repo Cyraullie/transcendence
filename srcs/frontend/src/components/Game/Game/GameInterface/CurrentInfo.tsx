@@ -4,7 +4,7 @@ import { BsFillSuitDiamondFill, BsFillSuitSpadeFill } from "react-icons/bs";
 import { FaQuestion } from "react-icons/fa";
 import { useGame } from "../../context/GameContext";
 
-function DisplayTrumpLogo({ trump }: { trump: string }) {
+function DisplayTrumpLogo({ trump }: { trump: string | null }) {
   if (trump === "club") {
     return <TbClubsFilled />;
   } else if (trump === "heart") return <TiHeartFullOutline />;
@@ -15,7 +15,7 @@ function DisplayTrumpLogo({ trump }: { trump: string }) {
 
 export default function CurrentInfo() {
   const { state } = useGame();
-  const trump = "club";
+  const trump = state.game.boardData.trick
   const currentPlayer = state.game.boardData.playing;
   const nameCurrentPlayer = state.game.boardData.player_list.find((player) => player.room_id === currentPlayer)
 
@@ -24,7 +24,7 @@ export default function CurrentInfo() {
       <p className="flex items-center gap-1">
         Atout: <DisplayTrumpLogo trump={trump} />{" "}
       </p>
-      <p><em>{nameCurrentPlayer?.user.username}</em>  is playing</p>
+      {nameCurrentPlayer ? <p><em>{nameCurrentPlayer?.user.username}</em>   is playing</p> : <p>Trick over</p>}
     </div>
   );
 }
