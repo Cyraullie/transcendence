@@ -1,6 +1,7 @@
 services:
   cloudflared:
     image: cloudflare/cloudflared:latest
+    container_name: cloudflare
     profiles: [serv]
     restart: unless-stopped
     depends_on:
@@ -136,8 +137,6 @@ services:
         DOMAIN_NAME: ${DOMAIN_NAME}
     profiles: [serv]
     container_name: nginx_serv
-    expose:
-      - "443"
     depends_on:
       django:
         condition: service_healthy
