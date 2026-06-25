@@ -15,16 +15,28 @@ function DisplayTrumpLogo({ trump }: { trump: string | null }) {
 
 export default function CurrentInfo() {
   const { state } = useGame();
-  const trump = state.game.boardData.trick
+  const trump = state.game.boardData.trick;
   const currentPlayer = state.game.boardData.playing;
-  const nameCurrentPlayer = state.game.boardData.player_list.find((player) => player.room_id === currentPlayer)
+  const nameCurrentPlayer = state.game.boardData.player_list.find(
+    (player) => player.room_id === currentPlayer,
+  );
 
   return (
     <div className="border-y border-primary mt-2 py-2 w-full flex flex-col items-center">
       <p className="flex items-center gap-1">
         Atout: <DisplayTrumpLogo trump={trump} />{" "}
       </p>
-      {nameCurrentPlayer ? <p><em>{nameCurrentPlayer?.user.username}</em>   is playing</p> : <p>Trick over</p>}
+      <p className="flex items-center gap-1">
+        Asked: <DisplayTrumpLogo trump={state.game.boardData.asked?.color} />{" "}
+      </p>
+      {nameCurrentPlayer ? (
+        <p>
+          <em>{nameCurrentPlayer?.user.username}</em> is playing
+        </p>
+      ) : (
+        <p>Trick over</p>
+      )}
+		<p>{state.event}</p>
     </div>
   );
 }
