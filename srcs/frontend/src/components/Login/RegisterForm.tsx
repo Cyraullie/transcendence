@@ -2,11 +2,12 @@ import type { Dispatch, KeyboardEvent, SetStateAction } from "react";
 import { useRef, useState } from "react";
 import { registerRequest } from "../../api/http/register";
 import { useLocation, useNavigate } from "react-router-dom";
-import avatar from "../../../public/avatars/avatar1.png";
 import type { errorT } from "../../utils/type/errorType";
 import LoginWithService from "./LoginWithService";
 import { useAuth } from "../hooks/useAuth";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+
+const avatar = "/avatars/avatar1.png";
 
 export function RegisterForm({
   setCreated,

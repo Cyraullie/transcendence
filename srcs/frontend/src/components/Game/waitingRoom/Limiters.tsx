@@ -1,7 +1,8 @@
 import SliderLimiters from "./SliderLimiters";
 import { useGame } from "../context/GameContext";
+import type { SettingsT } from "../../../utils/type/boardDataType";
 
-export default function Limiters() {
+export default function Limiters({updateSettings}:{updateSettings:(changes: Partial<SettingsT>) => void}) {
 
 	const { state, setGoal } = useGame(); 
 	let is_host = false;
@@ -12,8 +13,10 @@ export default function Limiters() {
   function handle_click() {
 		if (state.settings.goal === "games") {
 			setGoal("points");
+			updateSettings({goal:"points"});
 		} else {
 			setGoal("games");
+			updateSettings({goal:"games"});
 		}
   }
 
@@ -30,7 +33,7 @@ export default function Limiters() {
         />
         <p>Points</p>
       </div>
-      <SliderLimiters  />
+      <SliderLimiters updateSettings={updateSettings} />
     </div>
   );
 }
