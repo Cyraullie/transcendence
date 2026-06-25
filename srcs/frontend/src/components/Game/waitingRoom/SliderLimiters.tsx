@@ -75,6 +75,7 @@ export default function SliderLimiters({updateSettings}:{updateSettings:(changes
           <span>|</span>
           <span>|</span>
           <span>|</span>
+		  <span>|</span>
         </div>
         <div className="flex justify-between px-2.5 mt-2 text-xs">
 		  <span>Tiny (1)</span>
