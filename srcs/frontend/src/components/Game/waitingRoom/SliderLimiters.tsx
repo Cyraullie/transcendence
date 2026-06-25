@@ -18,8 +18,9 @@ export default function SliderLimiters({updateSettings}:{updateSettings:(changes
 	}
 
 	function get_games(val: string) {
-		if (val === "0") return 3;
-		if (val === "1") return 6;
+		if (val === "0") return 1;
+		if (val === "1") return 3;
+		if (val === "2") return 6;
 		return 10;
 	}
 
@@ -63,8 +64,8 @@ export default function SliderLimiters({updateSettings}:{updateSettings:(changes
         <input
           type="range"
           min="0"
-          max="2"
-          value={nb_games === 3 ? "0" : nb_games === 6 ? "1" : "2"}
+          max="3"
+          value={nb_games === 1 ? "0" : nb_games === 3 ? "1" : nb_games === 6 ? "2" : "3"}
           className="range [--range-progress:var(--color-primary)] glass"
           step="1"
           onChange={(e) => handle_change(get_games(e.target.value), setNBGames, "games")}
@@ -76,6 +77,7 @@ export default function SliderLimiters({updateSettings}:{updateSettings:(changes
           <span>|</span>
         </div>
         <div className="flex justify-between px-2.5 mt-2 text-xs">
+		  <span>Tiny (1)</span>
           <span>Short (3)</span>
           <span>Medium (6)</span>
           <span>Long (10)</span>
