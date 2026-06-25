@@ -11,7 +11,6 @@ import { FaPlus } from "react-icons/fa";
 import UsernameMiniProfileBtn from "../miniProfile/UsernameMiniProfileBtn";
 import { useNotif } from "../hooks/useNotif";
 import type { recommendationT } from "../../utils/type/recommendationType";
-import { request } from "http";
 
 type Props = {
   friends:friendT[];
