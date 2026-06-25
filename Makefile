@@ -36,12 +36,15 @@ BLACK    := $(shell printf "\033[1;90m")
 
 # Règles
 all:
-	@echo "Make usage:\n\nLaunch in production mode: $(GREEN)make prod\n$(RESET)Launch in developer mode: $(GREEN)make dev$(RESET)"
-	@echo "\n\nDeveloper tools:\n"
+	@echo "Make usage:\n\nLaunch in production mode: $(GREEN)make prod$(RESET)"
+	@echo "Launch in developer mode: $(GREEN)make dev$(RESET)"
+	@echo "Launch in server mode: $(GREEN)make serv$(RESET)"
+	@echo "\nDeveloper tools:\n"
 	@echo "Clean up unused images/containers: $(GREEN)make clean$(RESET)"
-	@echo "Force rebuild and relaunch containers: $(GREEN)make prod-build $(RESET)||$(GREEN) make dev-build$(RESET)"
-	@echo "Force rebuild and relaunch containers without cache: $(GREEN)make prod-build-cache $(RESET)||$(GREEN) make dev-build-cache\n$(RESET)Reset volumes and clean up: $(GREEN)make fclean$(RESET)"
-	@echo "All of the above: $(GREEN)make prod-re$(RESET) || $(GREEN)make dev-re$(RESET)"
+	@echo "Force rebuild and relaunch containers: $(GREEN)make prod-build $(RESET)||$(GREEN) make dev-build$(RESET) ||$(GREEN) make serv-build$(RESET)"
+	@echo "Force rebuild and relaunch containers without cache: $(GREEN)make prod-build-cache $(RESET)||$(GREEN) make dev-build-cache$(RESET) ||$(GREEN) make serv-build-cache$(RESET)"
+	@echo "Reset volumes and clean up: $(GREEN)make fclean$(RESET)"
+	@echo "All of the above: $(GREEN)make prod-re$(RESET) || $(GREEN)make dev-re$(RESET) || $(GREEN)make serv-re$(RESET)"
 
 dev: header dev-up
 
@@ -61,9 +64,9 @@ header:
 	@echo "$(RESET)"
 
 serv-up:
-	@if [ -n "$(MISSING_FILES_PROD)" ]; then \
+	@if [ -n "$(MISSING_FILES_DEV)" ]; then \
 		echo "❌ Missing files:"; \
-		printf '%s\n' $(MISSING_FILES_PROD); \
+		printf '%s\n' $(MISSING_FILES_DEV); \
 		exit 1; \
 	else \
 		$(COMPOSE) --profile "*" down; \
@@ -107,6 +110,7 @@ down:
 clean:
 	@echo "Cleaning up images and containers.."
 	@$(COMPOSE) --profile "*" down --rmi local --remove-orphans
+	@docker system prune
 
 fclean:
 	@echo "Cleaning up images and containers.."
