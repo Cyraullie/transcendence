@@ -76,10 +76,10 @@ class RoomConsumer(AsyncWebsocketConsumer):
         await self.close()
         
     async def player_afk(self, event):
-        await self.send_json({
-            "event": "player_afk",
-            "reason": event["reason"]
-        })
+        #await self.send_json({
+        #    "event": "player_afk",
+        #    "reason": event["reason"]
+        #})
         room = await get_room_with_host(event["code"])
         game = GameEngine(room.uuid)
         asyncio.create_task(BotService.play_until_human(room, room.game_state, game,
@@ -167,6 +167,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
     async def disconnect(self, close_code):
     
+        print("DISCONNECT CALLED", close_code)
         if not self.user.is_authenticated:
             return
     
