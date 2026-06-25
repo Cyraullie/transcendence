@@ -3,6 +3,7 @@ import { changeHandler } from "../../api/http/friend";
 import type { recommendationT } from "../../utils/type/recommendationType";
 import { FaPlus } from "react-icons/fa";
 import type { NotifContextType } from "../contexts/NotifContext";
+import UsernameMiniProfileBtn from "../miniProfile/UsernameMiniProfileBtn";
 
 type Props = {
   suggestions: recommendationT[];
@@ -17,39 +18,64 @@ export default function FriendsSuggestion({
   updatedFriends,
   setUpdate,
   ref,
-  notif, 
+  notif,
 }: Props) {
   return (
     <div className=" border-l ml-6 pl-6 border-primary mx-auto">
-      <h4 className="text font-bold text-center mb-4">Friends suggestion</h4>
+      <h4 className="text-lg font-bold text-center mb-4">Friends suggestion</h4>
       <table className="mx-auto w-full">
-	  <tbody>
-        {suggestions.map((suggest) => {
-          return (
-            <tr className="h-12 text-center">
-              <td>{suggest.username}
-			  <br/><span className="text-xs">{suggest.mutual_friends.length} mutual friends</span></td>
-              <td>
-                <button
-                  className="btn btn-circle"
-                  onClick={() =>
-                    changeHandler(
-                      suggest.id,
-                      "request",
-                      updatedFriends,
-                      setUpdate,
-                      ref,
-                      notif,
-                    )
-                  }
-                >
-                  <FaPlus />
-                </button>
-              </td>
-            </tr>
-          );
-        })}
-		</tbody>
+        <tbody>
+          {suggestions.slice(0, 5).map((suggest) => {
+            return (
+              <tr className="h-12 text-center">
+                <td>
+                  {" "}
+                  <UsernameMiniProfileBtn
+                    id={suggest.id}
+                    name={suggest.username}
+                  />
+                  <br />
+                  <span className="text-xs">
+                    <button
+                      className="link-hover"
+                      popoverTarget="popover-1"
+                      style={{ anchorName: "--anchor-1" }}
+                    >
+                      {suggest.mutual_friends.length} mutual friends
+                    </button>
+                    <ul
+                      className="dropdown dropdown-content dropdown-center menu w-52 rounded-box shadow-sm"
+                      popover="auto"
+                      id="popover-1"
+                      style={{ positionAnchor: "--anchor-1" }}
+                    >
+                      {suggest.mutual_friends.map((player) => (
+                        <li>{player.username}</li>
+                      ))}
+                    </ul>
+                  </span>
+                </td>
+                <td>
+                  <button
+                    className="btn btn-circle"
+                    onClick={() =>
+                      changeHandler(
+                        suggest.id,
+                        "request",
+                        updatedFriends,
+                        setUpdate,
+                        ref,
+                        notif,
+                      )
+                    }
+                  >
+                    <FaPlus />
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
       </table>
     </div>
   );
