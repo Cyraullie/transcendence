@@ -167,7 +167,6 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
     async def disconnect(self, close_code):
     
-        print("DISCONNECT CALLED", close_code)
         if not self.user.is_authenticated:
             return
     
