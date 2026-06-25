@@ -13,13 +13,37 @@ function DisplayTrumpLogo({ trump }: { trump: string | null }) {
   else return <FaQuestion />;
 }
 
+function DisplayWhoPlaying({
+  self,
+  username,
+}: {
+  self: boolean;
+  username: string | undefined;
+}) {
+  if (username) {
+    if (self) {
+      return <p className="text-accent font-bold">You are playing!</p>;
+    } else {
+      return (
+        <p>
+          <em>{username}</em> is playing...
+        </p>
+      );
+    }
+  } else {
+    return <p>trick over!</p>;
+  }
+}
+
 export default function CurrentInfo() {
   const { state } = useGame();
   const trump = state.game.boardData.trick;
   const currentPlayer = state.game.boardData.playing;
+  const asked = state.game.boardData.asked?.color;
   const nameCurrentPlayer = state.game.boardData.player_list.find(
     (player) => player.room_id === currentPlayer,
   );
+  const self = nameCurrentPlayer?.user.username === state.user;
 
   return (
     <div className="border-y border-primary mt-2 py-2 w-full flex flex-col items-center">
@@ -27,16 +51,12 @@ export default function CurrentInfo() {
         Atout: <DisplayTrumpLogo trump={trump} />{" "}
       </p>
       <p className="flex items-center gap-1">
-        Asked: <DisplayTrumpLogo trump={state.game.boardData.asked?.color} />{" "}
+        Asked: <DisplayTrumpLogo trump={asked} />{" "}
       </p>
-      {nameCurrentPlayer ? (
-        <p>
-          <em>{nameCurrentPlayer?.user.username}</em> is playing
-        </p>
-      ) : (
-        <p>Trick over</p>
-      )}
-		<p>{state.event}</p>
+      <DisplayWhoPlaying
+        self={self}
+        username={nameCurrentPlayer?.user.username}
+      />
     </div>
   );
 }
