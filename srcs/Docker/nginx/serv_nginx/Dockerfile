@@ -32,7 +32,7 @@ ARG DOMAIN_NAME
 
 RUN mkdir -p /etc/nginx/ssl 
 
-COPY Docker/nginx/prod_nginx/nginx.conf /etc/nginx/nginx.conf
+COPY Docker/nginx/serv_nginx/nginx.conf /etc/nginx/nginx.conf
 
 RUN sed -i "s/localhost/${DOMAIN_NAME} www.${DOMAIN_NAME}/g" /etc/nginx/nginx.conf
 
