@@ -86,6 +86,28 @@ class BroadcastService:
         )
     
     @staticmethod
+    async def _get_puntos(room, player):
+        if await sync_to_async(
+            GameLog.objects.filter
+            (
+                room_id=room.id,
+                player_id=player.id
+            ).exists)():
+            return 0
+        logs = await sync_to_async(
+            GameLog.objects.filter
+            )(
+                room_id=room.id,
+                player_id=player.id
+            )
+        points = 0
+        for log in logs:
+            points += log.score
+        
+        return points
+            
+            
+    @staticmethod
     async def _get_player_data(room, is_r0_finish):
         game_state = room.game_state
         player_puntos = []
@@ -102,7 +124,8 @@ class BroadcastService:
             )
 
             
-            player_puntos.append({"room_id":int(player_id), "user_id":p.player.id, "username": await BroadcastService._get_username(p), "score":player_data["puntos"]})
+            #player_puntos.append({"room_id":int(player_id), "user_id":p.player.id, "username": await BroadcastService._get_username(p), "score":player_data["puntos"]})
+            player_puntos.append({"room_id":int(player_id), "user_id":p.player.id, "username": await BroadcastService._get_username(p), "score": await BroadcastService._get_puntos(room, p)})
             
             if is_r0_finish:
                 melds = []
