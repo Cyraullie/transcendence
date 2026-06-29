@@ -85,22 +85,26 @@ class BroadcastService:
             }
         )
     
+    #TODO dont calculate her but calculate for puntos to be sure everywhere
     @staticmethod
     async def _get_puntos(room, player):
-        if await sync_to_async(
+        if not await sync_to_async(
             GameLog.objects.filter
             (
                 room_id=room.id,
                 player_id=player.id
             ).exists)():
             return 0
-        logs = await sync_to_async(
-            GameLog.objects.filter
-            )(
+        
+        logs = await sync_to_async(list)(
+            GameLog.objects.filter(
                 room_id=room.id,
                 player_id=player.id
             )
+        )
+        
         points = 0
+        
         for log in logs:
             points += log.score
         
