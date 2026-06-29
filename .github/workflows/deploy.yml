@@ -37,6 +37,7 @@ jobs:
             cd $APP_DIR
 
             git fetch origin
+            git checkout create_autodeploy
             git reset --hard origin/create_autodeploy
 
             make fclean
@@ -55,6 +56,7 @@ jobs:
             cd $APP_DIR
 
             git fetch origin
+            git checkout create_autodeploy
             git reset --hard origin/create_autodeploy
 
             make serv-build
