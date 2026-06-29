@@ -1,5 +1,11 @@
 import { useFrame } from "@react-three/fiber";
-import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import {
   // log,
   MeshPhongMaterial,
@@ -22,8 +28,8 @@ type Props = {
   front: Texture<HTMLImageElement, TextureEventMap> | undefined;
   back: Texture<HTMLImageElement, TextureEventMap> | undefined;
   oldStartPos: number;
-//   setHand: Dispatch<SetStateAction<cardT[]>>;
-//   hand: cardT[];
+  //   setHand: Dispatch<SetStateAction<cardT[]>>;
+  //   hand: cardT[];
   lastCardPlayed: number;
   setHand: Dispatch<any>;
   setLastCardPlayed: Dispatch<SetStateAction<number>>;
@@ -36,8 +42,8 @@ export default function PCard({
   front,
   back,
   oldStartPos,
-//   setHand,
-//   hand,
+  //   setHand,
+  //   hand,
   lastCardPlayed,
   setHand,
   setLastCardPlayed,
@@ -58,42 +64,44 @@ export default function PCard({
   ];
   const game = useGame();
 
+  // async function sleep(ms: number): Promise<void> {
+  //   return new Promise((resolve) => setTimeout(resolve, ms));
+  // }
+
   useEffect(() => {
-	async function handle_play() {
-		const inHand = game.state.game.self_cards.hand.some((thisCard) => {return card.id === thisCard.id})
-		if (!inHand && !played && !hidden) {
-			setPlayed(true);
-		}
-	}
-	handle_play();
-  }, [game.state.game.self_cards.hand, card.id, hidden, played])
+    async function handle_play() {
+      const inHand = game.state.game.self_cards.hand.some((thisCard) => {
+        return card.id === thisCard.id;
+      });
+      if (!inHand && !played && !hidden) {
+        // console.log("here")
+        setPlayed(true);
+        // await sleep(1000);
+        // console.log("here after 3s");
+      }
+    }
+    handle_play();
+  }, [game.state.game.self_cards.hand, card.id, hidden, played]);
 
-  
+  useEffect(() => {
+    function resetCard() {
+      cardRef.current!.position.set(
+        startPos - cardIndex * 0.4,
+        -2.5,
+        1.5 - 0.001 * cardIndex,
+      );
+      setActive(false);
+    }
 
-	useEffect(() => {
-
-		function resetCard() {
-
-			cardRef.current!.position.set(
-			startPos - cardIndex * 0.4,
-			-2.5,
-			1.5 - 0.001 * cardIndex,
-			);
-			setActive(false);
-		} 
-
-		if (game.state.event === "card_valid" && game.state.message === "invalid") {
-			
-			resetCard();
-		}
-	
-	}, [game.state.event, game.state.message, game.state.eventID]);
-
+    if (game.state.event === "card_valid" && game.state.message === "invalid") {
+      resetCard();
+    }
+  }, [game.state.event, game.state.message, game.state.eventID]);
 
   function handleDoubleClick() {
+    // setPlayed(true)
     game.playCard(card.id);
   }
-  
 
   function handleClick() {
     if (hidden || played) return;
@@ -166,7 +174,8 @@ export default function PCard({
         //   }),
         // );
         setLastCardPlayed(cardIndex);
-		setHand(game.state.game.self_cards.hand);
+        setHand(game.state.game.self_cards.hand);
+        // game.playCard(card.id); INFO: Work better here
         return;
       }
     }
@@ -180,6 +189,8 @@ export default function PCard({
         cardRef.current.position.x += 0.01 * deltaX * -1 * 10;
     }
   });
+  //  if (hidden)
+  // return;
   return (
     <mesh
       position={
@@ -212,15 +223,6 @@ export default function PCard({
       }}
     >
       <boxGeometry args={[1, 1.4, 0.03]} />
-      {/* <RoundedBoxGeometry */}
-      {/*   args={[1, 1.4, 0.03]} */}
-      {/*   radius={0.05} */}
-      {/*   steps={1} */}
-      {/*   smoothness={4} */}
-      {/*   bevelSegments={4} */}
-      {/*   creaseAngle={0.4} */}
-      {/*   material={materials} */}
-      {/* /> */}
     </mesh>
   );
 }
