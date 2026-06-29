@@ -15,15 +15,17 @@ type Props = {
   profileRef: React.RefObject<HTMLDialogElement | null>
 };
 
+
 export default function MiniProfile({account, updatedFriends, setUpdate, history, profileRef}: Props) {
   
   const [dummy, setDummy] = useState(false);
-
+  
   if (!updatedFriends) updatedFriends = dummy;
   if (!setUpdate) setUpdate = setDummy;
-
+  
   if ('code' in account)
-	return ;
+    return ;
+
   return (
     <>
     <div className="modal-box">
@@ -38,10 +40,17 @@ export default function MiniProfile({account, updatedFriends, setUpdate, history
           </p>
         </div>
         <div className="w-full flex justify-end">
-          <div >
-            {account.friend ? <DeleteBtn req_id={account.friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={profileRef}/> : <AddFriendsBtn req_id={account.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={profileRef}/>}
+          <div>
+            {account.friend?.status === "accepted" ?
+              <DeleteBtn req_id={account.friend.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={profileRef}/>
+            : (
+              account.friend?.status === "pending" ? 
+                <p className="pt-2 pr-2">Friend request sent / received.</p>
+              : <AddFriendsBtn req_id={account.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={profileRef}/>
+              )
+            }
           </div>
-            <BlockBtn req_id={account.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={profileRef}/>
+          <BlockBtn req_id={account.id} updatedFriends={updatedFriends} setUpdate={setUpdate} profileRef={profileRef}/>
         </div>
       </div>
       <table className="mt-5">
