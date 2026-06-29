@@ -5,11 +5,12 @@ import { useEffect, useRef, useState, type SetStateAction, type KeyboardEvent} f
 import { useGame } from "../../context/GameContext";
 
 type Props = {
-  setNewMessage: React.Dispatch<SetStateAction<boolean>>
-  isAlreadyOpen: boolean
+  setNewMessage: React.Dispatch<SetStateAction<boolean>>,
+  isAlreadyOpen: boolean,
+  setCount: React.Dispatch<SetStateAction<number>>
 }
 
-export default function Chat({setNewMessage, isAlreadyOpen}: Props) {
+export default function Chat({setNewMessage, isAlreadyOpen, setCount}: Props) {
   const game = useGame();
   const messages = game.state.messages;
   const messageEndRef = useRef<HTMLDivElement>(null);
@@ -30,6 +31,8 @@ export default function Chat({setNewMessage, isAlreadyOpen}: Props) {
 	async function setterMessage() { 
 	  if (!isAlreadyOpen)
       	setNewMessage(true);
+	  else
+        setCount(game.state.messages.length);
 	}
 	setterMessage();
   }, [messages, setNewMessage, isAlreadyOpen])
