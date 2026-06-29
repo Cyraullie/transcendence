@@ -35,10 +35,11 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
             cd /home/ubuntu/transcendence/
-
+            git stash
             git fetch origin
             git checkout create_autodeploy
             git reset --hard origin/create_autodeploy
+            git stash pop
 
             make fclean
             make serv-build
@@ -55,8 +56,10 @@ jobs:
           script: |
             cd /home/ubuntu/transcendence/
 
+            git stash
             git fetch origin
             git checkout create_autodeploy
             git reset --hard origin/create_autodeploy
+            git stash pop
 
             make serv-build
