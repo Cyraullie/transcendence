@@ -68,8 +68,6 @@ export default function PCard({
 	handle_play();
   }, [game.state.game.self_cards.hand, card.id, hidden, played])
 
-  
-
 	useEffect(() => {
 
 		function resetCard() {
@@ -137,7 +135,7 @@ export default function PCard({
 
     // Playing card
     if (played) {
-      const deltaY = cardRef.current.position.y - (1 * distance + 0.5);
+	  const deltaY = (1 * distance + 0.5) - cardRef.current.position.y;
       const deltaX = cardRef.current.position.x;
       const deltaZ = cardRef.current.position.z - -1.15;
       const deltaRotX = cardRef.current.rotation.x - -0.4;
@@ -166,7 +164,7 @@ export default function PCard({
         //   }),
         // );
         setLastCardPlayed(cardIndex);
-		setHand(game.state.game.self_cards.hand);
+		setHand((prev: cardT[]) => prev.filter((c) => c.id !== card.id));
         return;
       }
     }

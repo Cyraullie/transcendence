@@ -20,6 +20,7 @@ export default function Hand({
   const startPos = (0.4 * hand.length) / 2 - 0.2;
   const oldStartPos = (0.4 * (hand.length + 1)) / 2 - 0.2;
   const [lastCardPlayed, setLastCardPlayed] = useState<number>(19);
+  
 
   useEffect(() => {
 	async function handle_continue() {
