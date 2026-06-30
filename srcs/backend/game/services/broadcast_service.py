@@ -211,6 +211,7 @@ class BroadcastService:
             last_fold_username = await BroadcastService._get_username(p)
         return {
             "self_id": int(player_position),
+            "host": room.host.username,
             "trick": None if game_state["tricks"] == "none" else game_state["tricks"],
             "annonces": player_annonces,
             "board": board,
