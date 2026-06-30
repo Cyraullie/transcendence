@@ -41,6 +41,7 @@ jobs:
             git fetch origin
             git checkout backend
             git reset --hard origin/backend
+            git pull
             git stash pop
 
             make fclean
@@ -64,6 +65,7 @@ jobs:
             git fetch origin
             git checkout backend
             git reset --hard origin/backend
+            git pull
             git stash pop
 
             make serv-build-cache
