@@ -29,7 +29,7 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
 
   return (
     <>
-      <div className="modal-box">
+      <div className="modal-box w-full max-w-4/7">
         <p className="text-center ">click ESC for close this window</p>
         <div className="flex">
           <div className="avatar flex-col">

@@ -13,17 +13,17 @@ export default function GameVisual() {
   const loadedTextures: string[] = [];
   const back = useLoader(TextureLoader, loadTexture("back")!);
   deck.forEach((card) => {
-	  // console.log(card.value + card.color);
-	  
+    // console.log(card.value + card.color);
+
     loadedTextures.push(loadTexture(card.value + card.color)!);
   });
   const cardsTex = useLoader(TextureLoader, loadedTextures);
 
   return (
-    <Canvas className="w-3/4 bg-cover rounded-2xl" style={{backgroundImage: `url(${bgimg})`}}>
+    <Canvas className="w-3/4 bg-cover rounded-2xl" style={{ backgroundImage: `url(${bgimg})` }}>
       <ambientLight />
-      <Board front={cardsTex} back={back}/>
-      <Hand cardsTex={cardsTex} back={back}/>
+      <Board front={cardsTex} back={back} />
+      <Hand cardsTex={cardsTex} back={back} />
       {/* <OrbitControls /> */}
     </Canvas>
   );
