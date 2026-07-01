@@ -1,0 +1,228 @@
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflare
+    profiles: [serv]
+    restart: unless-stopped
+    depends_on:
+      - nginx_serv
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TOKEN}
+    networks:
+      - transcendence
+
+  redis:
+    image: redis:7-alpine
+    profiles: [dev, prod, serv]
+    container_name: redis
+    restart: unless-stopped
+    command: ["redis-server"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - transcendence
+
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    profiles: [dev, prod, serv]
+    container_name: celery
+    command: celery -A backend worker -l info
+    depends_on:
+      redis:
+        condition: service_healthy
+      mariadb:
+        condition: service_healthy
+    env_file:
+      - secrets/.env
+    environment:
+      DEBUG: ${DEBUG}
+      DJANGO_LOGLEVEL: ${DJANGO_LOGLEVEL}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+
+      DATABASE_ENGINE: ${DB_ENGINE}
+      DATABASE_NAME: ${DB_NAME}
+      DATABASE_USERNAME: ${DB_USER}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      DATABASE_HOST: ${DB_HOST}
+      DATABASE_PORT: ${DB_PORT}
+
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+    secrets:
+      - django_secret
+      - google_secret
+      - git_secret
+      - 42_secret
+    networks:
+      - transcendence
+
+  mariadb:
+    image: mariadb:11
+    profiles: [dev, prod, serv]
+    container_name: mariadb
+    restart: unless-stopped
+    ports:
+      - "${MARIADB_PORT}:3306" # TODO: Remove before the end
+
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 30s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD} #should we replace these with docker secrets?
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    env_file:
+      - secrets/.env
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./Docker/mariadb/tools/init.sh:/docker-entrypoint-initdb.d/init.sh
+    networks:
+      - transcendence
+
+  nginx_dev:
+    build:
+      context: ./Docker/nginx/dev_nginx
+      dockerfile: Dockerfile
+    profiles: [dev]
+    container_name: nginx_dev
+    ports:
+      - "8000:80"
+    depends_on:
+      - django
+    networks:
+      - transcendence
+
+  nginx_prod:
+    build:
+      context: .
+      dockerfile: Docker/nginx/prod_nginx/Dockerfile
+      args:
+        VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL} #should we replace these with docker secrets?
+        VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+        VITE_42_OAUTH_CALLBACK_URL: ${FORTYTWO_OAUTH_CALLBACK_URL}
+        VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}
+        VITE_GIT_OAUTH_CALLBACK_URL: ${GIT_OAUTH_CALLBACK_URL}
+        VITE_GIT_OAUTH_CLIENT_ID: ${GIT_OAUTH_CLIENT_ID}
+        DOMAIN_NAME: ${DOMAIN_NAME}
+    profiles: [prod]
+    container_name: nginx_prod
+    ports:
+      - "${NGINX_PORT}:443" # may need to change for eval so maybe best to put in env
+    depends_on:
+      django:
+        condition: service_healthy
+    networks:
+      - transcendence
+
+  nginx_serv:
+    build:
+      context: .
+      dockerfile: Docker/nginx/serv_nginx/Dockerfile
+      args:
+        VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL} #should we replace these with docker secrets?
+        VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+        VITE_42_OAUTH_CALLBACK_URL: ${FORTYTWO_OAUTH_CALLBACK_URL}
+        VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}
+        VITE_GIT_OAUTH_CALLBACK_URL: ${GIT_OAUTH_CALLBACK_URL}
+        VITE_GIT_OAUTH_CLIENT_ID: ${GIT_OAUTH_CLIENT_ID}
+        DOMAIN_NAME: ${DOMAIN_NAME}
+    profiles: [serv]
+    container_name: nginx_serv
+    depends_on:
+      django:
+        condition: service_healthy
+    networks:
+      - transcendence
+
+  django:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    profiles: [dev, prod, serv]
+    container_name: django
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      DEBUG: ${DEBUG}
+      DJANGO_LOGLEVEL: ${DJANGO_LOGLEVEL}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+      DATABASE_ENGINE: ${DB_ENGINE}
+      DATABASE_NAME: ${DB_NAME}
+      DATABASE_USERNAME: ${DB_USER}
+
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      DATABASE_HOST: ${DB_HOST}
+      DATABASE_PORT: ${DB_PORT}
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://django:8000/leaderboard/"]
+      start_period: 30s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+    env_file:
+      - secrets/.env
+    secrets:
+      - django_secret
+      - google_secret
+      - git_secret
+      - 42_secret
+    networks:
+      - transcendence
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    profiles: [dev]
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    environment:
+      NODE_ENV: development
+      VITE_GOOGLE_OAUTH_CALLBACK_URL: ${GOOGLE_OAUTH_CALLBACK_URL} #should we replace these with docker secrets?
+      VITE_GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID}
+      VITE_42_OAUTH_CALLBACK_URL: ${FORTYTWO_OAUTH_CALLBACK_URL}
+      VITE_42_OAUTH_CLIENT_ID: ${FORTYTWO_OAUTH_CLIENT_ID}
+      VITE_GIT_OAUTH_CALLBACK_URL: ${GIT_OAUTH_CALLBACK_URL}
+      VITE_GIT_OAUTH_CLIENT_ID: ${GIT_OAUTH_CLIENT_ID}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - django
+    networks:
+      - transcendence
+
+networks:
+  transcendence:
+    driver: bridge
+
+volumes:
+  db_data:
+
+secrets:
+  google_secret:
+    file: ./secrets/google_secret.txt
+  git_secret:
+    file: ./secrets/git_secret.txt
+  42_secret:
+    file: ./secrets/42_secret.txt
+  django_secret:
+    file: ./secrets/django_secret.txt
