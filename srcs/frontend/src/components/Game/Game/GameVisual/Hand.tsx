@@ -9,9 +9,11 @@ import { useGame } from "../../context/GameContext";
 export default function Hand({
   cardsTex,
   back,
+  distanceBoard
 }: {
   cardsTex: Texture<HTMLImageElement, TextureEventMap>[];
   back: Texture<HTMLImageElement, TextureEventMap>;
+  distanceBoard: number;
 }) {
   const { state } = useGame();
 //   const [hand, setHand] = useState<cardT[]>(state.game.self_cards);
@@ -50,6 +52,7 @@ export default function Hand({
 			  lastCardPlayed={lastCardPlayed}
 			  setHand={setHand}
 			  setLastCardPlayed={setLastCardPlayed}
+			  distanceBoard={distanceBoard}
             />
           );
         })}
