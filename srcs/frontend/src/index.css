@@ -150,5 +150,5 @@ fieldset {
 
 .chat-bubble {
   word-wrap: break-word;
-   @apply max-w-3xs bg-primary;
+   @apply max-w-3xs ;
 }

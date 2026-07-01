@@ -13,7 +13,7 @@ export default function GameButtons() {
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false);
   const [newMessage, setNewMessage] = useState<boolean>(false);
-  const [messageCount, setCount] = useState(game.state.messages.length);
+  const [messageCount, setCount] = useState<number>(game.state.messages.length);
 
   function changeState(whichButton: string) {
     if (whichButton === "chat")
@@ -31,28 +31,28 @@ export default function GameButtons() {
   }
 
   useEffect(() => {
-	async function setMessage() {
-		if (isChatOpen) {
-			setNewMessage(false);
-		} 
-	}
-	setMessage();
+    async function setMessage() {
+      if (isChatOpen) {
+        setNewMessage(false);
+      } 
+    }
+    setMessage();
   }, [isChatOpen])
 
-    useEffect(() => {
-	async function setMessage() {
-		if (!isChatOpen && game.state.messages.length !== messageCount && game.state.messages.at(-1)?.user.username !== game.state.user) {
-			setNewMessage(true);
-			setCount(game.state.messages.length);
-		}
-	}
-	setMessage();
+  useEffect(() => {
+    async function setMessage() {
+      if (!isChatOpen && game.state.messages.length !== messageCount && game.state.messages.at(-1)?.user.username !== game.state.user) {
+        setNewMessage(true);
+        setCount(game.state.messages.length);
+      }
+    }
+    setMessage();
   }, [isChatOpen, game.state.messages, game.state.user, messageCount])
 
   return (
     <div className="h-1/2 flex p-2 flex-col justify-end">
 	{isChatOpen ? (
-		<Chat setNewMessage={setNewMessage} isAlreadyOpen={isChatOpen}/>
+		<Chat setNewMessage={setNewMessage} isAlreadyOpen={isChatOpen} setCount={setCount}/>
 	) : ""}
 	{isInfoOpen ? (
 		<FunctionnementInfos />
@@ -60,14 +60,12 @@ export default function GameButtons() {
       <div className="flex gap-2 mt-2 items-center justify-between">
 	  <FoldModal />
         <Announcement />
-        <div className="flex gap-2">
           <div className="indicator">
             {newMessage ? (
-              <span className="indicator-item badge badge-xs  bg-(--nav-color)"></span>
-            ) : ""}
+              <span className="indicator-item badge badge-sm bg-(--nav-color)">New</span>
+            ) : null}
             <ChatBtn changeState={changeState} />
           </div>
-        </div>
         <InfoBtn changeState={changeState} />
       </div>
     <GlobalAnnonce />

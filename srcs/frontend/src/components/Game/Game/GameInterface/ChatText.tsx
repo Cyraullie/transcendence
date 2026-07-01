@@ -8,10 +8,10 @@ export default function ChatText({info}: {info: chatT}) {
   return (
     <div className={"chat " + (isOtherPlayers ? "chat-start": "chat-end")}>
       <div className="chat-header">
-        {info.user.username}
+        {isOtherPlayers ? (info.user.username) : ""}
         <time className="text-xs opacity-50">{info.time}</time>
       </div>
-      <div className="chat-bubble bg-(--hover-color) w-max-3/4">
+      <div className={"chat-bubble  " + (isOtherPlayers ? "bg-secondary" : "bg-primary")}>
         {info.message}
       </div>
     </div>
