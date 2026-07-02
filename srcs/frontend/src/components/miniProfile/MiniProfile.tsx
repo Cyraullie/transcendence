@@ -41,6 +41,8 @@ export default function MiniProfile({account, updatedFriends, setUpdate, history
   const [can_accept, setAccept] = useState(false);
   const auth = useAuth();
 
+  console.debug(can_accept);
+
   if (!updatedFriends) updatedFriends = dummy;
   if (!setUpdate) setUpdate = setDummy;
 
