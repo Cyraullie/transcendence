@@ -1,7 +1,7 @@
 import { TbPointFilled } from "react-icons/tb";
 import type { friendT, requestT } from "../../utils/type/friendType";
 import { changeHandler } from "../../api/http/friend";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { IoNotificationsOutline, IoSearch } from "react-icons/io5";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 import { AddFriends } from "./AddFriends";
