@@ -39,6 +39,8 @@ export default function Announcement() {
     setIsConfirmed(true);
   };
 
+  console.debug("This is the annonces: ", annonces_list);
+
   return (
     <>
       <button
@@ -61,7 +63,7 @@ export default function Announcement() {
             </thead>
             <tbody>
               {annonces_list.map((annonce, index) => {
-                if (!annonce.cards[0]) {
+                if (annonce.cards.length === 0 || annonce.cards === null) {
                   return null;
                 }
                 let type = "";
