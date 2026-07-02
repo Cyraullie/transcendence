@@ -133,7 +133,7 @@ export default function GameWebSocket({
 					auth.setGame(false);
 					leaveRoom();
 				} else if (data.event === "new_room") {
-					if (payload.host === state.user) {
+					if (state.host === state.user) {
 						dispatch({type:"SET_HOST", payload:payload.host})
 						setCode(payload.code)
 					}
