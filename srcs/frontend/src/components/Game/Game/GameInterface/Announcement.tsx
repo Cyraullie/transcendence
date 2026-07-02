@@ -39,8 +39,6 @@ export default function Announcement() {
     setIsConfirmed(true);
   };
 
-  console.debug("This is the annonces: ", annonces_list);
-
   return (
     <>
       <button
