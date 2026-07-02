@@ -131,7 +131,7 @@ export default function GameWebSocket({
 					auth.setGame(false);
 					leaveRoom();
 				} else if (data.event === "new_room") {
-					if (payload.host === state.user) {
+					if (state.host === state.user) {
 						dispatch({type:"SET_HOST", payload:payload.host})
 						setCode(payload.code)
 					}
@@ -146,7 +146,11 @@ export default function GameWebSocket({
 						}
 						dispatch({type:"SET_MESSAGE", payload: data.player_name});
 					}
-					setGame(payload.self_card, payload.board_data)
+					if (payload.board_data) {
+						setGame(payload.self_card, payload.board_data)
+						dispatch({type:"SET_HOST", payload: payload.board_data.host})
+						dispatch({type:"SET_USER", payload: payload.board_data.user})
+					}
 				}
 			} else if (data.event === "error" || data.type === "error") {
 				if (data.message === "Need 2 players") {

@@ -91,6 +91,7 @@ class BroadcastService:
         player_puntos = []
         player_list = []
         player_annonces = []
+        finished = 0
         
         for player_id, player_data in game_state["players"].items():
 
@@ -114,7 +115,8 @@ class BroadcastService:
                     "room_id": int(player_id),
                     "cards": melds
                 })
-    
+            if len(player_data["cards"]) == 0:
+                finished += 1
             player_list.append( {
                 "room_id": int(player_id),
                 "hand": len(player_data["cards"]),
@@ -126,7 +128,7 @@ class BroadcastService:
                 }
             } )
             
-        return player_puntos, player_list, player_annonces
+        return player_puntos, player_list, player_annonces, finished
         
     
     @staticmethod
@@ -136,7 +138,7 @@ class BroadcastService:
 
         detailed_points = []
         
-        player_puntos, player_list, player_annonces = await BroadcastService._get_player_data(room, is_r0_finish)
+        player_puntos, player_list, player_annonces, finished = await BroadcastService._get_player_data(room, is_r0_finish)
 
         logs = await sync_to_async(list)(
             GameLog.objects.filter(room=room).order_by("game", "round", "player_id")
@@ -204,14 +206,20 @@ class BroadcastService:
             else:
                 board = []
                 
+        user = await sync_to_async(PlayerPresence.objects.select_related("player").get)(position=player_position, room=room)
+        username = await BroadcastService._get_username(user)
         last_fold_id = game_state.get("last_fold_player")
         last_fold_username = ""
         if last_fold_id is not None:
             p = await sync_to_async(PlayerPresence.objects.select_related("player").get)(room=room, position=last_fold_id)
             last_fold_username = await BroadcastService._get_username(p)
+        
         return {
             "self_id": int(player_position),
+            "host": room.host.username,
+            "user": username,
             "trick": None if game_state["tricks"] == "none" else game_state["tricks"],
+            "lastCard": None if game_state["lastCard"]["id"] == -1 or finished < room.nb_player else game_state["lastCard"],
             "annonces": player_annonces,
             "board": board,
             "asked": asked,
@@ -228,7 +236,6 @@ class BroadcastService:
                     "room_id": last_fold_id,
                     "cards": game_state.get("last_fold"),
                 },
-            "host": room.host.username
         }       
     
     @staticmethod
