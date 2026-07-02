@@ -90,9 +90,11 @@ export function Game() {
 			setRooms(tmp_rooms);
 			setValid(true);
 		}
-		get_info();
+		if (!auth.in_game) {
+			get_info();
+		}
 
-	}, [auth.logging, navigate, location.state, notif, refresh])
+	}, [auth.logging, navigate, location.state, notif, refresh, auth.in_game])
 
 	if (valid === null) {
 		return (
