@@ -254,9 +254,9 @@ export default function GameWebSocket({
 		dispatch({type:"SET_WAIT", payload:bool})
 	}
 	
-	const { sendJsonMessage: sendChatJsonMessage } = useWebSocket(auth.logged_in  && auth.in_game ? (host.ws + "chat/" + code + '/') : null, {
+	const { sendJsonMessage: sendChatJsonMessage } = useWebSocket(auth.logged_in && auth.in_game ? (host.ws + "chat/" + code + '/') : null, {
 		shouldReconnect: () => {
-			return auth.logged_in ? true : false
+			return auth.logged_in && auth.in_game ? true : false
 		},
 		reconnectAttempts: 30,
 		reconnectInterval: 1000,
