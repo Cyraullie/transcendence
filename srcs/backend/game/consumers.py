@@ -83,14 +83,17 @@ class RoomConsumer(AsyncWebsocketConsumer):
         
         room = await get_room_with_host(event["code"])
         game = GameEngine(room.uuid)
-        asyncio.create_task(BotService.play_afk(room, room.game_state, game,
+        await BotService.play_afk(room, room.game_state, game,
                                                         check_end=GameService.check_game_end, 
                                                         check_take_fold_callback=GameService.check_take_fold,
                                                         ask_continue=GameService.check_goal_reached
-                                                        ))
+                                                        )
         p = await sync_to_async(PlayerPresence.objects.select_related("room").filter(room__code=event["code"], player_id=self.user.id).first)()
         
         if p.is_afk_count >= 3:
+            p.is_online = False
+            await sync_to_async(p.save)()
+            
             await self.channel_layer.group_send(
                 f"player_{p.player_id}",
                 {
@@ -101,6 +104,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     }
                 }
             )
+            return
         room = await get_room_with_host(event["code"])
         game = GameEngine(room.uuid)
         asyncio.create_task(BotService.play_until_human(room, room.game_state, game,
@@ -189,11 +193,15 @@ class RoomConsumer(AsyncWebsocketConsumer):
             game = GameEngine(room.uuid)
             
             nb_human = await get_nb_human(room.uuid)
-            if not nb_human > 1:
-                room.is_paused = False
-                await sync_to_async(room.save)()
-            
-            
+            if nb_human > 0:
+                await sync_to_async(
+                    Room.objects.filter(code=self.code).update
+                )(is_paused=False)
+                
+                
+                
+                
+            room = await get_room_with_host(room.code)
             asyncio.create_task(BotService.play_until_human(room, room.game_state, game,
                                                         check_end=GameService.check_game_end, 
                                                         check_take_fold_callback=GameService.check_take_fold,
@@ -232,7 +240,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
     
             try:
                 nb_human = await get_nb_human(room.uuid)
-                if nb_human > 1:
+                if nb_human > 0:
                     room = await get_room_with_host(room.code)
                     game = GameEngine(room.uuid)
                 
@@ -242,9 +250,12 @@ class RoomConsumer(AsyncWebsocketConsumer):
                                                         ask_continue=GameService.check_goal_reached
                                                         ))
                 else:
-                    room.is_paused = True
-                    await sync_to_async(room.save)()
-            except Exception:
+                    await sync_to_async(
+                        Room.objects.filter(code=self.code).update
+                    )(is_paused=True)
+                    
+            except Exception as e:
+                print("ERROR:", e)
                 pass
 
     async def receive(self, text_data):
