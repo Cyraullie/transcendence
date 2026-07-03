@@ -289,7 +289,7 @@ Challenges
 
 - Accepting to work with Python
 - Understanding the specificities of Django
-- Refactoring code when required by changes to the database or the existing codebsae
+- Refactoring code when required by changes to the database or the existing codebase
 - Remembering to use await before asynchronous functions
 
 ### Dana Vauthey
