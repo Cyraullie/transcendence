@@ -53,7 +53,6 @@ def splithand(data, idPlayer, legal):
 			if (c.colors == tricks):
 				take.append(c)
 			left = countCard(c, data, fold)
-			print("left = ", left)
 			if (left < playing):
 				if (tricks != "none"):
 					dontTake.append(c)
