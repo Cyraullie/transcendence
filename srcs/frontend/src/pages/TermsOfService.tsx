@@ -9,21 +9,16 @@ export function TermsOfService() {
       <p>
         We are Popcode Inc ('<strong>Company</strong>', '<strong>we</strong>', '<strong>us</strong>', or '<strong>our</strong>'), a company registered in Switzerland at Rue de Lausanne 64, Ecole 42, 1020 Renens, Vaud.
         <br /><br />
-        We operate the website
-        <a className="link" href="https://www.popcards.com">https://www.popcards.com</a>
+        We operate the website <a className="link" href="https://www.popcards.com">https://www.popcards.com</a>
         (the '<strong>Site</strong>'), as well as any other related products and services that refer or link to these legal terms (the '<strong>Legal Terms</strong>') (collectively, the '<strong>Services</strong>').
         <br /><br />
         Play cards with your friends online!
         <br /><br />
-        You can contact us by email at
-        <a className="link" href="mailto:popcorn.coders@gmail.com ">popcorn.coders@gmail.com</a>
-        or by mail to Rue de Lausanne 64, Ecole 42, 1020 Renens, Vaud, Switzerland.
+        You can contact us by email at <a className="link" href="mailto:popcorn.coders@gmail.com ">popcorn.coders@gmail.com</a> or by mail to Rue de Lausanne 64, Ecole 42, 1020 Renens, Vaud, Switzerland.
         <br /><br />
         These Legal Terms constitute a legally binding agreement made between you, whether personally or on behalf of an entity ('<strong>you</strong>'), and Popcode Inc, concerning your access to and use of the Services. You agree that by accessing the Services, you have read, understood, and agreed to be bound by all of these Legal Terms. IF YOU DO NOT AGREE WITH ALL OF THESE LEGAL TERMS, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SERVICES AND YOU MUST DISCONTINUE USE IMMEDIATELY.
         <br /><br />
-        We will provide you with prior notice of any scheduled changes to the Services you are using. The modified Legal Terms will become effective upon posting or notifying you by
-        <a className="link" href="mailto:popcorn.coders@gmail.com">popcorn.coders@gmail.com</a>
-        , as stated in the email message. By continuing to use the Services after the effective date of any changes, you agree to be bound by the modified terms.
+        We will provide you with prior notice of any scheduled changes to the Services you are using. The modified Legal Terms will become effective upon posting or notifying you by <a className="link" href="mailto:popcorn.coders@gmail.com">popcorn.coders@gmail.com</a>, as stated in the email message. By continuing to use the Services after the effective date of any changes, you agree to be bound by the modified terms.
         <br /><br />
         All users who are minors in the jurisdiction in which they reside (generally under the age of 18) must have the permission of, and be directly supervised by, their parent or guardian to use the Services. If you are a minor, you must have your parent or guardian read and agree to these Legal Terms prior to you using the Services.
         <br /><br />
@@ -44,20 +39,20 @@ export function TermsOfService() {
         <a className="link-hover" href="#thirdPartyWebsitesAndContent"><li>THIRD-PARTY WEBSITES AND CONTENT</li></a>
         <a className="link-hover" href="#servicesManagement"><li>SERVICES MANAGEMENT</li></a>
         <a className="link-hover" href="#privacyPolicy"><li>PRIVACY POLICY</li></a>
-        <a className="link-hover" href="#"><li>COPYRIGHT INFRINGEMENTS</li></a>
-        <a className="link-hover"><li>TERM AND TERMINATION</li></a>
-        <a className="link-hover"><li>MODIFICATIONS AND INTERRUPTIONS</li></a>
-        <a className="link-hover"><li>GOVERNING LAW</li></a>
-        <a className="link-hover"><li>DISPUTE RESOLUTION</li></a>
-        <a className="link-hover"><li>CORRECTIONS</li></a>
-        <a className="link-hover"><li>DISCLAIMER</li></a>
-        <a className="link-hover"><li>LIMITATIONS OF LIABILITY</li></a>
-        <a className="link-hover"><li>INDEMNIFICATION</li></a>
-        <a className="link-hover"><li>USER DATA</li></a>
-        <a className="link-hover"><li>ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES</li></a>
-        <a className="link-hover"><li>CALIFORNIA USERS AND RESIDENTS</li></a>
-        <a className="link-hover"><li>MISCELLANEOUS</li></a>
-        <a className="link-hover"><li>CONTACT US</li></a>
+        <a className="link-hover" href="#copyrightInfringements"><li>COPYRIGHT INFRINGEMENTS</li></a>
+        <a className="link-hover" href="#termAndTermination"><li>TERM AND TERMINATION</li></a>
+        <a className="link-hover" href="#modificationsAndInterruptions"><li>MODIFICATIONS AND INTERRUPTIONS</li></a>
+        <a className="link-hover" href="#governingLaw"><li>GOVERNING LAW</li></a>
+        <a className="link-hover" href="#disputeResolution"><li>DISPUTE RESOLUTION</li></a>
+        <a className="link-hover" href="#corrections"><li>CORRECTIONS</li></a>
+        <a className="link-hover" href="#disclaimer"><li>DISCLAIMER</li></a>
+        <a className="link-hover" href="#limitationsOfLiability"><li>LIMITATIONS OF LIABILITY</li></a>
+        <a className="link-hover" href="#indemnification"><li>INDEMNIFICATION</li></a>
+        <a className="link-hover" href="#userData"><li>USER DATA</li></a>
+        <a className="link-hover" href="#electronic"><li>ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES</li></a>
+        <a className="link-hover" href="#californiaUsersAndResidents"><li>CALIFORNIA USERS AND RESIDENTS</li></a>
+        <a className="link-hover" href="#miscellaneous"><li>MISCELLANEOUS</li></a>
+        <a className="link-hover" href="#contactUs"><li>CONTACT US</li></a>
       </ol>
       <br /><br />
       <h2 className="text-center" id="ourServices">1. OUR SERVICES</h2>
@@ -83,9 +78,7 @@ export function TermsOfService() {
       <h3 className="text-center">Your use of our Services</h3>
       <br />
       <p>
-        Subject to your compliance with these Legal Terms, including the
-        '<a className="link">PROHIBITED ACTIVITIES</a>'
-        section below, we grant you a non-exclusive, non-transferable, revocable licence to:
+        Subject to your compliance with these Legal Terms, including the '<a className="link" href="#prohibitedActivities">PROHIBITED ACTIVITIES</a>' section below, we grant you a non-exclusive, non-transferable, revocable licence to:
         <br /><br />
         <ul className="ms-8 list-disc">
           <li>access the Services; and</li>
@@ -96,9 +89,7 @@ export function TermsOfService() {
         <br /><br />
         Except as set out in this section or elsewhere in our Legal Terms, no part of the Services and no Content or Marks may be copied, reproduced, aggregated, republished, uploaded, posted, publicly displayed, encoded, translated, transmitted, distributed, sold, licensed, or otherwise exploited for any commercial purpose whatsoever, without our express prior written permission.
         <br /><br />
-        If you wish to make any use of the Services, Content, or Marks other than as set out in this section or elsewhere in our Legal Terms, please address your request to:
-        <a className="link" href="mailto:popcorn.coders@gmail.com ">popcorn.coders@gmail.com</a>.
-        If we ever grant you the permission to post, reproduce, or publicly display any part of our Services or Content, you must identify us as the owners or licensors of the Services, Content, or Marks and ensure that any copyright or proprietary notice appears or is visible on posting, reproducing, or displaying our Content.
+        If you wish to make any use of the Services, Content, or Marks other than as set out in this section or elsewhere in our Legal Terms, please address your request to: <a className="link" href="mailto:popcorn.coders@gmail.com ">popcorn.coders@gmail.com</a>. If we ever grant you the permission to post, reproduce, or publicly display any part of our Services or Content, you must identify us as the owners or licensors of the Services, Content, or Marks and ensure that any copyright or proprietary notice appears or is visible on posting, reproducing, or displaying our Content.
         <br /><br />
         We reserve all rights not expressly granted to you in and to the Services, Content, and Marks.
         <br /><br />
@@ -108,9 +99,7 @@ export function TermsOfService() {
       <h3 className="text-center">Your submissions and contributions</h3>
       <br />
       <p>
-        Please review this section and the
-        '<a className="link">PROHIBITED ACTIVITIES</a>'
-        section carefully prior to using our Services to understand the (a) rights you give us and (b) obligations you have when you post or upload any content through the Services.
+        Please review this section and the '<a className="link" href="#prohibitedActivities">PROHIBITED ACTIVITIES</a>' section carefully prior to using our Services to understand the (a) rights you give us and (b) obligations you have when you post or upload any content through the Services.
         <br /><br />
         <strong>Submissions:</strong> By directly sending us any question, comment, suggestion, idea, feedback, or other information about the Services ('Submissions'), you agree to assign to us all intellectual property rights in such Submission. You agree that we shall own this Submission and be entitled to its unrestricted use and dissemination for any lawful purpose, commercial or otherwise, without acknowledgment or compensation to you.
         <br /><br />
@@ -126,9 +115,7 @@ export function TermsOfService() {
         <br /><br />
         <ol className="list-disc list-outside ms-8">
           <li>
-            confirm that you have read and agree with our
-            '<a className="link">PROHIBITED ACTIVITIES</a>'
-            and will not post, send, publish, upload, or transmit through the Services any Submission nor post any Contribution harmful, defamatory, obscene, bullying, abusive, discriminatory, threatening to any person or group, sexually explicit, false, inaccurate, deceitful, or misleading;
+            confirm that you have read and agree with our '<a className="link" href="#prohibitedActivities">PROHIBITED ACTIVITIES</a>' and will not post, send, publish, upload, or transmit through the Services any Submission nor post any Contribution harmful, defamatory, obscene, bullying, abusive, discriminatory, threatening to any person or group, sexually explicit, false, inaccurate, deceitful, or misleading;
           </li>
           <li>
             to the extent permissible by applicable law, waive any and all moral rights to any such Submission and/or Contribution;
@@ -149,9 +136,7 @@ export function TermsOfService() {
       <h3 className="text-center">Copyright infringement</h3>
       <br />
       <p>
-        We respect the intellectual property rights of others. If you believe that any material available on or through the Services infringes upon any copyright you own or control, please immediately refer to the
-        '<a className="link">COPYRIGHT INFRINGEMENTS</a>'
-        section below.
+        We respect the intellectual property rights of others. If you believe that any material available on or through the Services infringes upon any copyright you own or control, please immediately refer to the '<a className="link" href="#copyrightInfringements">COPYRIGHT INFRINGEMENTS</a>' section below.
       </p>
       <br /><br />
       <h2 className="text-center" id="userRepresentations">3. USER REPRESENTATIONS</h2>
@@ -334,18 +319,16 @@ export function TermsOfService() {
       <h2 className="text-center" id="privacyPolicy">11. PRIVACY POLICY</h2>
       <br />
       <p>
-        We care about data privacy and security. Please review our Privacy Policy:
-        <a className="link" href="http://www.popcards.com/PrivacyPolicy">http://www.popcards.com/PrivacyPolicy</a>
-        . By using the Services, you agree to be bound by our Privacy Policy, which is incorporated into these Legal Terms. Please be advised the Services are hosted in Switzerland. If you access the Services from any other region of the world with laws or other requirements governing personal data collection, use, or disclosure that differ from applicable laws in Switzerland, then through your continued use of the Services, you are transferring your data to Switzerland, and you expressly consent to have your data transferred to and processed in Switzerland.
+        We care about data privacy and security. Please review our Privacy Policy: <a className="link" href="/PrivacyPolicy">http://www.popcards.com/PrivacyPolicy</a>. By using the Services, you agree to be bound by our Privacy Policy, which is incorporated into these Legal Terms. Please be advised the Services are hosted in Switzerland. If you access the Services from any other region of the world with laws or other requirements governing personal data collection, use, or disclosure that differ from applicable laws in Switzerland, then through your continued use of the Services, you are transferring your data to Switzerland, and you expressly consent to have your data transferred to and processed in Switzerland.
       </p>
       <br /><br />
-      <h2 className="text-center">12. COPYRIGHT INFRINGEMENTS</h2>
+      <h2 className="text-center" id="copyrightInfringements">12. COPYRIGHT INFRINGEMENTS</h2>
       <br />
       <p>
         We respect the intellectual property rights of others. If you believe that any material available on or through the Services infringes upon any copyright you own or control, please immediately notify us using the contact information provided below (a 'Notification'). A copy of your Notification will be sent to the person who posted or stored the material addressed in the Notification. Please be advised that pursuant to applicable law you may be held liable for damages if you make material misrepresentations in a Notification. Thus, if you are not sure that material located on or linked to by the Services infringes your copyright, you should consider first contacting an attorney.
       </p>
       <br /><br />
-      <h2 className="text-center">13. TERM AND TERMINATION</h2>
+      <h2 className="text-center" id="termAndTermination">13. TERM AND TERMINATION</h2>
       <br />
       <p>
         These Legal Terms shall remain in full force and effect while you use the Services. WITHOUT LIMITING ANY OTHER PROVISION OF THESE LEGAL TERMS, WE RESERVE THE RIGHT TO, IN OUR SOLE DISCRETION AND WITHOUT NOTICE OR LIABILITY, DENY ACCESS TO AND USE OF THE SERVICES (INCLUDING BLOCKING CERTAIN IP ADDRESSES), TO ANY PERSON FOR ANY REASON OR FOR NO REASON, INCLUDING WITHOUT LIMITATION FOR BREACH OF ANY REPRESENTATION, WARRANTY, OR COVENANT CONTAINED IN THESE LEGAL TERMS OR OF ANY APPLICABLE LAW OR REGULATION. WE MAY TERMINATE YOUR USE OR PARTICIPATION IN THE SERVICES OR DELETE YOUR ACCOUNT AND ANY CONTENT OR INFORMATION THAT YOU POSTED AT ANY TIME, WITHOUT WARNING, IN OUR SOLE DISCRETION.
@@ -353,7 +336,7 @@ export function TermsOfService() {
         If we terminate or suspend your account for any reason, you are prohibited from registering and creating a new account under your name, a fake or borrowed name, or the name of any third party, even if you may be acting on behalf of the third party. In addition to terminating or suspending your account, we reserve the right to take appropriate legal action, including without limitation pursuing civil, criminal, and injunctive redress.
       </p>
       <br /><br />
-      <h2 className="text-center">14. MODIFICATIONS AND INTERRUPTIONS</h2>
+      <h2 className="text-center" id="modificationsAndInterruptions">14. MODIFICATIONS AND INTERRUPTIONS</h2>
       <br />
       <p>
         We reserve the right to change, modify, or remove the contents of the Services at any time or for any reason at our sole discretion without notice. However, we have no obligation to update any information on our Services. We will not be liable to you or any third party for any modification, price change, suspension, or discontinuance of the Services.
@@ -361,13 +344,13 @@ export function TermsOfService() {
         We cannot guarantee the Services will be available at all times. We may experience hardware, software, or other problems or need to perform maintenance related to the Services, resulting in interruptions, delays, or errors. We reserve the right to change, revise, update, suspend, discontinue, or otherwise modify the Services at any time or for any reason without notice to you. You agree that we have no liability whatsoever for any loss, damage, or inconvenience caused by your inability to access or use the Services during any downtime or discontinuance of the Services. Nothing in these Legal Terms will be construed to obligate us to maintain and support the Services or to supply any corrections, updates, or releases in connection therewith.
       </p>
       <br /><br />
-      <h2 className="text-center">15. GOVERNING LAW</h2>
+      <h2 className="text-center" id="governingLaw">15. GOVERNING LAW</h2>
       <br />
       <p>
         These Legal Terms are governed by and interpreted following the laws of Switzerland, and the use of the United Nations Convention of Contracts for the International Sales of Goods is expressly excluded. If your habitual residence is in the EU, and you are a consumer, you additionally possess the protection provided to you by obligatory provisions of the law in your country to residence. Popcode Inc and yourself both agree to submit to the non-exclusive jurisdiction of the courts of Vaud, which means that you may make a claim to defend your consumer protection rights in regards to these Legal Terms in Switzerland, or in the EU country in which you reside.
       </p>
       <br /><br />
-      <h2 className="text-center">16. DISPUTE RESOLUTION</h2>
+      <h2 className="text-center" id="disputeResolution">16. DISPUTE RESOLUTION</h2>
       <br />
       <h3 className="text-center">Informal Negotiations</h3>
       <br />
@@ -393,55 +376,55 @@ export function TermsOfService() {
         The Parties agree that the following Disputes are not subject to the above provisions concerning informal negotiations binding arbitration: (a) any Disputes seeking to enforce or protect, or concerning the validity of, any of the intellectual property rights of a Party; (b) any Dispute related to, or arising from, allegations of theft, piracy, invasion of privacy, or unauthorised use; and (c) any claim for injunctive relief. If this provision is found to be illegal or unenforceable, then neither Party will elect to arbitrate any Dispute falling within that portion of this provision found to be illegal or unenforceable and such Dispute shall be decided by a court of competent jurisdiction within the courts listed for jurisdiction above, and the Parties agree to submit to the personal jurisdiction of that court.
       </p>
       <br /><br />
-      <h2 className="text-center">17. CORRECTIONS</h2>
+      <h2 className="text-center" id="corrections">17. CORRECTIONS</h2>
       <br />
       <p>
         There may be information on the Services that contains typographical errors, inaccuracies, or omissions, including descriptions, pricing, availability, and various other information. We reserve the right to correct any errors, inaccuracies, or omissions and to change or update the information on the Services at any time, without prior notice.
       </p>
       <br /><br />
-      <h2 className="text-center">18. DISCLAIMER</h2>
+      <h2 className="text-center" id="disclaimer">18. DISCLAIMER</h2>
       <br />
       <p>
         THE SERVICES ARE PROVIDED ON AN AS-IS AND AS-AVAILABLE BASIS. YOU AGREE THAT YOUR USE OF THE SERVICES WILL BE AT YOUR SOLE RISK. TO THE FULLEST EXTENT PERMITTED BY LAW, WE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, IN CONNECTION WITH THE SERVICES AND YOUR USE THEREOF, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. WE MAKE NO WARRANTIES OR REPRESENTATIONS ABOUT THE ACCURACY OR COMPLETENESS OF THE SERVICES' CONTENT OR THE CONTENT OF ANY WEBSITES OR MOBILE APPLICATIONS LINKED TO THE SERVICES AND WE WILL ASSUME NO LIABILITY OR RESPONSIBILITY FOR ANY (1) ERRORS, MISTAKES, OR INACCURACIES OF CONTENT AND MATERIALS, (2) PERSONAL INJURY OR PROPERTY DAMAGE, OF ANY NATURE WHATSOEVER, RESULTING FROM YOUR ACCESS TO AND USE OF THE SERVICES, (3) ANY UNAUTHORISED ACCESS TO OR USE OF OUR SECURE SERVERS AND/OR ANY AND ALL PERSONAL INFORMATION AND/OR FINANCIAL INFORMATION STORED THEREIN, (4) ANY INTERRUPTION OR CESSATION OF TRANSMISSION TO OR FROM THE SERVICES, (5) ANY BUGS, VIRUSES, TROJAN HORSES, OR THE LIKE WHICH MAY BE TRANSMITTED TO OR THROUGH THE SERVICES BY ANY THIRD PARTY, AND/OR (6) ANY ERRORS OR OMISSIONS IN ANY CONTENT AND MATERIALS OR FOR ANY LOSS OR DAMAGE OF ANY KIND INCURRED AS A RESULT OF THE USE OF ANY CONTENT POSTED, TRANSMITTED, OR OTHERWISE MADE AVAILABLE VIA THE SERVICES. WE DO NOT WARRANT, ENDORSE, GUARANTEE, OR ASSUME RESPONSIBILITY FOR ANY PRODUCT OR SERVICE ADVERTISED OR OFFERED BY A THIRD PARTY THROUGH THE SERVICES, ANY HYPERLINKED WEBSITE, OR ANY WEBSITE OR MOBILE APPLICATION FEATURED IN ANY BANNER OR OTHER ADVERTISING, AND WE WILL NOT BE A PARTY TO OR IN ANY WAY BE RESPONSIBLE FOR MONITORING ANY TRANSACTION BETWEEN YOU AND ANY THIRD-PARTY PROVIDERS OF PRODUCTS OR SERVICES. AS WITH THE PURCHASE OF A PRODUCT OR SERVICE THROUGH ANY MEDIUM OR IN ANY ENVIRONMENT, YOU SHOULD USE YOUR BEST JUDGEMENT AND EXERCISE CAUTION WHERE APPROPRIATE.
       </p>
       <br /><br />
-      <h2 className="text-center">19. LIMITATIONS OF LIABILITY</h2>
+      <h2 className="text-center" id="limitationsOfLiability">19. LIMITATIONS OF LIABILITY</h2>
       <br />
       <p>
         IN NO EVENT WILL WE OR OUR DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE TO YOU OR ANY THIRD PARTY FOR ANY DIRECT, INDIRECT, CONSEQUENTIAL, EXEMPLARY, INCIDENTAL, SPECIAL, OR PUNITIVE DAMAGES, INCLUDING LOST PROFIT, LOST REVENUE, LOSS OF DATA, OR OTHER DAMAGES ARISING FROM YOUR USE OF THE SERVICES, EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. NOTWITHSTANDING ANYTHING TO THE CONTRARY CONTAINED HEREIN, OUR LIABILITY TO YOU FOR ANY CAUSE WHATSOEVER AND REGARDLESS OF THE FORM OF THE ACTION, WILL AT ALL TIMES BE LIMITED TO CHF 0.67. CERTAIN US STATE LAWS AND INTERNATIONAL LAWS DO NOT ALLOW LIMITATIONS ON IMPLIED WARRANTIES OR THE EXCLUSION OR LIMITATION OF CERTAIN DAMAGES. IF THESE LAWS APPLY TO YOU, SOME OR ALL OF THE ABOVE DISCLAIMERS OR LIMITATIONS MAY NOT APPLY TO YOU, AND YOU MAY HAVE ADDITIONAL RIGHTS.
       </p>
       <br /><br />
-      <h2 className="text-center">20. INDEMNIFICATION</h2>
+      <h2 className="text-center" id="indemnification">20. INDEMNIFICATION</h2>
       <br />
       <p>
         You agree to defend, indemnify, and hold us harmless, including our subsidiaries, affiliates, and all of our respective officers, agents, partners, and employees, from and against any loss, damage, liability, claim, or demand, including reasonable attorneys’ fees and expenses, made by any third party due to or arising out of: (1) your Contributions; (2) use of the Services; (3) breach of these Legal Terms; (4) any breach of your representations and warranties set forth in these Legal Terms; (5) your violation of the rights of a third party, including but not limited to intellectual property rights; or (6) any overt harmful act toward any other user of the Services with whom you connected via the Services. Notwithstanding the foregoing, we reserve the right, at your expense, to assume the exclusive defence and control of any matter for which you are required to indemnify us, and you agree to cooperate, at your expense, with our defence of such claims. We will use reasonable efforts to notify you of any such claim, action, or proceeding which is subject to this indemnification upon becoming aware of it.
       </p>
       <br /><br />
-      <h2 className="text-center">21. USER DATA</h2>
+      <h2 className="text-center" id="userData">21. USER DATA</h2>
       <br />
       <p>
         We will maintain certain data that you transmit to the Services for the purpose of managing the performance of the Services, as well as data relating to your use of the Services. Although we perform regular routine backups of data, you are solely responsible for all data that you transmit or that relates to any activity you have undertaken using the Services. You agree that we shall have no liability to you for any loss or corruption of any such data, and you hereby waive any right of action against us arising from any such loss or corruption of such data.
       </p>
       <br /><br />
-      <h2 className="text-center">22. ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES</h2>
+      <h2 className="text-center" id="electronic">22. ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES</h2>
       <br />
       <p>
         Visiting the Services, sending us emails, and completing online forms constitute electronic communications. You consent to receive electronic communications, and you agree that all agreements, notices, disclosures, and other communications we provide to you electronically, via email and on the Services, satisfy any legal requirement that such communication be in writing. YOU HEREBY AGREE TO THE USE OF ELECTRONIC SIGNATURES, CONTRACTS, ORDERS, AND OTHER RECORDS, AND TO ELECTRONIC DELIVERY OF NOTICES, POLICIES, AND RECORDS OF TRANSACTIONS INITIATED OR COMPLETED BY US OR VIA THE SERVICES. You hereby waive any rights or requirements under any statutes, regulations, rules, ordinances, or other laws in any jurisdiction which require an original signature or delivery or retention of non-electronic records, or to payments or the granting of credits by any means other than electronic means.
       </p>
       <br /><br />
-      <h2 className="text-center">23. CALIFORNIA USERS AND RESIDENTS</h2>
+      <h2 className="text-center" id="californiaUsersAndResidents">23. CALIFORNIA USERS AND RESIDENTS</h2>
       <br />
       <p>
         If any complaint with us is not satisfactorily resolved, you can contact the Complaint Assistance Unit of the Division of Consumer Services of the California Department of Consumer Affairs in writing at 1625 North Market Blvd., Suite N 112, Sacramento, California 95834 or by telephone at (800) 952-5210 or (916) 445-1254.
       </p>
       <br /><br />
-      <h2 className="text-center">24. MISCELLANEOUS</h2>
+      <h2 className="text-center" id="miscellaneous">24. MISCELLANEOUS</h2>
       <br />
       <p>
         These Legal Terms and any policies or operating rules posted by us on the Services or in respect to the Services constitute the entire agreement and understanding between you and us. Our failure to exercise or enforce any right or provision of these Legal Terms shall not operate as a waiver of such right or provision. These Legal Terms operate to the fullest extent permissible by law. We may assign any or all of our rights and obligations to others at any time. We shall not be responsible or liable for any loss, damage, delay, or failure to act caused by any cause beyond our reasonable control. If any provision or part of a provision of these Legal Terms is determined to be unlawful, void, or unenforceable, that provision or part of the provision is deemed severable from these Legal Terms and does not affect the validity and enforceability of any remaining provisions. There is no joint venture, partnership, employment or agency relationship created between you and us as a result of these Legal Terms or use of the Services. You agree that these Legal Terms will not be construed against us by virtue of having drafted them. You hereby waive any and all defences you may have based on the electronic form of these Legal Terms and the lack of signing by the parties hereto to execute these Legal Terms.
       </p>
       <br /><br />
-      <h2 className="text-center">25. CONTACT US</h2>
+      <h2 className="text-center" id="contactUs">25. CONTACT US</h2>
       <br />
       <p>
         In order to resolve a complaint regarding the Services or to receive further information regarding use of the Services, please contact us at:
