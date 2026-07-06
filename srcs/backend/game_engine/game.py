@@ -4,7 +4,6 @@ from .board import Board
 from .deck import Deck
 import copy
 
-import traceback
 class GameEngine:
 	def __init__(self, roomID: str):
 		self.indexPlayer = -1
@@ -58,7 +57,6 @@ class GameEngine:
 		Q = 6
 		K = 7
 
-		print(cards)
 		for c in colors:
 			if ({"value": "Q", "color": c, "id": Q} in cards and 
 				{"value": "K", "color": c, "id": K} in cards):

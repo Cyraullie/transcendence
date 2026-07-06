@@ -1,6 +1,6 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .db import  end_room, get_room_with_host, get_player_pos, get_nb_human
+from .db import get_room_with_host, get_player_pos, get_nb_human
 from .models import PlayerPresence, Room
 from asgiref.sync import sync_to_async
 from game_engine.game import GameEngine

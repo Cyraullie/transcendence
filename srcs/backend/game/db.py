@@ -2,12 +2,11 @@ import os
 from pathlib import Path
 import tempfile
 from asgiref.sync import sync_to_async
-from .models import PlayerPresence, Room, PlayerScore, Stat, GameLog
+from .models import PlayerPresence, Room, PlayerScore, Stat
 from api.models import User
 from django.db.models import Max
 from django.utils import timezone
 from datetime import timedelta
-import asyncio
 
 @sync_to_async
 def get_params(code):

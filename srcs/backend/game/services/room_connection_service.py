@@ -4,7 +4,6 @@ from api.models import Friendship, User
 from asgiref.sync import sync_to_async
 from django.db.models import Q, F
 
-from .room_service import RoomService
 from .room_task_service import RoomTaskService
 
 class RoomConnectionService:
