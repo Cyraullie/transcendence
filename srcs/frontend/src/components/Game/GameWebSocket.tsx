@@ -31,9 +31,9 @@ export default function GameWebSocket({
   }, [code]);
 
   function leaveRoom() {
-	auth.setGame(false);
     localStorage.removeItem("code");
     setCode("");
+	auth.setGame(false);
   }
 
   const { default: useWebSocket = useWebSocketModule } =
