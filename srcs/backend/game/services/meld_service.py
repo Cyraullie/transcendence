@@ -4,8 +4,6 @@ from game_engine.game import GameEngine
 from .score_service import ScoreService
 from game.models import PlayerPresence, Room
 from asgiref.sync import sync_to_async
-from game_engine.card import Card
-import copy
 
 CARD_VALUES = {
     "6": 6,

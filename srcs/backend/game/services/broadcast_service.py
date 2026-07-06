@@ -1,10 +1,8 @@
 from asgiref.sync import sync_to_async
-from ..db import  remove_player_from_room, get_room_with_host, get_params
+from ..db import get_room_with_host
 from datetime import timedelta
 from ..models import PlayerPresence, GameLog
-import json
 from game_engine.game import GameEngine
-from channels.layers import get_channel_layer
 from game_engine.card import Card
 import copy
 

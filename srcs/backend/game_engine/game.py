@@ -4,7 +4,6 @@ from .board import Board
 from .deck import Deck
 import copy
 
-import traceback
 class GameEngine:
 	def __init__(self, roomID: str):
 		self.indexPlayer = -1

@@ -1,16 +1,12 @@
-# game/tasks.py
-
 from celery import shared_task
-from .db import  get_room_with_host, get_params
+from .db import get_params
 from .models import Room
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.utils import timezone
-from datetime import datetime
 
 from .models import PlayerPresence
 from api.models import User
-
 
 @shared_task
 def delete_room(room_code):

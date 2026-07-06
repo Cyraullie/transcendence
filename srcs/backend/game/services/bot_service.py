@@ -4,14 +4,13 @@ from .room_task_service import RoomTaskService
 from .broadcast_service import BroadcastService
 from django.utils import timezone
 from datetime import timedelta
-from ..db import add_player_to_room, remove_player_from_room, end_room, save_room_state, get_room_with_host, start_room, get_player_pos, count_player
+from ..db import save_room_state, get_room_with_host
 from game_engine.game import GameEngine
 from game_engine.bot.bot import bot
 from channels.layers import get_channel_layer
 from .meld_service import MeldService
 import asyncio
 import random
-
 
 class BotService:
 
