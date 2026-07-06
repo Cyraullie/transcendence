@@ -11,6 +11,7 @@ from .services.task_service import TaskService
 from .services.bot_service import BotService
 from .services.room_connection_service import RoomConnectionService
 from .services.broadcast_service import BroadcastService
+from .services.room_task_service import RoomTaskService
 from django.utils import timezone
 from datetime import timedelta
 
@@ -117,8 +118,8 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
         if finished and room.status == "start":
             await GameService.check_goal_reached(room.code)
-    #TODO avoid does not exist error on room connection
     
+
     async def connect(self):
         self.code = self.scope["url_route"]["kwargs"]["code"]
         self.group_name = f"room_{self.code}"
@@ -128,7 +129,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await self.close(code=4003)
             return
 
-        if not await sync_to_async(Room.objects.get)(code=self.code):
+        if not await sync_to_async(Room.objects.filter(code=self.code).exists)():
                 await self.send_json({"error": "The room does not exist"})
                 await self.close(code=4004)
                 return
@@ -191,7 +192,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await BroadcastService.broadcast_game(self.code, self.channel_layer, "player_reconnect", self.user.username)
             room = await get_room_with_host(room.code)
             game = GameEngine(room.uuid)
-            
+            await RoomTaskService.cancel_disconnected(room.code, self.user.id)
             nb_human = await get_nb_human(room.uuid)
             if nb_human > 0:
                 await sync_to_async(
@@ -239,12 +240,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 if nb_human > 0:
                     room = await get_room_with_host(room.code)
                     game = GameEngine(room.uuid)
-                
-                    asyncio.create_task(BotService.play_until_human(room, room.game_state, game,
-                                                        check_end=GameService.check_game_end, 
-                                                        check_take_fold_callback=GameService.check_take_fold,
-                                                        ask_continue=GameService.check_goal_reached
-                                                        ))
+                    await RoomTaskService.schedule_disconnected(room.code, self.user.id)
                 else:
                     await sync_to_async(
                         Room.objects.filter(code=self.code).update
