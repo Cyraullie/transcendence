@@ -35,7 +35,7 @@ function DisplayWhoPlaying({
       );
     }
   } else if (winner) {
-    return <p><em>{username}</em> has won the fold!</p>;
+    return <p><em>{winner}</em> has won the fold!</p>;
   } else {
 	return <p>trick over!</p>
   }
@@ -134,6 +134,7 @@ export default function CurrentInfo() {
       <DisplayWhoPlaying
         self={self}
         username={nameCurrentPlayer?.user.username}
+		winner={state.game.boardData.winner}
       />
       {state.event === "finish_round" ? (
         <p className="flex items-center gap-1">
