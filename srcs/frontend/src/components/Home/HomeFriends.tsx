@@ -18,11 +18,15 @@ export default function HomeFriends({ friends, requests }: Props) {
               friends.length === 0 ?
                 <p className="text-center">You don't have any friends online, go make some !</p>
                 :
-                (friends.map((friend: friendT) => {
-                  return (
-                    <p>{friend.user.username}</p>
-                  )
-                }))
+                (
+                  <ul className="list-disc ms-8">
+                    {friends.map((friend: friendT) => {
+                      return (
+                        <li>{friend.user.username}</li>
+                      );
+                    })}
+                  </ul>
+                )
             )
             : "Error about friends in HomeFriends"
           }
