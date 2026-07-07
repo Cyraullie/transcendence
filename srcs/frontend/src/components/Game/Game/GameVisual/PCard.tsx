@@ -1,7 +1,6 @@
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import {
-  // log,
   MeshPhongMaterial,
   Texture,
   type Mesh,
@@ -10,11 +9,6 @@ import {
 import type { cardT } from "../../../../utils/type/handCardsType";
 import { useGame } from "../../context/GameContext";
 
-// import { RoundedBoxGeometry } from "@react-three/drei";
-
-// function sendCard(card: cardT) {
-//   console.log(card.value + " of " + card.color + " played!");
-// }
 
 type Props = {
   cardIndex: number;
@@ -23,8 +17,6 @@ type Props = {
   front: Texture<HTMLImageElement, TextureEventMap> | undefined;
   back: Texture<HTMLImageElement, TextureEventMap> | undefined;
   oldStartPos: number;
-//   setHand: Dispatch<SetStateAction<cardT[]>>;
-//   hand: cardT[];
   lastCardPlayed: number;
   setHand: Dispatch<SetStateAction<cardT[]>>;
   setLastCardPlayed: Dispatch<SetStateAction<number>>;
@@ -38,8 +30,6 @@ export default function PCard({
   front,
   back,
   oldStartPos,
-//   setHand,
-//   hand,
   lastCardPlayed,
   setHand,
   setLastCardPlayed,
@@ -98,12 +88,9 @@ export default function PCard({
   function handleClick() {
     if (hidden || played) return;
     if (!active) {
-      // cardRef.current.translateY(1.3);
-      // cardRef.current.translateZ(0.1);
       setOvered(false);
       setActive(true);
     } else {
-      // replaceCard();
       handleDoubleClick();
       setActive(false);
     }

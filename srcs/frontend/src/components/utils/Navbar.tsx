@@ -29,6 +29,11 @@ export function Navbar() {
     );
   };
 
+  function logout_handler() {
+	auth.setHasFriendRequest(false);
+	navigate("/login", { state: current_location.pathname });
+  }
+
   async function handleLogout() {
     auth.setLogging(true);
     const res = await logout();
@@ -40,7 +45,7 @@ export function Navbar() {
     auth.setLoggedIn(false);
     localStorage.removeItem("code");
     auth.setUserID(null);
-    navigate("/login", { state: current_location.pathname });
+    logout_handler();
     setTimeout(() => {
       auth.setLogging(false);
     }, 500);
@@ -136,7 +141,7 @@ export function Navbar() {
               onClick={() =>
                 auth.logged_in
                   ? showConfirmRef.current?.showModal()
-                  : navigate("/login", { state: current_location.pathname })
+                  : logout_handler()
               }
               className={(isActive("/login") ? "active " : "") + "item-menu"}
             >
@@ -164,11 +169,6 @@ export function Navbar() {
               </div>
             </div>
           </dialog>
-          {/* {auth.logged_in ? ( */}
-          {/*   <li> */}
-          {/*     <Notif_Inbox></Notif_Inbox> */}
-          {/*   </li> */}
-          {/* ) : null} */}
         </ul>
       </div>
     </div>
