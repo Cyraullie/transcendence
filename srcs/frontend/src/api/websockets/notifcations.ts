@@ -114,24 +114,3 @@ export function Notifications({ setProfile, updatedProfile, updateLeaderboard, s
 	});
 	return null;
 }
-
-// Friend Deleted
-// {"type": "friend_delete", "event": "update", "payload": null}
-
-
-// Friend request denied
-// {"type": "friend_delete", "event": "update", "payload": null}
-
-// Blocked
-// {"type": "friend_blocked", "event": "update", "payload": null}
-
-// // Friend goes online/offline
-// event: "update"
-// 
-// payload: null
-// 
-// type: "friend_online"
-
-
-// Leaderboard
-// game_finished

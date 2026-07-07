@@ -142,8 +142,6 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
             <td>{account.is_online ? "now" : account.last_login}</td>
           </tr> : null}
         </table>
-        {/* {* if friend *} 
-        need to modify a lot of thing here like the width of the modal ( surement creer un nouveau component history) */}
         <div className="mt-10">
           <MiniHistory history={history} updatedProfile={localUpdatedFriends} setUpdate={localSet} />
         </div>

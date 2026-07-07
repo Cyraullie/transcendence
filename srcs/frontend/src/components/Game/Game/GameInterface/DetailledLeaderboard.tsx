@@ -1,6 +1,4 @@
 import { useRef } from "react";
-// import { generateFakeDetailedGame } from "../../../../utils/test_funcs/generateFakeDetailedGame";
-// import { generateFakeUsersInGame } from "../../../../utils/test_funcs/generateFakeUsersInGame";
 import { useGame } from "../../context/GameContext";
 import type { DetailedPointsT, playerScoreT } from "../../../../utils/type/boardDataType";
 
