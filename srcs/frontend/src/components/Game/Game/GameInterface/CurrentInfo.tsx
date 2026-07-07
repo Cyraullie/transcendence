@@ -18,9 +18,11 @@ function DisplayTrumpLogo({ trump }: { trump: string | null }) {
 function DisplayWhoPlaying({
   self,
   username,
+  winner,
 }: {
   self: boolean;
   username: string | undefined;
+  winner: string | null;
 }) {
   if (username) {
     if (self) {
@@ -32,8 +34,10 @@ function DisplayWhoPlaying({
         </p>
       );
     }
+  } else if (winner) {
+    return <p><em>{username}</em> has won the fold!</p>;
   } else {
-    return <p>trick over!</p>;
+	return <p>trick over!</p>
   }
 }
 
