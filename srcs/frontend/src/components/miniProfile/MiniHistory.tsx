@@ -44,7 +44,7 @@ export function MiniHistory({ history }: Props) {
       <div className="collapse-content text-sm z-1">
         {history.length === 0 ?
           <div className="text-center">
-            <p>Once you have played a game, you'll be able to see it here !</p>
+            <p>This player does not yet have any games in their history!</p>
           </div>
           :
           <table className="mt-5 text-center w-full">
