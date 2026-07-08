@@ -83,32 +83,34 @@ export default function CurrentInfo() {
     (player) => player.room_id === currentPlayer,
   );
   const self = nameCurrentPlayer?.user.username === state.user;
-  const timeout = state.game.boardData.round_time;
-  const [timeLeft, setTimeLeft] = useState<number>(
-    Math.floor((timeout.getTime() - new Date().getTime()) / 1000),
-  );
   const limit = "round";
   const limitValue = 3;
   const currentGame = state.game.boardData.game;
   const currentPoints = state.game.boardData.points;
+  const [timeLeft, setTimeLeft] = useState<number>(5);
 
-  useEffect(() => {
-    async function setTime() {
-      setTimeLeft(
-        Math.max(0, Math.floor((timeout.getTime() - Date.now()) / 1000)),
-      );
-    }
+	useEffect(() => {
+	async function handle_time() {
+		if (state.event !== "finish_round") {
+			setTimeLeft(5);
+			return;
+		}
+		setTimeLeft(5);
+		const intervalId = setInterval(() => {
+			setTimeLeft((prev) => {
+			if (prev <= 1) {
+				clearInterval(intervalId);
+				return 0;
+			}
 
-    setTime();
+			return prev - 1;
+			});
+		}, 1000);
 
-    const intervalId = setInterval(() => {
-      setTimeLeft(
-        Math.max(0, Math.floor((timeout.getTime() - Date.now()) / 1000)),
-      );
-    }, 1000);
-
-    return () => clearInterval(intervalId);
-  }, [state.game.boardData.round_time]);
+		return () => clearInterval(intervalId);
+	}
+	handle_time();
+	}, [state.event]);
 
   return (
     <div className="border-y border-primary mt-2 py-2 w-full flex flex-col items-center">
@@ -140,7 +142,7 @@ export default function CurrentInfo() {
         <p className="flex items-center gap-1">
           Next fold in:{" "}
           <strong>
-            {Math.max(0, timeLeft - (state.game.boardData.round === 0 ? 20 : 9))}s
+            {timeLeft}s
           </strong>
         </p>
       ) : null}
