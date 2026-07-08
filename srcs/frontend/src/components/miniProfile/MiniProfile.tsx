@@ -81,12 +81,9 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
         <p className="text-center ">click ESC to close this window</p>
         <div className="flex">
           <div className="avatar flex-col">
-            <div className="avatar mt-8 rounded-4xl w-24">
+            <div className={"avatar mt-8 rounded-4xl w-24" + (account.is_online ? " border-4 border-green-400" : "")}>
               <img src={account.avatar}></img>
             </div>
-            <p className="text-success font-extrabold my-2 mx-auto">
-              {account.is_online && account.friend ? "Online" : ""}
-            </p>
           </div>
           <div className="w-full flex justify-end">
             <div >
@@ -99,13 +96,13 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
                         <p className="flex items-center pr-2">Friend request received : </p>
                         <button
                           className="btn validate"
-                          onClick={() => changeHandler(account.friend.id, "accept", localUpdatedFriends, localSet, null, notif)}
+                          onClick={() => changeHandler(account.friend.id, "accept", localUpdatedFriends, localSet, profileRef, notif)}
                         >
                           <RxCheck />
                         </button>
                         <button
                           className="btn del"
-                          onClick={() => changeHandler(account.friend.id, "delete", localUpdatedFriends, localSet, null, notif)}
+                          onClick={() => changeHandler(account.friend.id, "delete", localUpdatedFriends, localSet, profileRef, notif)}
                         >
                           <RxCross2 />
                         </button>
@@ -115,7 +112,7 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
                         <p className="flex items-center">Friend request sent : </p>
                         <button
                           className="btn del"
-                          onClick={() => changeHandler(account.friend.id, "delete", localUpdatedFriends, localSet, null, notif)}
+                          onClick={() => changeHandler(account.friend.id, "delete", localUpdatedFriends, localSet, profileRef, notif)}
                         >
                           <RxCross2 />
                         </button>
