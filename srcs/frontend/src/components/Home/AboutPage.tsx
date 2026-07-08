@@ -67,7 +67,7 @@ export default function AboutPage() {
         <h2 className="text-center">Meet the team</h2>
         <br />
         <p className="text-justify">
-          The Popcode team has been together since the beginning of their 42 journey.Enjoying lunch together nearly every day, the formation into a project team occurred naturally.Having a tradition of sharing popcorn around the work space, the identity of our team was esaily decided.Our first project as a team is Popcards, inspired by our daily card games we decided to bring one of our favourite card games to the online world.
+          The Popcode team has been together since the beginning of their 42 journey. Enjoying lunch together nearly every day, the formation into a project team occurred naturally. Having a tradition of sharing popcorn around the work space, the identity of our team was easily decided. Our first project as a team is Popcards, inspired by our daily card games we decided to bring one of our favourite card games to the online world.
         </p>
         <br />
         <h3 className="text-center">Individual Profiles</h3>
