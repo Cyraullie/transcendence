@@ -18,7 +18,7 @@ export default function PlayedCard({show, front, back, posPlayedCard, idPlayer, 
     new MeshPhongMaterial({color: 0xffffff}),
     new MeshPhongMaterial({color: 0xffffff}),
     new MeshPhongMaterial({color: 0xffffff}),
-    new MeshPhongMaterial({map: front}),
+    new MeshBasicMaterial({map: front}),
     new MeshPhongMaterial({map: back})
   ];
 
