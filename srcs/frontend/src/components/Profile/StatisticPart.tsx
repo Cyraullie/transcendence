@@ -9,7 +9,7 @@ export function StatisticsPart({stats}:{stats:statisticsT}) {
         <td>{stats.played}</td>
         <th className="th-stats">Winrate: </th>
         <td>
-          {(stats.win / stats.played).toPrecision(3)} (W: {stats.win} L:{" "}
+          {( stats.played > 0 ? (stats.win / stats.played).toPrecision(3): 0)} (W: {stats.win} L:{" "}
           {stats.lose})
         </td>
       </tr>
@@ -21,7 +21,7 @@ export function StatisticsPart({stats}:{stats:statisticsT}) {
       </tr>
       <tr>
         <th className="th-stats">Prefered tricks</th>
-        <td>{stats.prefered_trick}</td>
+        <td>{stats.prefered_trick !== "null" ? stats.prefered_trick : "none"}</td>
         <th className="th-stats">Times fold taken</th>
         <td>{stats.nb_taken}</td>
       </tr>
