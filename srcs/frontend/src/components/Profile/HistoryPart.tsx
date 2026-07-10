@@ -154,42 +154,27 @@ export function History({ gameHistory, updatedProfile, setUpdate, isHome }: Prop
               </a>
             )}
           </table >
-          <table className={"mt-5 table-auto text-center w-full" + (isHome ? "" : " hidden")} >
-              <>
-                <tr className="h-14">
-                  <th className="th-history">Game ID</th>
+          <table className={"table mt-5 text-center table-sm table-pin-rows table-pin-cols" + (isHome ? " md:hidden" : " hidden")} >
+            <thead>
+              <tr className="h-14 bg-base-200 border-y-hidden">
+                <th className="bg-base-200 border-hidden"></th>
+                <td className="w-40 border-hidden">Date</td>
+                <td className="th-history border-hidden">Your points</td>
+                <td className="th-history border-hidden">Nb players</td>
+                <td className=" overflow-hidden border-hidden">Opponents</td>
+                <th className="bg-base-200 th-history border-hidden"></th>
+              </tr>
+            </thead>
             {gameHistory.slice(0, nbSlice).map((game: historyT) => (
-                  <td className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-x-4 "}><p className="ml-2">{game.game_id} </p></td>
-			))}
-                </tr>
-                <tr className="h-14">
-                  <th className="w-40">Date</th>
-            {gameHistory.slice(0, nbSlice).map((game: historyT) => (
-                  <td className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-x-4 "}>{game.start}</td>
-			))}
-                </tr>
-                <tr className="h-14">
-                  <th className="th-history">Your points</th>
-            {gameHistory.slice(0, nbSlice).map((game: historyT) => (
-                  <td className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-x-4 "}>{game.points}</td>
-			))}
-                </tr>
-                <tr className="h-14">
-                  <th className="th-history">Time played</th>
-            {gameHistory.slice(0, nbSlice).map((game: historyT) => (
-                  <td className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-x-4 "}>{game.duration}</td>
-			))}
-                </tr>
-                <tr className="h-14">
-                  <th className="th-history">Nb players</th>
-            {gameHistory.slice(0, nbSlice).map((game: historyT) => (
-                  <td className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-x-4 "}>{game.nb_player}</td>
-			))}
-                </tr>
-                <tr className="h-14">
-                  <th className="overflow-hidden">Opponents</th>
-            {gameHistory.slice(0, nbSlice).map((game: historyT) => (
-                  <td className={(isHome ? "bg-base-100 border-base-200" : "bg-base-200 border-base-100") + " border-x-4 "}>
+              <tbody>
+                <tr className="bg-base-100">
+                  <th className="bg-base-200 px-2">
+                    <p>{gameHistory.indexOf(game)}</p>
+                  </th>
+                  <td className="px-2 border-y g-base-100 border-base-200 ">{game.start}</td>
+                  <td className="px-2 border-base-200 border-y">{game.points}</td>
+                  <td className="px-2 border-base-200 border-y">{game.nb_player}</td>
+                  <td className="px-2 border-base-200 border-y">
                     <div className="dropdown dropdown-center">
                       <div
                         tabIndex={0}
@@ -218,17 +203,13 @@ export function History({ gameHistory, updatedProfile, setUpdate, isHome }: Prop
                       </ul>
                     </div>
                   </td>
-			))}
-                </tr>
-                <tr>
-                  <th className="th-history">Your result</th>
-            {gameHistory.slice(0, nbSlice).map((game: historyT) => (
-                  <td className={
+                  <th className={
                     (game.won ? "bg-success" : "bg-warning") +
-                    " h-16 border-x-4 border-base-200"}>{game.won ? "winner" : "loooser"}</td>
-			))}
+                    " h-16 border-y border-base-200 -px-2"}>{game.won ? "W" : "L"}</th>
                 </tr>
-              </>
+              </tbody>
+            ))
+            }
           </table >
         </>
       }
