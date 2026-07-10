@@ -16,7 +16,7 @@ export function StatisticsPart({stats}:{stats:statisticsT}) {
       <tr>
         <th className="th-stats">Total points received:</th>
         <td>{stats.total_points}</td>
-        <th className="th-stats">Times tricks choosen</th>
+        <th className="th-stats">Times tricks chosen</th>
         <td>{stats.nb_trick_choose}</td>
       </tr>
       <tr>
