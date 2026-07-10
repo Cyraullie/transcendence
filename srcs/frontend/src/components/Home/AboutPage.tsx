@@ -29,7 +29,7 @@ export default function AboutPage() {
       <div id="technicalStack">
         <h2 className="text-center">Technical Stack</h2>
         <br />
-        <div className="flex justify-between flex-wrap">
+        <div className="flex gap-6 justify-center flex-wrap">
           <div className="mb-4">
             <h3>Frontend</h3>
             <ul className="list-disc ms-8">
@@ -71,7 +71,7 @@ export default function AboutPage() {
         </p>
         <br />
         <h3 className="text-center">Individual Profiles</h3>
-        <div className="flex flex-wrap justify-between gap-3 justify-center">
+        <div className="flex flex-wrap gap-3 justify-center">
           <div className="bordered border w-60">
             <h4 className="pb-4"><strong>Cyril aka cgoldens</strong></h4>
             <div className="flex justify-center mb-3 ">
