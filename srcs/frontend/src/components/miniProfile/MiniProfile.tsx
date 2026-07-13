@@ -118,29 +118,47 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
           </div>
           <BlockBtn req_id={account.id} updatedFriends={localUpdatedFriends} setUpdate={localSet} profileRef={profileRef} />
         </div>
-        <div className="avatar w-full flex justify-start max-sm:justify-center mt-2">
+        <div className="avatar w-full flex justify-start max-md:justify-center mt-2">
           <div className={"avatar rounded-4xl w-24" + (account.is_online ? " border-4 border-green-400" : "")}>
             <img src={account.avatar}></img>
           </div>
         </div>
-        <table className="mt-5">
+        <table className="mt-5 max-md:mx-auto max-sm:hidden">
           <tr>
             <th className="th-profile">Username:</th>
-            <td>{account.username}</td>
+            <td>
+              {account.username}{" "}
+            </td>
           </tr>
           <tr>
             <th className="th-profile">Joined on:</th>
             <td>{account.date_joined}</td>
           </tr>
-          {account.friend ? <tr>
+          <tr>
             <th className="th-profile">Last login:</th>
             <td>{account.is_online ? "now" : account.last_login}</td>
-          </tr> : null}
+          </tr>
         </table>
+        <ul className="sm:hidden">
+          <li>
+            <strong>Username:</strong>
+          </li>
+          <li className="mb-4">
+            {account.username}{" "}
+          </li>
+          <li>
+            <strong>Joined on:</strong>
+          </li>
+          <li className="mb-4">{account.date_joined}</li>
+          <li>
+            <strong>Last login:</strong>
+          </li>
+          <li>{account.is_online ? "now" : account.last_login}</li>
+        </ul>
         <div className="mt-10">
           <MiniHistory history={history} />
         </div>
-      </div >
+      </div>
       <form method="dialog" className="modal-backdrop">
         <button ></button>
       </form>
