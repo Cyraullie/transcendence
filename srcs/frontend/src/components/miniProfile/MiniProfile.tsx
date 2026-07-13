@@ -118,7 +118,7 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
           </div>
           <BlockBtn req_id={account.id} updatedFriends={localUpdatedFriends} setUpdate={localSet} profileRef={profileRef} />
         </div>
-        <div className="avatar w-full flex justify-start max-sm:justify-center mt-2">
+        <div className="avatar w-full flex justify-start max-md:justify-center mt-2">
           <div className={"avatar rounded-4xl w-24" + (account.is_online ? " border-4 border-green-400" : "")}>
             <img src={account.avatar}></img>
           </div>
