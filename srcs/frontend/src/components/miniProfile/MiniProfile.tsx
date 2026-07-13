@@ -123,24 +123,42 @@ export default function MiniProfile({ account, updatedFriends, setUpdate, histor
             <img src={account.avatar}></img>
           </div>
         </div>
-        <table className="mt-5">
+        <table className="mt-5 max-md:mx-auto max-sm:hidden">
           <tr>
             <th className="th-profile">Username:</th>
-            <td>{account.username}</td>
+            <td>
+              {account.username}{" "}
+            </td>
           </tr>
           <tr>
             <th className="th-profile">Joined on:</th>
             <td>{account.date_joined}</td>
           </tr>
-          {account.friend ? <tr>
+          <tr>
             <th className="th-profile">Last login:</th>
             <td>{account.is_online ? "now" : account.last_login}</td>
-          </tr> : null}
+          </tr>
         </table>
+        <ul className="sm:hidden">
+          <li>
+            <strong>Username:</strong>
+          </li>
+          <li className="mb-4">
+            {account.username}{" "}
+          </li>
+          <li>
+            <strong>Joined on:</strong>
+          </li>
+          <li className="mb-4">{account.date_joined}</li>
+          <li>
+            <strong>Last login:</strong>
+          </li>
+          <li>{account.is_online ? "now" : account.last_login}</li>
+        </ul>
         <div className="mt-10">
           <MiniHistory history={history} />
         </div>
-      </div >
+      </div>
       <form method="dialog" className="modal-backdrop">
         <button ></button>
       </form>
