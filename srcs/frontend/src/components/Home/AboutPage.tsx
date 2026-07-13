@@ -26,43 +26,6 @@ export default function AboutPage() {
         </p>
         <br /><br />
       </div>
-      <div id="technicalStack">
-        <h2 className="text-center">Technical Stack</h2>
-        <br />
-        <div className="flex gap-6 justify-center flex-wrap mx-30">
-          <div className="mb-4">
-            <h3>Frontend</h3>
-            <ul className="list-disc ms-8">
-              <li>React</li>
-              <li>Typescript</li>
-              <li>Tailwind CSS</li>
-              <li>ThreeJS</li>
-              <li>DaisyUI</li>
-            </ul>
-          </div>
-          <br />
-          <div className="mb-4">
-            <h3>Backend</h3>
-            <ul className="list-disc ms-8">
-              <li>Django</li>
-              <li>RESTapi</li>
-              <li>Daphne</li>
-              <li>Celery</li>
-              <li>MariaDB</li>
-            </ul>
-          </div>
-          <br />
-          <div className="mb-4">
-            <h3>Infrastructure</h3>
-            <ul className="list-disc ms-8">
-              <li>NGINX</li>
-              <li>Docker & Docker Compose</li>
-              <li>Make</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <br /><br />
       <div id="meetTheTeam">
         <h2 className="text-center">Meet the team</h2>
         <br />
