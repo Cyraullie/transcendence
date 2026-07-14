@@ -32,7 +32,7 @@ export default function AdversaryCard({setShow, angle, littleRadius, front, back
   const cardRef = useRef<Mesh>(null!);
 
   const factor = 0.15 * ((7 - totalPlayer));
-  const pf = [0, posPlayedCard, 0];
+  const pf = [0, posPlayedCard, 0 + (positionCard * 0.001)];
   const [scale, setScale] = useState(0.4)
   
   
@@ -42,15 +42,8 @@ export default function AdversaryCard({setShow, angle, littleRadius, front, back
       const delta = [pf[0] - cardRef.current.position.x, pf[1] - cardRef.current.position.y, pf[2] - cardRef.current.position.z];
       if (delta[0] < 0.001 && delta[1] < 0.001 && delta[2] < 0.001)
       {
-        // resetState();
-		// setShow(true);
-		setTimeout(() => {
-			resetState();
-		}, 100);
-
-		setTimeout(() => {
-			setShow(true);
-		}, 200);
+        resetState();
+		setShow(true);
 		return ;
       }
 	setScale(1);
