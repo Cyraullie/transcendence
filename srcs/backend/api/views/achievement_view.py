@@ -23,12 +23,13 @@ def achievements(request):
             .annotate(count=Count("user"))
         )
     }
-    my_achievement_ids = set()
-    if request.user:
+    if request.user.is_authenticated:
         my_achievement_ids = set(
             UserAchievement.objects.filter(user=request.user)
             .values_list("achievement_id", flat=True)
         )
+    else:
+        my_achievement_ids = set()
 
     achievements = Achievement.objects.all()
     list_achievement = []
@@ -42,10 +43,10 @@ def achievements(request):
         )
         condition = achievement.condition
 
-        current_value = get_condition_value(
-            request.user,
-            condition
-        )
+        if request.user.is_authenticated:
+            current_value = get_condition_value(request.user, condition)
+        else:
+            current_value = 0
         
         max_value = condition.get("value", 1)
         
