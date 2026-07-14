@@ -94,7 +94,6 @@ export default function AdversaryHand({ room_id, angleCenter, cardHand, fronts, 
               posPlayedCard={posPlayedCard}
               animate={index === playedCard}
               resetState={resetState}
-			  key={index}
               />
         );
       })}
