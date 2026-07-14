@@ -1,11 +1,12 @@
 import AdversaryCard from "./AdversaryCard";
 import type { adversaryT } from "../../../../utils/type/adversaryType";
 import { type Texture, type TextureEventMap } from "three";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { useGame } from "../../context/GameContext";
 import { Text, Image } from "@react-three/drei";
 
 type Props = {
+  setShow: Dispatch<SetStateAction<boolean>>,
   room_id: number,
   angleCenter: number,
   cardHand: adversaryT,
@@ -16,11 +17,11 @@ type Props = {
   posPlayedCard: number
 }
 
-export default function AdversaryHand({ room_id, angleCenter, cardHand, fronts, back, totalPlayer, boardRadius, posPlayedCard }: Props) {
+export default function AdversaryHand({ setShow, room_id, angleCenter, cardHand, fronts, back, totalPlayer, boardRadius, posPlayedCard }: Props) {
 
   const [simCards, setCards] = useState(cardHand.nbCards);
   const [playedCard, setPlayed] = useState<number | null>(null);
-  const { state, setShow } = useGame();
+  const { state } = useGame();
   const angleBetween = Math.PI / 30;
   const littleRadius = Math.sin(angleCenter / 2) * boardRadius;
   const angleStart = - (cardHand.nbCards - 1) * angleBetween / 2;
@@ -84,6 +85,7 @@ export default function AdversaryHand({ room_id, angleCenter, cardHand, fronts, 
           return (
             <>
               <AdversaryCard
+                setShow={setShow}
                 angle={angle}
                 littleRadius={littleRadius}
                 front={fronts[cardID]}

@@ -1,10 +1,11 @@
 import { useFrame } from "@react-three/fiber";
-import { useRef } from "react";
+import { useRef, type Dispatch, type SetStateAction } from "react";
 import { MeshPhongMaterial } from "three";
 import type { Mesh, Texture, TextureEventMap } from "three";
 import { useGame } from "../../context/GameContext";
 
 type Props = {
+  setShow: Dispatch<SetStateAction<boolean>>,
   angle: number,
   littleRadius: number,
   front: Texture<HTMLImageElement, TextureEventMap>,
@@ -16,7 +17,7 @@ type Props = {
   resetState: () => void,
 }
 
-export default function AdversaryCard({ angle, littleRadius, front, back, positionCard, totalPlayer, posPlayedCard, animate, resetState }: Props) {
+export default function AdversaryCard({ setShow, angle, littleRadius, front, back, positionCard, totalPlayer, posPlayedCard, animate, resetState }: Props) {
   const materials = [
     new MeshPhongMaterial({ color: 0xffffff }),
     new MeshPhongMaterial({ color: 0xffffff }),
@@ -25,7 +26,6 @@ export default function AdversaryCard({ angle, littleRadius, front, back, positi
     new MeshPhongMaterial({ map: front }),
     new MeshPhongMaterial({ map: back })
   ];
-  const { setShow } = useGame();
 
   const cardRef = useRef<Mesh>(null!);
 
