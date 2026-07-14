@@ -77,7 +77,7 @@ This will build the project in docker compose, using the self-signed SSL certifi
 
 Certain users with operating systems which use SELinux may run into permissions issues when running the Docker containers. To solve this our recommended solution is to modify the `docker-compose.yml` file, or create a new one.
 
-A template has been provided for this file. The key changes are: `:Z` has been added to bind mounted volumes. Secrets have been converted to bind mounted volumes to allow for this.
+In this new file `:Z` will need to be added at the end of bind mounted volumes. Secrets need to also be converted to bind mounted volumes to allow for this.
 
 We did not use this as our default `docker-compose.yml` as we preferred to implement docker secrets in a clean way as intended, rather than reproducing their behaviour with bind mounts.
 
@@ -131,33 +131,42 @@ The team collaborated by having initial meetings to decide on the general direct
 
 ### Frontend
 - **React + TypeScript**: Being a commonly used framework + language which some team members already had experience with, we felt it would benefit our project to use them. The layout and structure of code and design that is encouraged by these technologies suited our approach to the design of our project.
-- **Tailwind CSS**: The ease of integration between CSS and React allowed for both more writeable and readable code, allowing for more effective teamwork. 
+
+- **Tailwind CSS**: The ease of integration between CSS and React allowed for both more writeable and readable code, allowing for more effective teamwork.
+
 - **WebSockets**: As opposed to HTTP requests WebSockets allowed for continuous communication between the frontend and backend. This allowed for seamless real-time interactions between users, notably when in game.
-- **ThreeJS**:
+
+- **ThreeJS**: A 3D javascript library was required to implement our game. Being a commonly used library with good documentation that works well with React it made sense for our project where we used it to render 3D animations and elements such as the table and cards.
+
 - **DaisyUI**: DaisyUI provided an easily accessible library of components that were readily customisable making it an obvious choice for our project especially as it provided a foundation that was already in line with our design principles.
 
 ### Backend
-- **Django**: Django is a
-- **REST**:
-- **Daphne?**:
-- **Celery**
+
+- **Django**: A high-level Python web framework that enables rapid development of secure, scalable, and maintainable web applications. It provides built-in features such as an ORM, authentication system, administration panel, URL routing, and more.
+
+- **Django REST Framework (DRF)**: An extension of Django used to build RESTful APIs. It provides tools for data serialization, authentication, permissions, pagination, and API view management.
+
+- **Daphne**: An ASGI server designed to run asynchronous Django applications. It supports WebSockets through Django Channels, enabling real-time communication between clients and the server.
+
+- **Celery**: A distributed task queue used to execute asynchronous and scheduled background tasks. It helps offload time-consuming operations such as sending emails, processing data, and running periodic jobs without blocking user requests.
 
 ### Database
-- **MariaDB**:
+
+- **MariaDB**: An open-source relational database management system (RDBMS) compatible with MySQL. It is used to store, manage, and query application data efficiently and reliably.
+
+### Real-Time Communication
+
+- **Django Channels**: An extension for Django that adds support for asynchronous protocols such as WebSockets. It enables real-time features like live notifications, chat systems, and multiplayer interactions.
+
+- **Redis**: An in-memory data store commonly used as a message broker for Celery and as the channel layer backend for Django Channels. It provides fast data access and efficient communication between services.
 
 ### Infrastructure
 - **Docker + Docker Compose**: Docker was already well known to our team, and allowed for us to easily deploy standardized containers from different environments and ensure efficient internal communication between them.
+
 - **NGINX**: NGINX provides a simple and easy to use webserver which integrated well with our docker containers, and allowed for simple integration with cloudflare tunnels to host our project in the future.
 
 ### Other
-Procreate
-
-
-Frontend technologies and frameworks used.
-◦ Backend technologies and frameworks used.
-◦ Database system and why it was chosen.
-◦ Any other significant technologies or libraries.
-◦ Justification for major technical choices.
+- **Procreate**: A user friendly drawing application that was used to quickly and elegantly create assets for our deck of cards.
 
 
 ## Database Schema
@@ -245,14 +254,34 @@ Frontend technologies and frameworks used.
 
 ### Cyril Goldenschue
 
+Features Implemented
+
+- Game WebSocket
+- Presence Websocket
+- Notification WebSocket
+- Connection to game engine from game WebSocket
+- API routes for:
+	- Friend requests
+	- Statistics
+	- User information
+	- Game information
+- Managed the database
+- Authentication
+
+Challenges
+
+- Understanding the specificities of Django
+- Understansing the specificites of WebSockets
+- Connection game engine to game WebSockets
+
 ### Alexandre Tomasi
 
 Features Implemented
 
 - Creation of the UX architecture
 - Creation of the Profile Page
-- Creation of the Leaderboard page
-- Creation of the game lobby page
+- Creation of the Leaderboard Page
+- Creation of the Game Lobby Page
 - Creation of parts of the in game interface
 - Handled interactions with cards in hand and animations
 
@@ -283,6 +312,20 @@ Challenges
 - Remembering to use await before asynchronous functions
 
 ### Dana Vauthey
+
+Features Implemented
+
+- Created the card assets for the game
+- Created the Home Page
+- Created the waiting Room/Settings Page
+- Created the Terms & Condtions Page
+- Displayed and animated the opponents' cards
+
+Challenges
+
+- Planning and creating the assets took time, adding time to catch up with other features that had since been implemented
+- Learning React and how to use other frontend tools, which had unfamiliar syntax and logic
+- Learning to implement 3D graphics with ThreeJS
 
 ### Anouar Kabbaj
 
