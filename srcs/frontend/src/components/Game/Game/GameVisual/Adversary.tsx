@@ -24,7 +24,7 @@ export default function Adversary({ position, room_id, isSelf, cardHand, playedC
     playedCard = defaultBoard;
   const centerHand = Math.cos(angleCenter / 2) * boardRadius;
   const posPlayedCard = centerHand - distanceBoard;
-  const [show, setShow] = useState<boolean>(false);
+  const [show, setShow] = useState<boolean>(true);
 
   return (
     <>
