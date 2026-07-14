@@ -3,7 +3,7 @@ import { useGame } from "../../context/GameContext";
 import { useEffect, useMemo, useState } from "react";
 
 type Props = {
-  show: boolean;
+  show: boolean,
   front: Texture<HTMLImageElement, TextureEventMap>,
   back: Texture<HTMLImageElement, TextureEventMap>,
   posPlayedCard: number,
