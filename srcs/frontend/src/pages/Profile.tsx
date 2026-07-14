@@ -15,7 +15,7 @@ import { getHistory, historyArray } from "../api/http/history";
 import { useNotif } from "../components/hooks/useNotif";
 import type { recommendationT } from "../utils/type/recommendationType";
 import { useAuth } from "../components/hooks/useAuth";
-import AchievementPart from "../components/Profile/AchievementsPart";
+import { AchievementsPart } from "../components/Profile/AchievementsPart";
 
 const avatar1 = "/avatars/avatar1.png";
 
@@ -205,7 +205,7 @@ export function Profile({ updatedProfile, setUpdate }: Props) {
           <h2 className="text-center">Achievements</h2>
         </div>
         <div className="collapse-content">
-          <AchievementPart />
+          <AchievementsPart updateachievement={true}/>
         </div>
       </div>
     </div>
