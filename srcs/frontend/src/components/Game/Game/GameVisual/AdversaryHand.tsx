@@ -83,7 +83,6 @@ export default function AdversaryHand({room_id, setShow, angleCenter, cardHand, 
             setShow(false);
           }
           return (
-            <>
             <AdversaryCard
               setShow={setShow}
               angle={angle}
@@ -95,8 +94,8 @@ export default function AdversaryHand({room_id, setShow, angleCenter, cardHand, 
               posPlayedCard={posPlayedCard}
               animate={index === playedCard}
               resetState={resetState}
+			  key={index}
               />
-          </>
         );
       })}
       </mesh>
