@@ -78,7 +78,7 @@ export function AchievementsPart({ updateachievement }: Props) {
                 </div>
 
                 <progress
-				className=" w-full rounded-2xl bg-base-content &::-webkit-progress-bar]:rounded-2xl [&::-webkit-progress-value]:rounded-2xl [&::-webkit-progress-value]:bg-base-200 [&::-moz-progress-bar]:bg-base-200"
+				className=" w-full rounded-2xl bg-base-content &::-webkit-progress-bar]:rounded-2xl [&::-webkit-progress-value]:rounded-2xl [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary"
                   value={player.value}
                   max={player.max_value}
                 />
