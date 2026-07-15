@@ -40,7 +40,7 @@ class MeldService:
                         "color": card["color"],
                         "value": card["value"]
                     })
-            print("melds = ", cards)
+
             if len(cards) > 0:
 
                 points = Player().countMelds(cards, game_state["tricks"])
