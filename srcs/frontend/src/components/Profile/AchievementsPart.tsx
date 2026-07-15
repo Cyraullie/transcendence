@@ -54,23 +54,23 @@ export function AchievementsPart({ updateachievement }: Props) {
   }
 
   return (
-    <div className="page-content my-17">
+    <div className=" my-17">
       <div className="flex flex-wrap justify-center gap-10"
       >
         {achievement.achievement.map((player) => {
           return (
               <div
                 key={player.title}
-			    className="shadow-2xl shadow-base-300 p-4 rounded-2xl bg-base-300 flex flex-col w-fit"
+			    className="shadow-2xl shadow-base-300 p-4 rounded-2xl bg-base-300 flex md:flex-col flex-wrap w-fit max-md:justify-center"
               >
                 <div
-				className="flex mb-10 w-80"
+				className="flex mb-10 md:w-80 max-md:flex-col w-fit "
                 >
                   <img
                     src={"/" + player.img}
-					className="max-h-20 aspect-square mr-10"
+					className="max-h-20 aspect-square mr-10 max-md:max-w-20 max-md:mx-auto"
                   />
-                  <div>
+                  <div className="w-fit max-md:text-center">
                     <h3>{player.title}</h3>
                     <p>{player.description}</p>
                     <p>obtention rate: {player.rate}%</p>
@@ -78,7 +78,7 @@ export function AchievementsPart({ updateachievement }: Props) {
                 </div>
 
                 <progress
-				className=" w-full rounded-2xl bg-base-content &::-webkit-progress-bar]:rounded-2xl [&::-webkit-progress-value]:rounded-2xl [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary"
+				className="w-full rounded-2xl bg-base-content &::-webkit-progress-bar]:rounded-2xl [&::-webkit-progress-value]:rounded-2xl [&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary"
                   value={player.value}
                   max={player.max_value}
                 />
