@@ -69,17 +69,17 @@ export function AddFriends({
 					<br />
 					<span className="text-xs">
 					<button
-					className="link-hover"
-					popoverTarget="popover-1"
-					style={{ anchorName: "--anchor-1" }}
+					className="link-hover "
+					popoverTarget={`popover-${recs.indexOf(suggest)}`}
+					style={{ anchorName: `--anchor-${recs.indexOf(suggest)}` }}
 					>
 					{suggest.mutual_friends.length} mutual friends
 					</button>
 					<ul
 					className="dropdown dropdown-content dropdown-center menu w-52 rounded-box shadow-sm"
 					popover="auto"
-					id="popover-1"
-					style={{ positionAnchor: "--anchor-1" }}
+					id={`popover-${recs.indexOf(suggest)}`}
+					style={{ positionAnchor: `--anchor-${recs.indexOf(suggest)}` }}
 					>
 					{suggest.mutual_friends.map((player) => (
 						<li key={player.id}>{player.username}</li>
