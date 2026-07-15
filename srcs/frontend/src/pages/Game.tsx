@@ -120,7 +120,7 @@ export function Game() {
         )}
       </div>
       <div className=" text-center md:hidden flex mt-20 justify-center flex-col gap-6 mx-10">
-        <p className="text-error font-bold">Sorry but this game is unavailabe on a little screen, go on a biggest one!</p>
+        <p className="text-error font-bold">Sorry but this game is unavailabe on a small screen, go on a larger one to play our game!</p>
 		<img className="h-50 max-w-50 mx-auto" src="/stitch-sorry.gif"/>
       </div>
     </>
