@@ -74,30 +74,36 @@ export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, h
 
           {has_pass ?
             <>
-              <label className="label">Password</label>
-              <div className="input w-full">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={passChange}
-                  placeholder="Your password"
-                  onKeyDown={handleKey}
-                />
-                <button className="cursor-pointer " onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
-              </div>
+              <p>Password</p>
+              <label className="label">
+                <div className="input w-full">
+                  <input
+                    id="pswdChange"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={passChange}
+                    placeholder="Your password"
+                    onKeyDown={handleKey}
+                  />
+                  <button className="cursor-pointer " onClick={() => setShowPassword(!showPassword)}>{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
+                </div>
+              </label>
             </>
             : null
           }
 
-          <label className="label">New username</label>
-          <input
-            type="text"
-            value={name}
-            onChange={nameChange}
-            className="input"
-            placeholder="Your new username"
-            onKeyDown={handleKey}
-          />
+          <p>New username</p>
+          <label className="label">
+            <input
+              id="usernameChange"
+              type="text"
+              value={name}
+              onChange={nameChange}
+              className="input"
+              placeholder="Your new username"
+              onKeyDown={handleKey}
+            />
+          </label>
           <form className="flex justify-around">
             <button ref={buttonRef} type="button" onClick={() => updateUser(name, password, old_user)} className="btn mt-4">Change</button>
             <button type="button" onClick={() => clean_close()} className="btn mt-4">Cancel</button>

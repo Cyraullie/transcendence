@@ -82,40 +82,50 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
         <fieldset className="fieldset border-accent rounded-box w-xs border p-4 mx-auto">
           <legend className="fieldset-legend">Change password</legend>
 
-          <label className="label">Old password</label>
-          <div className="input w-full">
-            <input
-              type={showOldPassword ? "text" : "password"}
-              value={oldpass}
-              onChange={oldChange}
-              placeholder="..."
-              onKeyDown={handleKey}
-            />
-            <button className="cursor-pointer " onClick={() => setShowOldPassword(!showOldPassword)}>{showOldPassword ? <FaEyeSlash /> : <FaEye />}</button>
-          </div>
+          <p>Old password</p>
+          <label className="label">
+            <div className="input w-full">
+              <input
+                id="oldPswd"
+                type={showOldPassword ? "text" : "password"}
+                value={oldpass}
+                onChange={oldChange}
+                placeholder="..."
+                onKeyDown={handleKey}
+              />
+              <button className="cursor-pointer " onClick={() => setShowOldPassword(!showOldPassword)}>{showOldPassword ? <FaEyeSlash /> : <FaEye />}</button>
+            </div>
+          </label>
 
-          <label className="label">New password</label>
-          <div className="input w-full">
-            <input type={showNewPassword ? "text" : "password"}
-              value={password1}
-              onChange={pass1Change}
-              placeholder="..."
-              onKeyDown={handleKey}
-            />
-            <button className="cursor-pointer " onClick={() => setShowNewPassword(!showNewPassword)}>{showNewPassword ? <FaEyeSlash /> : <FaEye />}</button>
-          </div>
+          <p>New password</p>
+          <label className="label">
+            <div className="input w-full">
+              <input
+                id="newPswd"
+                type={showNewPassword ? "text" : "password"}
+                value={password1}
+                onChange={pass1Change}
+                placeholder="..."
+                onKeyDown={handleKey}
+              />
+              <button className="cursor-pointer " onClick={() => setShowNewPassword(!showNewPassword)}>{showNewPassword ? <FaEyeSlash /> : <FaEye />}</button>
+            </div>
+          </label>
 
-          <label className="label">Confirm new password</label>
-          <div className="input w-full">
-            <input
-              type={showNewConfirmPassword ? "text" : "password"}
-              value={password2}
-              onChange={pass2Change}
-              placeholder="..."
-              onKeyDown={handleKey}
-            />
-            <button className="cursor-pointer " onClick={() => setShowNewConfirmPassword(!showNewConfirmPassword)}>{showNewConfirmPassword ? <FaEyeSlash /> : <FaEye />}</button>
-          </div>
+          <p>Confirm new password</p>
+          <label className="label">
+            <div className="input w-full">
+              <input
+                id="confirmNewPswd"
+                type={showNewConfirmPassword ? "text" : "password"}
+                value={password2}
+                onChange={pass2Change}
+                placeholder="..."
+                onKeyDown={handleKey}
+              />
+              <button className="cursor-pointer " onClick={() => setShowNewConfirmPassword(!showNewConfirmPassword)}>{showNewConfirmPassword ? <FaEyeSlash /> : <FaEye />}</button>
+            </div>
+          </label>
 
           <form method="dialog" className="flex justify-around">
             <button ref={buttonRef} type="button" onClick={() => updatePass(oldpass, password1, password2)} className="btn mt-4">Change</button>
