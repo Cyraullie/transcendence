@@ -79,6 +79,7 @@ export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, h
                 <div className="input w-full">
                   <input
                     id="pswdChange"
+                    name="pswdChange"
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={passChange}
@@ -96,6 +97,7 @@ export function PseudoChange({ dialogRef, updatedProfile, setUpdate, old_user, h
           <label className="label">
             <input
               id="usernameChange"
+              name="usernameChange"
               type="text"
               value={name}
               onChange={nameChange}
