@@ -386,6 +386,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
             await GameService.open_valve(self.code)
             return
 
+        if result.get("end"):
+            if (result.get("end")):
+                await GameService.open_valve(self.code)
+                return
+
         await BroadcastService.broadcast_game(self.code, self.channel_layer, "card_valid")
 
         room = await get_room_with_host(self.code)

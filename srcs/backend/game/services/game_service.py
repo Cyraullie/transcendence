@@ -145,8 +145,7 @@ class GameService:
                 await sync_to_async(Room.objects.filter(code=room.code).update)(round_time=(timezone.now() + timedelta(seconds=(25 if game_state["round"] == 0 else 10))))
                 await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
             else:
-                await GameService.check_goal_reached(room.code)
-                return
+                return {"end": await GameService.check_goal_reached(room.code)}
                 
        
         room = await get_room_with_host(room.code)
