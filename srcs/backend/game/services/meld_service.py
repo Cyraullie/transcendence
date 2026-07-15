@@ -42,49 +42,9 @@ class MeldService:
                     })
             print("melds = ", cards)
             if len(cards) > 0:
-                # selected_cards_idx = await MeldService.extract_card_indexes(
-                #     room,
-                #     p.player,
-                #     cards
-                # )
-                
-                # selected_cards = await MeldService.extract_cards(
-                #     room,
-                #     p.player,
-                #     player_id,
-                #     cards
-                # )
-                # print("selected cards", selected_cards, " - idx = ", selected_cards_idx)
-                # if selected_cards_idx is None:
-                #     return {"error": "Carte invalide"}
-        
-                # valid, _ = MeldService.compute_sequences(
-                #     cards
-                # )
-        
-                # if not valid:
-                #     return {
-                #         "error": "Toutes les cartes doivent appartenir à des suites valides"
-                #     }
-        
-                # game = GameEngine(room.uuid)
-        
-                # game_state = game.handleAction(
-                #     "meld",
-                #     game_state,
-                #     idPlayer=str(player_id),
-                #     meldIndex=selected_cards_idx
-                # )
-    
-                # points = game.handleAction(
-                #     "point_meld",
-                #     game_state,
-                #     idPlayer=str(player_id),
-                #     meldIndex=selected_cards_idx
-                # )
 
                 points = Player().countMelds(cards, game_state["tricks"])
-                print("points = ", points)
+                
                 await ScoreService.save_meld(room.code, player_id, game_state["game"], game_state["round"], points * -1)
             
                 await StatsService.add_meld_points(
