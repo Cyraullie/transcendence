@@ -45,13 +45,18 @@ export function Game() {
         if (tmp_joined.code === 401) {
           return login_error("Authentication error:", "Please log in again.");
         } else if (tmp_joined.code === 404) {
-          tmp_joined = { room: "" };
+          tmp_joined = { room: "", message: "" };
         } else {
           return other_error(
             "Error " + tmp_joined.code + ":",
             tmp_joined.response,
           );
         }
+      } else if (tmp_joined.message === "lobby_failed") {
+        return other_error(
+          "Lobby Error",
+          "Do you have another lobby already open?",
+        );
       }
 
       if (tmp_joined.room !== "") {
@@ -89,14 +94,13 @@ export function Game() {
     get_info();
   }, [auth.logging, navigate, location.state, notif, refresh]);
 
-	if (valid === null) {
-		return (
-			<div className="page-content flex items-center justify-center min-h-screen">
-				<span className="loading loading-spinner loading-xl"></span>
-			</div>
-		)
-	}
-
+  if (valid === null) {
+    return (
+      <div className="page-content flex items-center justify-center min-h-screen">
+        <span className="loading loading-spinner loading-xl"></span>
+      </div>
+    );
+  }
 
   function refreshLobby() {
     setRefresh(!refresh);
@@ -104,15 +108,21 @@ export function Game() {
 
   return (
     <>
-      {joined !== "" ? (
-        <GameWebSocket key={joined} code={joined} setCode={setJoined} />
-      ) : (
-        <CreateOrJoin
-          availableGames={rooms}
-          refreshLobby={refreshLobby}
-          setJoined={setJoined}
-        />
-      )}
+      <div className="max-lg:hidden">
+        {joined !== "" ? (
+          <GameWebSocket key={joined} code={joined} setCode={setJoined} />
+        ) : (
+          <CreateOrJoin
+            availableGames={rooms}
+            refreshLobby={refreshLobby}
+            setJoined={setJoined}
+          />
+        )}
+      </div>
+      <div className=" text-center lg:hidden flex mt-20 justify-center flex-col gap-6 mx-10">
+        <p className="text-error font-bold">Sorry but this game is unavailabe on a little screen, go on a biggest one!</p>
+        <img className="h-50 max-w-50 mx-auto" src="/stitch-sorry.gif" />
+      </div>
     </>
   );
 }

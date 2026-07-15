@@ -1,4 +1,3 @@
-import type { Dispatch, SetStateAction } from "react";
 import type { historyT } from "../../utils/type/historyType";
 import { History } from "../Profile/HistoryPart";
 import type { leaderboardT } from "../../utils/type/leaderboardType";
@@ -6,21 +5,17 @@ import type { errorT } from "../../utils/type/errorType";
 
 type Props = {
   gameHistory: historyT[] | errorT,
-  setUpdate: Dispatch<SetStateAction<boolean>>,
-  updatedProfile: boolean,
   leaderboard: leaderboardT | errorT
 }
 
-export default function HomeProfile({ gameHistory, setUpdate, updatedProfile, leaderboard }: Props) {
+export default function HomeProfile({ gameHistory, leaderboard }: Props) {
   return (
     <>
       <h2 className="text-center">Profile</h2>
       <div className="pt-4">
         <h3>Last games</h3>
-        <div>
-          {!("code" in gameHistory) ?
-            <History gameHistory={gameHistory} setUpdate={setUpdate} updatedProfile={updatedProfile} isHome={true} /> : "Error about game history in HomeProfile"}
-        </div>
+        {!("code" in gameHistory) ?
+          <History gameHistory={gameHistory} isHome={true} isMiniProfile={false} /> : "Error about game history in HomeProfile"}
       </div>
       <div className="pt-6">
         <h3>Leaderboard</h3>

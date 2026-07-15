@@ -46,7 +46,7 @@ The following features are implemented on Popcards:
 - Make
 - A secrets folder in `./srcs` containing:
 	- `.env` - Please see .env.example for further guidance
-	- `django_secret.txt` - Must have a key for django, this can be anything although it is recommended you generate a key using: @Cyril
+	- `django_secret.txt` - Must have a key for django, this can be anything although it is recommended you generate new key using a generator.
 
 
 	- The following secret files must be non-empty. If they contain valid API Secret Keys that correspond to the IDs provided in the .env they will allow OAuth login for their corresponding service.
@@ -77,7 +77,7 @@ This will build the project in docker compose, using the self-signed SSL certifi
 
 Certain users with operating systems which use SELinux may run into permissions issues when running the Docker containers. To solve this our recommended solution is to modify the `docker-compose.yml` file, or create a new one.
 
-A template has been provided for this file. The key changes are: `:Z` has been added to bind mounted volumes. Secrets have been converted to bind mounted volumes to allow for this.
+In this new file `:Z` will need to be added at the end of bind mounted volumes. Secrets need to also be converted to bind mounted volumes to allow for this.
 
 We did not use this as our default `docker-compose.yml` as we preferred to implement docker secrets in a clean way as intended, rather than reproducing their behaviour with bind mounts.
 

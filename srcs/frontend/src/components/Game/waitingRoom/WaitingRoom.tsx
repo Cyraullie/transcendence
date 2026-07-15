@@ -22,15 +22,15 @@ export default function WaitingRoom({ roomCode }: { roomCode: string }) {
   }
 
   return (
-    <div className="mt-17 page-content">
+    <div className="mt-27 page-content">
       <h1>Waiting Room</h1>
       <div className="grid grid-cols-3 gap-6">
         <InfoAndActionPart roomCode={roomCode} />
-        <div className=" space-y-6">
+        <div className="max-xl:col-span-3 space-y-6">
           <PlayerList />
           <InviteYourFriends />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-2 max-xl:col-span-3">
           <ParameterRoom roomCode={roomCode} updateSettings={handleChange} />
         </div>
       </div>

@@ -23,6 +23,7 @@ import PrivateRoute from "./utils/routing/PrivateRoutes";
 
 function AppContent({ setFontChoice }: { setFontChoice: React.Dispatch<React.SetStateAction<string>> }) {
   const [updatedProfile, setProfile] = useState(false);
+  const [updatedBlock, setBlock] = useState(false);
   const [updateLeaderboard, setLeaderboard] = useState(false);
 
   const auth = useAuth();
@@ -38,17 +39,17 @@ function AppContent({ setFontChoice }: { setFontChoice: React.Dispatch<React.Set
   return (
     <BrowserRouter>
       <Presence />
-      <Notifications setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard} />
+      <Notifications setBlock={setBlock} updatedBlock={updatedBlock} setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard} />
       {auth.in_game ? null : <Navbar />}
       <NotifPopUp />
       <Routes>
         <Route path="/game" element={<PrivateRoute> <Game /> </PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute>  <Profile setUpdate={setProfile} updatedProfile={updatedProfile} /> </PrivateRoute>} />
-        <Route path="/" element={<Home updatedProfile={updatedProfile} setUpdate={setProfile} />} />
+        <Route path="/" element={<Home />} />
         <Route path="/leaderboard" element={<Leaderboard updateLeaderboard={updateLeaderboard} />} />
         <Route
           path="/settings"
-          element={<Settings setFontChoice={setFontChoice} />}
+          element={<Settings setFontChoice={setFontChoice} setBlock={setBlock} updatedBlock={updatedBlock}/>}
         />
         <Route path="/rules" element={<Rules />} />
         <Route path="/login" element={<Login />} />

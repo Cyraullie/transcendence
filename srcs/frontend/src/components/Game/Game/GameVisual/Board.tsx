@@ -1,8 +1,4 @@
-// import generateFakeBoard from "../../../../utils/test_funcs/generateFakeBoard";
 import Adversary from "./Adversary";
-// import PlayedCard from "./PlayedCard";
-// // import generateFakeAdversary from "../../../../utils/test_funcs/generateFakeAdversary";
-// import generateFakeAdversary from "../../../../utils/test_funcs/generateFakeAdversary";
 import { Texture, type TextureEventMap } from "three";
 import { useGame } from "../../context/GameContext";
 
@@ -15,7 +11,6 @@ type Props = {
 
 export default function Board({front, back, boardRadius, distanceBoard} : Props) {
   
-//   const cards = generateFakeBoard();
   const { state } = useGame();
   const cards = state.game.boardData.board;
   const adversaries = state.game.boardData.player_list;
@@ -42,6 +37,8 @@ export default function Board({front, back, boardRadius, distanceBoard} : Props)
           return(
             <>
               <Adversary
+			    key={adversaries.indexOf(adversary)}
+                position={position}
                 room_id={adversary.room_id}
                 isSelf={adversary.room_id == idPlayer}
                 boardRadius={boardRadius}

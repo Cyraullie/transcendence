@@ -21,13 +21,13 @@ export default function FriendsSuggestion({
   notif,
 }: Props) {
   return (
-    <div className=" border-l ml-6 pl-6 border-primary mx-auto">
+    <div className=" border-l ml-6 pl-6 border-primary mx-auto max-md:hidden">
       <h4 className="text-lg font-bold text-center mb-4">Friends suggestion</h4>
       <table className="mx-auto w-full">
         <tbody>
           {suggestions.slice(0, 5).map((suggest) => {
             return (
-              <tr className="h-12 text-center">
+              <tr className="h-12 text-center" key={suggest.id}>
                 <td>
                   {" "}
                   <UsernameMiniProfileBtn
@@ -50,7 +50,7 @@ export default function FriendsSuggestion({
                       style={{ positionAnchor: "--anchor-1" }}
                     >
                       {suggest.mutual_friends.map((player) => (
-                        <li>{player.username}</li>
+                        <li key={player.id}>{player.username}</li>
                       ))}
                     </ul>
                   </span>
