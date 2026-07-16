@@ -83,9 +83,9 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
       {reason.code !== 200 && reason.code !== -1 ? <p className="py-4 text-center"> {"Unknown Error: " + String(reason.response)}</p> : ""}
       <div className="modal-action">
         <fieldset className="fieldset border-accent rounded-box w-xs border p-4 mx-auto">
-          <legend className="fieldset-legend">Change password</legend>
+          <legend className="fieldset-legend text-start">Change password</legend>
 
-          <p>Old password</p>
+          <p className="text-start">Old password</p>
           <label className="label">
             <div className="input w-full">
               <input
@@ -100,7 +100,7 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
             </div>
           </label>
 
-          <p>New password</p>
+          <p className="text-start">New password</p>
           <label className="label">
             <div className="input w-full">
               <input
@@ -115,7 +115,7 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
             </div>
           </label>
 
-          <p>Confirm new password</p>
+          <p className="text-start">Confirm new password</p>
           <label className="label">
             <div className="input w-full">
               <input
