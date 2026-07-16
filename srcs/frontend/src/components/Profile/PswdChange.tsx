@@ -26,6 +26,9 @@ export function PswdChange({ dialogRef }: { dialogRef: React.RefObject<HTMLDialo
     setPassword2("");
     setReason({ code: 200, response: "" });
     dialogRef.current?.close();
+    setShowOldPassword(false);
+    setShowNewPassword(false);
+    setShowNewConfirmPassword(false);
   }
 
   function validate_inputs(old_pass: string, pass1: string, pass2: string) {
