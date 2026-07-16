@@ -57,11 +57,9 @@ def create_room(request):
                 }
             )
     
-    abandoned = list(Room.objects.filter(status="abandoned"))
+    abandoned = list(Room.objects.filter(status__in=["abandoned", "start"]))
     for r in abandoned:
-        print("abandoned", r.code)
         if (timezone.now() > r.round_time + timedelta(minutes=15)):
-            print("deleting here:", r.code)
             r.delete()
 
     return Response(RoomSerializer(room).data, status=201)

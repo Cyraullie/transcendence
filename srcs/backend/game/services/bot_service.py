@@ -18,6 +18,8 @@ class BotService:
     async def play_afk(room, game_state, game, check_end=None, check_take_fold_callback=None, ask_continue=None):
         if not await sync_to_async(Room.objects.filter(code=room.code).exists)():
             return game_state
+        if (room.status == "abandoned"):
+            return game_state
         channel_layer = get_channel_layer()
         is_end, gs = await check_end(room, game)
         if is_end:
@@ -111,6 +113,8 @@ class BotService:
                         await BroadcastService.broadcast_game(room.code, channel_layer, "start_round")
 
             room = await get_room_with_host(room.code)
+            if (room.status == "abandoned"):
+                return game_state
             is_end, gs = await check_end(room, game)
             if is_end:
                 await ask_continue(room.code)
