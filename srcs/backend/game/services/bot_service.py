@@ -69,6 +69,8 @@ class BotService:
     async def play_until_human(room, game_state, game, check_end=None, check_take_fold_callback=None, ask_continue=None):
         channel_layer = get_channel_layer()
         room = await get_room_with_host(room.code)
+        if (room.status == "abandoned"):
+            return game_state
         is_end, gs = await check_end(room, game)
         if is_end:
             await ask_continue(room.code)
@@ -133,6 +135,8 @@ class BotService:
             return game_state
         room = await get_room_with_host(room_code)
         game_state = room.game_state
+        if (room.status == "abandoned"):
+            return game_state
         is_end, gs = await check_end(room, game)
         if is_end:
             await ask_continue(room.code)
