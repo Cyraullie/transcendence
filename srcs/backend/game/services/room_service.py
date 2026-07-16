@@ -140,7 +140,9 @@ class RoomService:
             is_human=False
         ).count)()
         if room.nb_player - nb_bots == 1:
-            room.update(status="abandoned")
+            await sync_to_async(
+                    Room.objects.filter(code=code).update
+                )(status="abandoned")
             # await delete_room(code)
             return True
         p.player = valid_bots[0]
