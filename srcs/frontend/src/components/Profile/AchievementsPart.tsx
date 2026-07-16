@@ -68,7 +68,7 @@ export function AchievementsPart({ updateachievement }: Props) {
           return (
             <div
               key={player.title}
-              className="shadow-2xl shadow-base-300 p-4 rounded-2xl bg-base-300 flex md:flex-col flex-wrap w-full max-md:justify-center"
+              className="shadow-2xl shadow-base-300 p-4 rounded-2xl bg-base-300 flex md:flex-col flex-wrap w-fit max-md:w-full max-md:justify-center"
             >
               <div
                 className="flex mb-10 md:w-80 max-md:flex-col w-fit "
