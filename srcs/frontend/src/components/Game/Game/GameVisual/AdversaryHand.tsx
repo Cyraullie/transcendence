@@ -69,7 +69,7 @@ export default function AdversaryHand({ setShow, room_id, angleCenter, cardHand,
       <mesh position={[0, (-littleRadius) + factor, 0]} rotation={[0, 0, Math.PI]}>
         <Image scale={0.4} url={state.game.boardData.player_list[room_id].user.avatar} position={[-1, 0, 0]} />
         <Text fontSize={0.2}>
-          {state.game.boardData.player_list[room_id].user.username}
+          {state.game.boardData.player_list[room_id].user.username.length > 10 ? (state.game.boardData.player_list[room_id].user.username.substring(0, 10) + "...") : state.game.boardData.player_list[room_id].user.username}
           <meshStandardMaterial />
         </Text>
       </mesh>
