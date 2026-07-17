@@ -15,7 +15,7 @@ import Error404 from "./pages/Error404";
 import { GoogleCallback } from "./OAuth/GoogleCallback";
 import { FortyTwoCallback } from "./OAuth/42Callback";
 import { GitCallback } from "./OAuth/GitCallback";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Presence } from "./api/websockets/presence";
 import { Notifications } from "./api/websockets/notifcations";
 import { useAuth } from "./components/hooks/useAuth";
@@ -25,6 +25,7 @@ function AppContent({ setFontChoice }: { setFontChoice: React.Dispatch<React.Set
   const [updatedProfile, setProfile] = useState(false);
   const [updatedBlock, setBlock] = useState(false);
   const [updateLeaderboard, setLeaderboard] = useState(false);
+  const [show, setShow] = useState<boolean>(false);
 
   const auth = useAuth();
 
@@ -36,11 +37,22 @@ function AppContent({ setFontChoice }: { setFontChoice: React.Dispatch<React.Set
     );
   }
 
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth < 1024)
+        setShow(true);
+      else
+        setShow(false);
+    }
+    window.addEventListener("resize", handleResize);
+    handleResize();
+  }, [])
+
   return (
     <BrowserRouter>
       <Presence />
       <Notifications setBlock={setBlock} updatedBlock={updatedBlock} setProfile={setProfile} updatedProfile={updatedProfile} updateLeaderboard={updateLeaderboard} setLeaderboard={setLeaderboard} />
-      {auth.in_game ? null : <Navbar />}
+      {auth.in_game && !show ? null : <Navbar />}
       <NotifPopUp />
       <Routes>
         <Route path="/game" element={<PrivateRoute> <Game /> </PrivateRoute>} />
@@ -49,7 +61,7 @@ function AppContent({ setFontChoice }: { setFontChoice: React.Dispatch<React.Set
         <Route path="/leaderboard" element={<Leaderboard updateLeaderboard={updateLeaderboard} />} />
         <Route
           path="/settings"
-          element={<Settings setFontChoice={setFontChoice} setBlock={setBlock} updatedBlock={updatedBlock}/>}
+          element={<Settings setFontChoice={setFontChoice} setBlock={setBlock} updatedBlock={updatedBlock} />}
         />
         <Route path="/rules" element={<Rules />} />
         <Route path="/login" element={<Login />} />
