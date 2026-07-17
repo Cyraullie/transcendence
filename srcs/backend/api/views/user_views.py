@@ -136,6 +136,7 @@ def register(request):
                 {"error": (f"There was an issue registering. Please try again.")},
                 status=408
             )
+        
         access_token = refresh.access_token
         refresh_token = refresh
         
