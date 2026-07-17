@@ -185,7 +185,44 @@ services:
       - 42_secret
     networks:
       - transcendence
+  game_server:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: python -m game_server.main
+    profiles: [dev, prod, serv]
+    container_name: game_server
+    restart: unless-stopped
 
+    depends_on:
+      redis:
+        condition: service_healthy
+      mariadb:
+        condition: service_healthy
+
+    env_file:
+      - secrets/.env
+    secrets:
+      - django_secret
+      - google_secret
+      - git_secret
+      - 42_secret
+      
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      GAME_BROKER_URL: redis://redis:6379/2
+      GAME_RESULT_BACKEND: redis://redis:6379/2
+
+      DATABASE_ENGINE: ${DB_ENGINE}
+      DATABASE_NAME: ${DB_NAME}
+      DATABASE_USERNAME: ${DB_USER}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      DATABASE_HOST: ${DB_HOST}
+      DATABASE_PORT: ${DB_PORT}
+
+    networks:
+      - transcendence
   frontend:
     build:
       context: ./frontend

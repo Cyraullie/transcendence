@@ -6,6 +6,11 @@ if [ "$1" = "celery" ]; then
     exec "$@"
 fi
 
+if [ "$1" = "python" ]; then
+    exec "$@"
+fi
+
+
 python manage.py migrate --noinput
 
 python manage.py shell -c "
