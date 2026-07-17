@@ -77,6 +77,7 @@ INSTALLED_APPS = [
 	'dj_rest_auth.registration',
 	"api",
 	"game",
+    "redis_client",
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

@@ -14,7 +14,7 @@ from .services.broadcast_service import BroadcastService
 from .services.room_task_service import RoomTaskService
 from django.utils import timezone
 from datetime import timedelta
-
+from redis_client import client
 import asyncio
 
 CARD_VALUES = {
@@ -124,7 +124,22 @@ class RoomConsumer(AsyncWebsocketConsumer):
         game = GameEngine(room.uuid)
         asyncio.create_task(self.afk_flow(room, game))
         
+    async def redis_listener(self):
+
+        pubsub = client.pubsub()
     
+        await pubsub.subscribe(
+            f"room_events:{self.room}"
+        )
+    
+        async for message in pubsub.listen():
+    
+            if message["type"] != "message":
+                continue
+    
+            data = json.loads(message["data"])
+    
+            await self.send_json(data)
 
     async def connect(self):
         self.code = self.scope["url_route"]["kwargs"]["code"]
@@ -158,6 +173,15 @@ class RoomConsumer(AsyncWebsocketConsumer):
             return
     
         await self.accept()
+        await client.publish(
+            "game_actions",
+            json.dumps({
+                "room": self.code,
+                "player": self.user.id,
+                "action": {"type": "join"}
+            })
+        )
+
         
         await self.send_json({"type": "global", "event": "set_user", "username":self.get_username(), "id": self.user.id})
         
@@ -221,7 +245,14 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 self.group_name,
                 self.channel_name
             )
-    
+        await client.publish(
+            "game_actions",
+            json.dumps({
+                "room": self.code,
+                "player": self.user.id,
+                "action": {"type": "leave"}
+            })
+        )
         result = await RoomService.handle_player_disconnect(
             self.user,
             self.code
@@ -257,6 +288,17 @@ class RoomConsumer(AsyncWebsocketConsumer):
                 pass
 
     async def receive(self, text_data):
+        data = json.loads(text_data)
+
+        await client.publish(
+            "game_actions",
+            json.dumps({
+                "room": self.code,
+                "player": self.user.id,
+                "action": data
+            })
+        )
+        
         asyncio.create_task(self.stream_message(text_data))
 
     async def stream_message(self, text_data):
