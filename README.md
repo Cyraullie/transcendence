@@ -69,7 +69,7 @@ make prod
 This will build the project in docker compose, using the self-signed SSL certificates provided, and start all docker containers.
 
 3. The application will be available at `https://localhost:{NGINX_PORT}` (NGINX_PORT specified in .env, for a normal production version 443 is recommended).
-4. For developper features such as clearing the DBs, run `make` to see all commands available.
+4. For developer features such as clearing the DBs, run `make` to see all commands available.
 
 ### Makefile usage
 
