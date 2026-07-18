@@ -364,6 +364,7 @@ class RoomConsumer(AsyncWebsocketConsumer):
                     "type": "error",
                     "message": "it's not your turn"
                 }))
+            GameService.open_valve(self.code)
             return
         
         await BotService.play_override(game, room.code, position,
